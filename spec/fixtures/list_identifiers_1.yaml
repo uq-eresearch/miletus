@@ -1,0 +1,31 @@
+- 1:
+  identifier: http://example.test/1
+  datestamp: 2012-07-03T09:17:47Z
+
+- 2:
+  identifier: http://example.test/2
+  datestamp: 2012-07-03T09:17:47Z
+
+- 3:
+  identifier: http://example.test/3
+  datestamp: 2012-07-03T09:17:47Z
+
+- 4:
+  identifier: http://example.test/4
+  datestamp: 2012-07-03T09:17:47Z
+
+- 5:
+  identifier: http://example.test/5
+  datestamp: 2012-07-03T09:17:47Z
+
+- 6:
+  identifier: http://example.test/6
+  datestamp: 2012-07-03T09:17:47Z
+
+- 7:
+  identifier: http://example.test/7
+  datestamp: 2012-07-03T09:17:47Z
+
+- 8:
+  identifier: http://example.test/8
+  datestamp: 2012-07-03T09:17:47Z
