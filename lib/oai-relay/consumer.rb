@@ -35,7 +35,7 @@ class Consumer
   end
   
   def update
-    @client.list_identifiers(:metadata_format => @collection.format)\
+    @client.list_identifiers(:metadataPrefix => @collection.format)\
       .select { |record|
         existing = @collection.get(record.identifier)
         existing == nil or existing.datestamp < record.datestamp

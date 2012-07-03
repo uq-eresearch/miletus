@@ -49,7 +49,7 @@ describe Consumer do
   it "adds all records for an empty collection" do
     # OAI::Client and RecordCollection should be duck-typed
     client = double("OAI::Client")
-    client.should_receive(:list_identifiers).with(:metadata_format => 'rif')\
+    client.should_receive(:list_identifiers).with(:metadataPrefix => 'rif')\
       .and_return(get_fixture_records('fixtures/list_identifiers_1.yaml'))
     # This should be lazily called
     client.should_not_receive(:get_record)
@@ -75,7 +75,7 @@ describe Consumer do
     
     # OAI::Client and RecordCollection should be duck-typed
     client = double("OAI::Client")
-    client.should_receive(:list_identifiers).with(:metadata_format => 'rif')\
+    client.should_receive(:list_identifiers).with(:metadataPrefix => 'rif')\
       .and_return(get_fixture_records('fixtures/list_identifiers_2.yaml'))
     # This should be lazily called
     client.should_not_receive(:get_record)
