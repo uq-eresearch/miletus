@@ -1,0 +1,5 @@
+source "http://rubygems.org/"
+gem "oai"
+gem "pry"
+gem "rake"
+gem "rspec", :require => "spec"
