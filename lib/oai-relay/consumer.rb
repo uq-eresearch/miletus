@@ -1,6 +1,6 @@
 require 'oai'
 
-class Reader
+class Consumer
   
   def initialize(endpoint)
     is_client = [:identify, :get_record, :list_identifiers].all? do |method|
