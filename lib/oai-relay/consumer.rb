@@ -2,6 +2,12 @@ require 'oai'
 
 class Consumer
   
+  module DataMixin
+    def data
+      @client.get_record(:metadata_format => @collection.format)
+    end
+  end
+  
   # Take endpoint to use and collection to update
   def initialize(endpoint, recordCollection)
     is_client = [:get_record, :list_identifiers].all? do |method|
@@ -29,11 +35,13 @@ class Consumer
   end
   
   def update
-    @client.list_identifiers(@collection.format).select { |record|
-      @collection.get(record) == nil
-    }.each { |record|
-      @collection.add(record)
-    }
+    @client.list_identifiers(:metadata_format => @collection.format)\
+      .select { |record|
+        existing = @collection.get(record.identifier)
+        existing == nil or existing.datestamp < record.datestamp
+      }.each { |record|
+        @collection.add(record.extend(DataMixin))
+      }
   end
   
 end
