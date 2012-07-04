@@ -1,5 +1,11 @@
 source "http://rubygems.org/"
+
+gem "activerecord"
 gem "oai"
 gem "pry"
 gem "rake"
-gem "rspec", :require => "spec"
+
+group :test do
+  gem "rspec"
+  gem "sqlite3"
+end

@@ -3,13 +3,14 @@ require 'yaml'
 
 describe Consumer do
 
+  # Convenience function for lambda
+  def get_record_for_header(headers, identifier)
+    headers.select { |header| header.identifier = identifier }\
+      .map { |header| Struct.new(:header, :metadata).new(header, '<xml/>') }\
+      .first
+  end
+
   def get_record_response_for_header_lambda(filename)
-    # Convenience function for lambda
-    def get_record_for_header(headers, identifier)
-      headers.select { |header| header.identifier = identifier }\
-        .map { |header| Struct.new(:header, :metadata).new(header, '<xml/>') }\
-        .first
-    end
     # Produce lambda
     lambda do |h|
       Struct.new(:record).new(
@@ -68,8 +69,9 @@ describe Consumer do
     client.should_receive(:list_identifiers).with(:metadataPrefix => 'rif')\
       .and_return(get_fixture_objects('fixtures/list_identifiers_1.yaml'))
     # This should be called for all records
-    client.should_receive(:get_record).exactly(8).times.and_return\
+    client.should_receive(:get_record).exactly(8).times.and_return(
       &get_record_response_for_header_lambda('fixtures/list_identifiers_1.yaml')
+    )
 
     recordCollection = double("RecordCollection")
     # Record collection should have its format checked
@@ -96,8 +98,9 @@ describe Consumer do
     client.should_receive(:list_identifiers).with(:metadataPrefix => 'rif')\
       .and_return(get_fixture_objects('fixtures/list_identifiers_2.yaml'))
     # One new record => one call
-    client.should_receive(:get_record).exactly(1).times.and_return\
+    client.should_receive(:get_record).exactly(1).times.and_return(
       &get_record_response_for_header_lambda('fixtures/list_identifiers_2.yaml')
+    )
 
     recordCollection = double("RecordCollection")
     # Record collection should have its format checked
