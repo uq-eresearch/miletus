@@ -30,11 +30,14 @@ describe Consumer do
     end
   end
 
-  it "takes an OAI-PMH client and RecordCollection for initialization" do
+  it "takes a RecordCollection and optional OAI-PMH client for init" do
     # Need an argument
     lambda { Consumer.new() }.should raise_error(ArgumentError)
 
     # Not just any arguments
+    lambda {
+      Consumer.new(Object.new())
+    }.should raise_error(ArgumentError)
     lambda {
       Consumer.new(Object.new(), Object.new())
     }.should raise_error(ArgumentError)
@@ -44,23 +47,17 @@ describe Consumer do
     client.stub(:get_record)
     client.stub(:list_identifiers)
     recordCollection = double("RecordCollection")
+    recordCollection.should_receive(:endpoint)\
+                    .and_return("http://example.test/oai")
     recordCollection.stub(:format)
     recordCollection.stub(:get)
     recordCollection.stub(:add)
     recordCollection.stub(:remove)
 
-    Consumer.new(client, recordCollection)
-
-    # Check both arguments
-    lambda {
-      Consumer.new(client, Object.new())
-    }.should raise_error(ArgumentError)
-    lambda {
-      Consumer.new(Object.new(), recordCollection)
-    }.should raise_error(ArgumentError)
-
-    # A string will also do
-    Consumer.new("http://example.test/oai", recordCollection)
+    # Explicit client should be fine
+    Consumer.new(recordCollection, client)
+    # Implicit client should be fine
+    Consumer.new(recordCollection)
   end
 
   it "adds all records for an empty collection" do
@@ -86,7 +83,7 @@ describe Consumer do
     # No records should be removed
     recordCollection.should_not_receive(:remove)
 
-    consumer = Consumer.new(client, recordCollection)
+    consumer = Consumer.new(recordCollection, client)
     consumer.update()
   end
 
@@ -117,7 +114,7 @@ describe Consumer do
     # No records should be removed
     recordCollection.should_not_receive(:remove)
 
-    consumer = Consumer.new(client, recordCollection)
+    consumer = Consumer.new(recordCollection, client)
     consumer.update()
   end
 

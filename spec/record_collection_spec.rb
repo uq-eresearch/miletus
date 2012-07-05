@@ -3,13 +3,23 @@ require 'support/active_record'
 
 describe RecordCollection do
 
-  it { should respond_to :add, :get, :remove }
+  subject {
+    RecordCollection.new(
+      :format => 'rif',
+      :endpoint => 'http://example.test/oai'
+    ).tap do |rc|
+      rc.save()
+      rc.readonly!
+    end
+  }
 
-  it "should add OAI::Record instances to a collection" do
-    subject.format = 'rif'
-    subject.endpoint = 'http://example.test/oai'
-    subject.save()
+  it { should respond_to :add, :get, :remove, :format, :endpoint }
 
+  it "returns nil if record is absent" do
+    subject.get("http://example.test/1").should be nil
+  end
+
+  it "adds OAI::Record instances to a collection" do
     record = Struct.new(:header, :metadata).new(
         Struct.new(:identifier, :datestamp).new(
           'http://example.test/1',
@@ -23,11 +33,7 @@ describe RecordCollection do
     r.metadata.should == record.metadata
   end
 
-  it "should update existing OAI::Record instances in a collection" do
-    subject.format = 'rif'
-    subject.endpoint = 'http://example.test/oai'
-    subject.save()
-
+  it "updates existing OAI::Record instances in a collection" do
     records = (-10..-1).map do |i|
       Struct.new(:header, :metadata).new(
         Struct.new(:identifier, :datestamp).new(

@@ -3,11 +3,11 @@ require 'support/active_record'
 
 describe Record do
 
-  it "should be creatable with no arguments" do
+  it "is creatable with no arguments" do
     Record.new()
   end
 
-  it "should be creatable using an OAI::Record" do
+  it "is creatable using an OAI::Record" do
     oaiRecord = Struct.new(:header, :metadata).new(
         Struct.new(:identifier, :datestamp).new(
           'http://example.test/1',
@@ -19,7 +19,7 @@ describe Record do
     record.metadata.should == oaiRecord.metadata
   end
 
-  it "should be convertable to an OAI::Record" do
+  it "converts to an OAI::Record" do
     record = Record.new(
       :identifier => 'http://example.test/1',
       :datestamp => DateTime.now,

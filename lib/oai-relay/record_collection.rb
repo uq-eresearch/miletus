@@ -11,7 +11,8 @@ class RecordCollection < ActiveRecord::Base
   has_many :records, :dependent => :destroy
 
   def get(identifier)
-    self.records.find_by_identifier(identifier).to_oai
+    r = self.records.find_by_identifier(identifier)
+    r && r.to_oai # Convert to OAI:Record unless nil
   end
 
   def add(oaiRecord)
