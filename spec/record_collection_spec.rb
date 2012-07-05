@@ -18,8 +18,8 @@ describe RecordCollection do
     subject.add(record)
 
     r = subject.get(record.header.identifier)
-    r.identifier.should == record.header.identifier
-    r.datestamp.iso8601.should == record.header.datestamp.iso8601
+    r.header.identifier.should == record.header.identifier
+    r.header.datestamp.iso8601.should == record.header.datestamp.iso8601
     r.metadata.should == record.metadata
   end
 
@@ -36,19 +36,15 @@ describe RecordCollection do
         '<xml/>')
     end
 
-    record_ids = records.map do |record|
+    records.each do |record|
       subject.add(record)
       # Check attributes are what they should be
       r = subject.get(record.header.identifier)
-      r.identifier.should == record.header.identifier
-      r.datestamp.iso8601.should == record.header.datestamp.iso8601
+      r.header.identifier.should == record.header.identifier
+      r.header.datestamp.iso8601.should == record.header.datestamp.iso8601
       r.metadata.should == record.metadata
-      # Return ID for checking
-      r.id
     end
 
-    # Whatever ID is allocated, it should be the same one in every case
-    record_ids.to_set.size.should == 1
   end
 
 end

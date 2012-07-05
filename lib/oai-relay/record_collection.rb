@@ -1,5 +1,6 @@
 require 'active_record'
 require 'uri'
+require 'oai-relay/record'
 
 class RecordCollection < ActiveRecord::Base
 
@@ -10,31 +11,20 @@ class RecordCollection < ActiveRecord::Base
   has_many :records, :dependent => :destroy
 
   def get(identifier)
-    self.records.find_by_identifier(identifier)
+    self.records.find_by_identifier(identifier).to_oai
   end
 
   def add(oaiRecord)
     identifier = oaiRecord.header.identifier
-    r = self.records.find_or_initialize_by_identifier(identifier)
-    r.datestamp = oaiRecord.header.datestamp
-    r.metadata = oaiRecord.metadata
-    r.save()
+    self.records.find_or_initialize_by_identifier(identifier).tap do |r|
+      r.datestamp = oaiRecord.header.datestamp
+      r.metadata = oaiRecord.metadata
+      r.save()
+    end
   end
 
   def remove(identifier)
     # TODO: Implement "remove" method
   end
-
-end
-
-class Record < ActiveRecord::Base
-
-  belongs_to :record_collection
-
-  # These fields should exist
-  validates :identifier, :datestamp, :metadata, :presence => true
-
-  # Identifier should be unique inside a collection
-  validates :identifier, :uniqueness => { :scope => :record_collection_id }
 
 end
