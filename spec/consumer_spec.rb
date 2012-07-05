@@ -3,33 +3,6 @@ require 'yaml'
 
 describe Consumer do
 
-  # Convenience function for lambda
-  def get_record_for_header(headers, identifier)
-    headers.select { |header| header.identifier = identifier }\
-      .map { |header| Struct.new(:header, :metadata).new(header, '<xml/>') }\
-      .first
-  end
-
-  def get_record_response_for_header_lambda(filename)
-    # Produce lambda
-    lambda do |h|
-      Struct.new(:record).new(
-        get_record_for_header(
-          get_fixture_objects(filename),
-          h[:identifier]))
-    end
-  end
-
-  def get_fixture_objects(filename)
-    File.open(File.join(File.dirname(__FILE__), filename)) do |f|
-      YAML::load(f.read()).map do |h|
-        # Convert hashes to structs which resemble OAI::Header
-        k,v = h.to_a.transpose
-        Struct.new(*k).new(*v)
-      end
-    end
-  end
-
   it "takes a RecordCollection and optional OAI-PMH client for init" do
     # Need an argument
     lambda { Consumer.new() }.should raise_error(ArgumentError)
@@ -67,7 +40,7 @@ describe Consumer do
       .and_return(get_fixture_objects('fixtures/list_identifiers_1.yaml'))
     # This should be called for all records
     client.should_receive(:get_record).exactly(8).times.and_return(
-      &get_record_response_for_header_lambda('fixtures/list_identifiers_1.yaml')
+      &get_record_by_identifier_lambda('fixtures/list_identifiers_1.yaml')
     )
 
     recordCollection = double("RecordCollection")
@@ -96,7 +69,7 @@ describe Consumer do
       .and_return(get_fixture_objects('fixtures/list_identifiers_2.yaml'))
     # One new record => one call
     client.should_receive(:get_record).exactly(1).times.and_return(
-      &get_record_response_for_header_lambda('fixtures/list_identifiers_2.yaml')
+      &get_record_by_identifier_lambda('fixtures/list_identifiers_2.yaml')
     )
 
     recordCollection = double("RecordCollection")
@@ -105,7 +78,7 @@ describe Consumer do
     # The collection should be checked for all records
     recordCollection.should_receive(:get).with(%r{^http://example.test/})\
       .exactly(8).times.and_return { |q|
-        existing_records.select { |r| q == r.identifier }.first
+        get_record_by_identifier(existing_records, q)
       }
     # All records should be added
     recordCollection.should_receive(:add)\
@@ -116,6 +89,39 @@ describe Consumer do
 
     consumer = Consumer.new(recordCollection, client)
     consumer.update()
+  end
+
+  def header_to_record(header)
+    Struct.new(:header, :metadata).new(header, '<xml/>')
+  end
+
+  def get_header_by_identifier(headers, identifier)
+    headers.select { |header| header.identifier = identifier }.first
+  end
+
+  # Convenience function for lambda
+  def get_record_by_identifier(*args)
+    header_to_record(get_header_by_identifier(*args))
+  end
+
+  def get_record_by_identifier_lambda(filename)
+    # Produce lambda
+    lambda do |h|
+      Struct.new(:record).new(
+        get_record_by_identifier(
+          get_fixture_objects(filename),
+          h[:identifier]))
+    end
+  end
+
+  def get_fixture_objects(filename)
+    File.open(File.join(File.dirname(__FILE__), filename)) do |f|
+      YAML::load(f.read()).map do |h|
+        # Convert hashes to structs which resemble OAI::Header
+        k,v = h.to_a.transpose
+        Struct.new(*k).new(*v)
+      end
+    end
   end
 
 end
