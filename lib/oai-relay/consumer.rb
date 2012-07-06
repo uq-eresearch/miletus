@@ -29,7 +29,8 @@ class Consumer
     @client.list_identifiers(:metadataPrefix => @collection.format)\
       .select { |header|
         existing = @collection.get(header.identifier)
-        existing.nil? or existing.header.datestamp < header.datestamp
+        (existing.nil? or existing.header.datestamp < header.datestamp)\
+          and not (header.respond_to?(:deleted?) and header.deleted?)
       }.each { |header|
         record = @client.get_record(
             :identifier => header.identifier,
