@@ -92,7 +92,7 @@ describe Consumer do
   end
 
   def header_to_record(header)
-    Struct.new(:header, :metadata).new(header, '<xml/>')
+    Struct.new(:header, :metadata).new(header, XML::Node.new('xml'))
   end
 
   def get_header_by_identifier(headers, identifier)

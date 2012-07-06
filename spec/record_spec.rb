@@ -12,7 +12,7 @@ describe Record do
         Struct.new(:identifier, :datestamp).new(
           'http://example.test/1',
           DateTime.now),
-        '<xml/>')
+        LibXML::XML::Node.new('xml'))
     record = Record.from_oai(oaiRecord)
     record.identifier.should == oaiRecord.header.identifier
     record.datestamp.should == oaiRecord.header.datestamp

@@ -20,7 +20,7 @@ class RecordCollection < ActiveRecord::Base
     self.records.find_or_initialize_by_identifier(identifier).tap do |r|
       r.datestamp = oaiRecord.header.datestamp
       r.metadata = oaiRecord.metadata
-      r.save()
+      r.save!()
     end
   end
 

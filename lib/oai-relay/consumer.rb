@@ -20,7 +20,7 @@ class Consumer
     if is_client
       @client = client
     else
-      @client = OAI::Client.new(recordCollection.endpoint)
+      @client = OAI::Client.new(recordCollection.endpoint, :parser => 'libxml')
     end
   end
 

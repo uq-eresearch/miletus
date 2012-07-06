@@ -24,7 +24,7 @@ describe RecordCollection do
         Struct.new(:identifier, :datestamp).new(
           'http://example.test/1',
           DateTime.now),
-        '<xml/>')
+        LibXML::XML::Node.new('xml'))
     subject.add(record)
 
     r = subject.get(record.header.identifier)
@@ -39,7 +39,7 @@ describe RecordCollection do
         Struct.new(:identifier, :datestamp).new(
           'http://example.test/1',
           DateTime.now + i),
-        '<xml/>')
+        LibXML::XML::Node.new('xml'))
     end
 
     records.each do |record|
