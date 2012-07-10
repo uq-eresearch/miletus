@@ -8,7 +8,7 @@ class RecordCollection < ActiveRecord::Base
   validates_format_of :endpoint, :with => URI::regexp(%w(http https))
   validates_uniqueness_of :format, :endpoint
 
-  has_many :records, :dependent => :destroy
+  has_many :records, :dependent => :destroy, :order => 'datestamp DESC'
 
   def get(identifier)
     r = self.records.find_by_identifier(identifier)
