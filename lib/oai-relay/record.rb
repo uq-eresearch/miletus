@@ -26,7 +26,8 @@ class Record < ActiveRecord::Base
     Record.new(
       :identifier => oaiRecord.header.identifier,
       :datestamp => oaiRecord.header.datestamp,
-      :metadata => oaiRecord.metadata)
+      :metadata => oaiRecord.metadata,
+      :deleted => oaiRecord.header.deleted?)
   end
 
   def metadata=(metadata)
@@ -61,6 +62,7 @@ class Record < ActiveRecord::Base
     OaiHeader.new().tap do |oaiHeader|
       oaiHeader.identifier = self.identifier
       oaiHeader.datestamp = self.datestamp
+      oaiHeader.status = self.deleted? ? 'deleted' : ''
     end
   end
 

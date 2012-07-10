@@ -11,6 +11,7 @@ class CreateRecordCollections < ActiveRecord::Migration
       t.string :identifier, :null => false
       t.datetime :datestamp, :null => false
       t.text :metadata, :null => false
+      t.boolean :deleted, :default => false, :null => false
     end
   end
 

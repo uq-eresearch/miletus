@@ -24,8 +24,12 @@ class RecordCollection < ActiveRecord::Base
     end
   end
 
-  def remove(identifier)
-    # TODO: Implement "remove" method
+  def remove(identifier, datestamp = DateTime.now())
+    r = self.records.find_by_identifier(identifier)
+    return r if r.nil?
+    r.datestamp = datestamp
+    r.deleted = true
+    r.save!()
   end
 
 end
