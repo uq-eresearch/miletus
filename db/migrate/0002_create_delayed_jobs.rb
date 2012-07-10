@@ -1,0 +1,1 @@
+require 'generators/delayed_job/templates/migration'
