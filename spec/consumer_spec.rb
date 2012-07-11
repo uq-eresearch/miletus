@@ -20,8 +20,7 @@ describe Consumer do
     client.stub(:get_record)
     client.stub(:list_identifiers)
     recordCollection = double("RecordCollection")
-    recordCollection.should_receive(:endpoint)\
-                    .and_return("http://example.test/oai")
+    recordCollection.stub(:endpoint)
     recordCollection.stub(:format)
     recordCollection.stub(:get)
     recordCollection.stub(:add)

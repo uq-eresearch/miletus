@@ -6,6 +6,10 @@ gem "oai", :git => "https://github.com/tjdett/ruby-oai.git", :branch => "libxml-
 gem "pry"
 gem "rake"
 gem "libxml-ruby"
+gem "foreman"
+gem "clockwork"
+gem "activerecord-postgresql-adapter"
+gem "pg"
 
 group :test do
   gem "rspec"

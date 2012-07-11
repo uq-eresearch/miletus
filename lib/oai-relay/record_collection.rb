@@ -6,7 +6,7 @@ class RecordCollection < ActiveRecord::Base
 
   validates :format, :endpoint, :presence => true
   validates_format_of :endpoint, :with => URI::regexp(%w(http https))
-  validates_uniqueness_of :format, :endpoint
+  validates_uniqueness_of :format, :scope => :endpoint
 
   has_many :records, :dependent => :destroy, :order => 'datestamp DESC'
 
@@ -30,6 +30,10 @@ class RecordCollection < ActiveRecord::Base
     r.datestamp = datestamp
     r.deleted = true
     r.save!()
+  end
+
+  def to_s
+    "#{endpoint} (#{format})"
   end
 
 end

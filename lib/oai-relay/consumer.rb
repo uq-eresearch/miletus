@@ -15,18 +15,18 @@ class Consumer
     unless is_collection
       raise ArgumentError.new("Consumer requires a collection to update.")
     end
-    @collection = recordCollection
 
-    if is_client
-      @client = client
-    else
-      @client = OAI::Client.new(recordCollection.endpoint, :parser => 'libxml')
-    end
+    @collection = recordCollection
+    @client = client
+  end
+
+  def client
+    @client or OAI::Client.new(@collection.endpoint, :parser => 'libxml')
   end
 
   # Update collection with changed records
   def update
-    @client.list_identifiers(:metadataPrefix => @collection.format)\
+    client.list_identifiers(:metadataPrefix => @collection.format)\
       .select { |header|
         existing = @collection.get(header.identifier)
         (existing.nil? or existing.header.datestamp < header.datestamp)
@@ -40,7 +40,7 @@ class Consumer
   end
 
   def _add_record(header)
-    record = @client.get_record(
+    record = client.get_record(
         :identifier => header.identifier,
         :metadataPrefix => @collection.format).record
     @collection.add(record)
@@ -48,6 +48,11 @@ class Consumer
 
   def _remove_record(header)
     @collection.remove(header.identifier, header.datestamp)
+  end
+
+  def perform
+    puts "Checking for updates on #{@collection.to_s}"
+    update
   end
 
 end
