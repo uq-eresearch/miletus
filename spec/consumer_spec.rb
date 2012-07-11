@@ -32,6 +32,17 @@ describe Consumer do
     Consumer.new(recordCollection)
   end
 
+  it "should be a valid delayed job" do
+    recordCollection = double("RecordCollection")
+    recordCollection.stub(:endpoint)
+    recordCollection.stub(:format)
+    recordCollection.stub(:get)
+    recordCollection.stub(:add)
+    recordCollection.stub(:remove)
+    # All delayed jobs must respond to :perform
+    Consumer.new(recordCollection).should respond_to(:perform)
+  end
+
   it "adds all records for an empty collection" do
     # OAI::Client and RecordCollection should be duck-typed
     client = double("OAI::Client")

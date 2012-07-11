@@ -1,4 +1,5 @@
 *~
+.env
 .buildpath
 .bundle/
 .project
