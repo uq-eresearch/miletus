@@ -32,27 +32,29 @@ class Consumer
         (existing.nil? or existing.header.datestamp < header.datestamp)
       }.each { |header|
         if header.deleted?
-          _remove_record(header)
+          remove_record(header)
         else
-          _add_record(header)
+          add_record(header)
         end
       }
   end
 
-  def _add_record(header)
+  def perform
+    puts "Checking for updates on #{@collection.to_s}"
+    update
+  end
+
+  private
+
+  def add_record(header)
     record = client.get_record(
         :identifier => header.identifier,
         :metadataPrefix => @collection.format).record
     @collection.add(record)
   end
 
-  def _remove_record(header)
+  def remove_record(header)
     @collection.remove(header.identifier, header.datestamp)
-  end
-
-  def perform
-    puts "Checking for updates on #{@collection.to_s}"
-    update
   end
 
 end

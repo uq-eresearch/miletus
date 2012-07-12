@@ -31,14 +31,23 @@ class Record < ActiveRecord::Base
   end
 
   def metadata=(metadata)
-    write_attribute(:metadata, _xml_obj_to_str(metadata))
+    write_attribute(:metadata, xml_obj_to_str(metadata))
   end
 
   def metadata
-    _xml_str_to_obj(read_attribute(:metadata))
+    xml_str_to_obj(read_attribute(:metadata))
   end
 
-  def _xml_str_to_obj(xml)
+  def to_oai
+    OaiRecord.new().tap do |oaiRecord|
+      oaiRecord.header = oai_header
+      oaiRecord.metadata = metadata
+    end
+  end
+
+  private
+
+  def xml_str_to_obj(xml)
     begin
       XML::Document.string(xml).root
     rescue ArgumentError
@@ -46,7 +55,7 @@ class Record < ActiveRecord::Base
     end
   end
 
-  def _xml_obj_to_str(obj)
+  def xml_obj_to_str(obj)
     case obj.class.name
       when 'LibXML::XML::Node'
         XML::Document.new().try{|d| d.root = d.import(obj) }.to_s
@@ -58,7 +67,7 @@ class Record < ActiveRecord::Base
   end
 
 
-  def _oai_header
+  def oai_header
     OaiHeader.new().tap do |oaiHeader|
       oaiHeader.identifier = self.identifier
       oaiHeader.datestamp = self.datestamp
@@ -66,11 +75,5 @@ class Record < ActiveRecord::Base
     end
   end
 
-  def to_oai
-    OaiRecord.new().tap do |oaiRecord|
-      oaiRecord.header = self._oai_header
-      oaiRecord.metadata = self.metadata
-    end
-  end
 
 end
