@@ -24,6 +24,20 @@ task :console => :environment do |t|
   pry
 end
 
+namespace :record_collection do
+
+  desc "Add a Record Collection"
+  task :add, [:endpoint, :format] => [:environment] do |t, args|
+    RecordCollection.new.tap do |rc|
+      rc.endpoint = args[:endpoint]
+      rc.format = args[:format]
+      rc.save!
+    end
+  end
+
+end
+
+
 task :environment do |t|
   Delayed::Worker.destroy_failed_jobs = false
   STDOUT.sync = true
