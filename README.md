@@ -1,6 +1,6 @@
-# OAI Relay
+# Miletus OAI-PMH RIF-CS Harvester
 
-[![Build Status](https://secure.travis-ci.org/tjdett/oai-relay.png?branch=master)](http://travis-ci.org/tjdett/oai-relay)
+[![Build Status](https://secure.travis-ci.org/tjdett/miletus-oaipmh-rifcs-harvester.png?branch=master)](http://travis-ci.org/tjdett/miletus-oaipmh-rifcs-harvester)
 
 ## Overview
 
