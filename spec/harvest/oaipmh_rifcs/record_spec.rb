@@ -17,7 +17,7 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Record do
           'http://example.test/1',
           DateTime.now),
         LibXML::XML::Node.new('xml'))
-    oaiRecord.header.should respond_to :'deleted?'
+    oaiRecord.header.should respond_to('deleted?'.to_sym)
     record = Miletus::Harvest::OAIPMH::RIFCS::Record.from_oai(oaiRecord)
     record.identifier.should == oaiRecord.header.identifier
     record.datestamp.should == oaiRecord.header.datestamp

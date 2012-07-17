@@ -12,10 +12,10 @@ describe Miletus::Harvest::OAIPMH::RIFCS::RecordCollection do
     end
   }
 
-  it { should respond_to :add, :get, :remove, :format, :endpoint }
+  it { should respond_to(:add, :get, :remove, :format, :endpoint) }
 
   it "returns nil if record is absent" do
-    subject.get("http://example.test/1").should be nil
+    subject.get("http://example.test/1").should be(nil)
   end
 
   it "adds OAI::Record instances to a collection" do
