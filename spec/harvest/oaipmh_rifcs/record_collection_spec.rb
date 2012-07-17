@@ -28,7 +28,7 @@ describe Miletus::Harvest::OAIPMH::RIFCS::RecordCollection do
 
     r = subject.get(record.header.identifier)
     r.header.identifier.should == record.header.identifier
-    r.header.datestamp.iso8601.should == record.header.datestamp.iso8601
+    r.header.datestamp.to_i.should == record.header.datestamp.to_i
     r.metadata.should == record.metadata
   end
 
@@ -46,7 +46,7 @@ describe Miletus::Harvest::OAIPMH::RIFCS::RecordCollection do
       # Check attributes are what they should be
       r = subject.get(record.header.identifier)
       r.header.identifier.should == record.header.identifier
-      r.header.datestamp.iso8601.should == record.header.datestamp.iso8601
+      r.header.datestamp.to_i.should == record.header.datestamp.to_i
       r.metadata.should == record.metadata
     end
 
@@ -63,7 +63,7 @@ describe Miletus::Harvest::OAIPMH::RIFCS::RecordCollection do
       # Check attributes are what they should be
       r = subject.get(record.header.identifier)
       r.header.identifier.should == record.header.identifier
-      r.header.datestamp.iso8601.should == record.header.datestamp.iso8601
+      r.header.datestamp.to_i.should == record.header.datestamp.to_i
       r.header.deleted?.should be_false
 
       subject.remove(record.header.identifier)
@@ -71,7 +71,7 @@ describe Miletus::Harvest::OAIPMH::RIFCS::RecordCollection do
       # Check attributes are what they should be
       r = subject.get(record.header.identifier)
       r.header.identifier.should == record.header.identifier
-      r.header.datestamp.iso8601.should == record.header.datestamp.iso8601
+      r.header.datestamp.to_i.should == record.header.datestamp.to_i
       r.header.deleted?.should be_true
     end
 

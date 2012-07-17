@@ -11,7 +11,9 @@ module Miletus
 
           self.table_name = 'oaipmh_rifcs_record_collections'
 
-          validates :format, :endpoint, :presence => true
+          attr_accessible :endpoint
+
+          validates :endpoint, :presence => true
           validates_format_of :endpoint, :with => URI::regexp(%w(http https))
           validates_uniqueness_of :endpoint
 

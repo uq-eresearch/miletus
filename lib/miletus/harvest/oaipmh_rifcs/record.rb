@@ -21,6 +21,8 @@ module Miletus
             end
           end
 
+          attr_accessible :identifier, :datestamp, :metadata, :deleted
+
           belongs_to :record_collection,
             :class_name => 'Miletus::Harvest::OAIPMH::RIFCS::RecordCollection',
             :foreign_key => 'record_collection_id'
