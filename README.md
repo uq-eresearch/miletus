@@ -11,12 +11,16 @@ _More to come later..._
 
 The database connection is provided by the `DATABASE_URL` environment variable.
 
-For running Rake tasks adhoc:
-
-    DATABASE_URL="postgres:///my_db" rake jobs:work
-
-Or to run the whole lot, you can take advantage of Foreman's `.env` file:
+Take advantage of Foreman's `.env` file:
 
     echo "DATABASE_URL=postgres:///my_db" > .env
+
+To run Rake tasks adhoc:
+
+    foreman run rake jobs:work
+
+Or to run the whole lot:
+
     foreman start
+
 	
