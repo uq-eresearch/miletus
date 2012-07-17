@@ -1,12 +1,11 @@
-class CreateRecordCollections < ActiveRecord::Migration
+class CreateOaipmhRifcsRecordCollections < ActiveRecord::Migration
 
   def self.up
-    create_table :record_collections do |t|
-      t.string :format, :null => false
+    create_table :oaipmh_rifcs_record_collections do |t|
       t.string :endpoint, :null => false
     end
 
-    create_table :records do |t|
+    create_table :oaipmh_rifcs_records do |t|
       t.references :record_collection
       t.string :identifier, :null => false
       t.datetime :datestamp, :null => false
@@ -16,8 +15,8 @@ class CreateRecordCollections < ActiveRecord::Migration
   end
 
   def self.down
-    drop_table :records
-    drop_table :record_collections
+    drop_table :oaipmh_rifcs_records
+    drop_table :oaipmh_rifcs_record_collections
   end
 
 end

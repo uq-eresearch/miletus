@@ -6,7 +6,8 @@ require 'active_record'
 ActiveRecord::Base.establish_connection\
   :adapter => "sqlite3",
   :database => ":memory:"
-ActiveRecord::Migrator.up "db/migrate"
+ActiveRecord::Migrator.up File.realpath(File.join(File.dirname(__FILE__),
+    '..', 'db','migrate'))
 
 RSpec.configure do |config|
   config.around do |example|

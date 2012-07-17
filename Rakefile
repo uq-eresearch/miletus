@@ -3,13 +3,23 @@ require 'bundler/setup'
 
 # Import Rake task for RSpec
 require 'rspec/core/rake_task'
+# Import Rake task for gem packaging
+require 'rubygems/package_task'
+
 # Import DelayedJob tasks
 require 'delayed_job_active_record'
 require 'delayed/tasks'
+
 # Add lib/ to path
 $:.unshift File.join(File.dirname(__FILE__), 'lib')
 
-desc "Run specs"
+#spec = Gem::Specification.load(Dir['*.gemspec'].first)
+#gem = Rake::GemPackageTask.new(spec)
+#gem.define
+
+
+
+
 RSpec::Core::RakeTask.new()
 
 desc "Run clockwork scheduler"
@@ -24,29 +34,28 @@ task :console => :environment do |t|
   pry
 end
 
-namespace :record_collection do
+namespace :harvest do
+  namespace :oaipmh_rifcs do
+    namespace :record_collection do
 
-  desc "Add a Record Collection"
-  task :add, [:endpoint, :format] => [:environment] do |t, args|
-    RecordCollection.new.tap do |rc|
-      rc.endpoint = args[:endpoint]
-      rc.format = args[:format]
-      rc.save!
+      desc "Add a Record Collection"
+      task :add, [:endpoint] => [:environment] do |t, args|
+        include Miletus::Harvest::OAIPMH::RIFCS
+        RecordCollection.new(:endpoint => args[:endpoint]).save!
+      end
+
     end
   end
-
 end
-
 
 task :environment do |t|
   Delayed::Worker.destroy_failed_jobs = false
   STDOUT.sync = true
   require 'active_record'
-  ActiveRecord::Base.establish_connection(
+  @connection = ActiveRecord::Base.establish_connection(
     ENV['DATABASE_URL']
   )
   ActiveRecord::Migrator.up "db/migrate"
-  require 'oai-relay/consumer'
-  require 'oai-relay/record_collection'
+  require 'miletus'
 end
 

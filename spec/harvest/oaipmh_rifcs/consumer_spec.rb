@@ -1,18 +1,20 @@
-require 'oai-relay/consumer'
+require 'miletus/harvest/oaipmh_rifcs/consumer'
 require 'yaml'
 
-describe Consumer do
+describe Miletus::Harvest::OAIPMH::RIFCS::Consumer do
+
+  subjectClass = Miletus::Harvest::OAIPMH::RIFCS::Consumer
 
   it "takes a RecordCollection and optional OAI-PMH client for init" do
     # Need an argument
-    lambda { Consumer.new() }.should raise_error(ArgumentError)
+    lambda { subjectClass.new() }.should raise_error(ArgumentError)
 
     # Not just any arguments
     lambda {
-      Consumer.new(Object.new())
+      subjectClass.new(Object.new())
     }.should raise_error(ArgumentError)
     lambda {
-      Consumer.new(Object.new(), Object.new())
+      subjectClass.new(Object.new(), Object.new())
     }.should raise_error(ArgumentError)
 
     # OAI::Client and RecordCollection should be duck-typed
@@ -27,9 +29,9 @@ describe Consumer do
     recordCollection.stub(:remove)
 
     # Explicit client should be fine
-    Consumer.new(recordCollection, client)
+    subjectClass.new(recordCollection, client)
     # Implicit client should be fine
-    Consumer.new(recordCollection)
+    subjectClass.new(recordCollection)
   end
 
   it "should be a valid delayed job" do
@@ -40,7 +42,7 @@ describe Consumer do
     recordCollection.stub(:add)
     recordCollection.stub(:remove)
     # All delayed jobs must respond to :perform
-    Consumer.new(recordCollection).should respond_to(:perform)
+    subjectClass.new(recordCollection).should respond_to(:perform)
   end
 
   it "adds all records for an empty collection" do
@@ -66,7 +68,7 @@ describe Consumer do
     # No records should be removed
     recordCollection.should_not_receive(:remove)
 
-    consumer = Consumer.new(recordCollection, client)
+    consumer = subjectClass.new(recordCollection, client)
     consumer.update()
   end
 
@@ -97,7 +99,7 @@ describe Consumer do
     # No records should be removed
     recordCollection.should_not_receive(:remove)
 
-    consumer = Consumer.new(recordCollection, client)
+    consumer = subjectClass.new(recordCollection, client)
     consumer.update()
   end
 
@@ -130,7 +132,7 @@ describe Consumer do
                     .with(kind_of(String), kind_of(Time))\
                     .exactly(6).times
 
-    consumer = Consumer.new(recordCollection, client)
+    consumer = subjectClass.new(recordCollection, client)
     consumer.update()
   end
 

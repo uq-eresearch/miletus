@@ -1,10 +1,10 @@
-require 'oai-relay/record'
-require 'support/active_record'
+require 'spec_helper'
+require 'miletus/harvest/oaipmh_rifcs/record'
 
-describe Record do
+describe Miletus::Harvest::OAIPMH::RIFCS::Record do
 
   it "is creatable with no arguments" do
-    Record.new()
+    Miletus::Harvest::OAIPMH::RIFCS::Record.new()
   end
 
   it "is creatable using an OAI::Record" do
@@ -18,14 +18,14 @@ describe Record do
           DateTime.now),
         LibXML::XML::Node.new('xml'))
     oaiRecord.header.should respond_to :'deleted?'
-    record = Record.from_oai(oaiRecord)
+    record = Miletus::Harvest::OAIPMH::RIFCS::Record.from_oai(oaiRecord)
     record.identifier.should == oaiRecord.header.identifier
     record.datestamp.should == oaiRecord.header.datestamp
     record.metadata.should == oaiRecord.metadata
   end
 
   it "converts to an OAI::Record" do
-    record = Record.new(
+    record = Miletus::Harvest::OAIPMH::RIFCS::Record.new(
       :identifier => 'http://example.test/1',
       :datestamp => DateTime.now,
       :metadata => '<xml/>')

@@ -1,11 +1,10 @@
-require 'oai-relay/record_collection'
-require 'support/active_record'
+require 'spec_helper'
+require 'miletus/harvest/oaipmh_rifcs/record_collection'
 
-describe RecordCollection do
+describe Miletus::Harvest::OAIPMH::RIFCS::RecordCollection do
 
   subject {
-    RecordCollection.new(
-      :format => 'rif',
+    Miletus::Harvest::OAIPMH::RIFCS::RecordCollection.new(
       :endpoint => 'http://example.test/oai'
     ).tap do |rc|
       rc.save()

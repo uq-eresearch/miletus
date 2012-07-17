@@ -1,12 +1,17 @@
 GIT
   remote: https://github.com/tjdett/ruby-oai.git
-  revision: 748d95ced717f3b555194100d567706fb3da1952
-  branch: libxml-fix
+  revision: 1e76bfa7cdb988177410fea2e44d02a607edb059
+  branch: next
   specs:
     oai (0.2.0)
       builder (>= 2.0.0)
       faraday
       faraday_middleware
+
+PATH
+  remote: .
+  specs:
+    miletus (0.0.1)
 
 GEM
   remote: http://rubygems.org/
@@ -75,6 +80,7 @@ DEPENDENCIES
   delayed_job_active_record
   foreman
   libxml-ruby
+  miletus!
   oai!
   pg
   pry
