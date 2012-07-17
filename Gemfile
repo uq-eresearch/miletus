@@ -49,3 +49,5 @@ gem "clockwork"
 gem "activerecord-postgresql-adapter"
 gem "pg"
 
+gem "twitter-bootstrap-rails"
+
