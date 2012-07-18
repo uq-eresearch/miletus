@@ -23,7 +23,7 @@ describe Miletus::Harvest::OAIPMH::RIFCS::RecordCollection do
         Struct.new(:identifier, :datestamp, :status).new(
           'http://example.test/1',
           DateTime.now),
-        LibXML::XML::Node.new('xml'))
+        LibXML::XML::Node.new('metadata'))
     subject.add(record)
 
     r = subject.get(record.header.identifier)
@@ -38,7 +38,7 @@ describe Miletus::Harvest::OAIPMH::RIFCS::RecordCollection do
         Struct.new(:identifier, :datestamp, :status).new(
           'http://example.test/1',
           DateTime.now + i),
-        LibXML::XML::Node.new('xml'))
+        LibXML::XML::Node.new('metadata'))
     end
 
     records.each do |record|
@@ -57,7 +57,7 @@ describe Miletus::Harvest::OAIPMH::RIFCS::RecordCollection do
           Struct.new(:identifier, :datestamp, :status).new(
             'http://example.test/1',
             DateTime.now),
-          LibXML::XML::Node.new('xml'))
+          LibXML::XML::Node.new('metadata'))
       subject.add(record)
 
       # Check attributes are what they should be
