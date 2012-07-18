@@ -1,6 +1,6 @@
 # Miletus
 
-[![Build Status](https://secure.travis-ci.org/tjdett/miletus.png?branch=master)](http://travis-ci.org/tjdett/miletus)
+[![Build Status](https://secure.travis-ci.org/uq-eresearch/miletus.png?branch=master)](http://travis-ci.org/uq-eresearch/miletus)
 
 ## Overview
 
