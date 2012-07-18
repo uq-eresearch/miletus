@@ -50,4 +50,5 @@ gem "activerecord-postgresql-adapter"
 gem "pg"
 
 gem "twitter-bootstrap-rails"
+gem "haml-rails"
 
