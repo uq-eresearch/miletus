@@ -57,6 +57,12 @@ module Miletus
             end
           end
 
+          def to_rif
+            metadata.children.map { |obj|
+              xml_obj_to_str(obj)
+            }.join("\n")
+          end
+
           private
 
           def xml_str_to_obj(xml)
