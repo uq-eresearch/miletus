@@ -20,6 +20,32 @@ describe OaiController do
       xml.find_first('//oai:protocolVersion', NS_DECL).content.should == "2.0"
     end
 
+    it "lists RIF-CS as a metadata format" do
+      get 'index', { 'verb' => 'ListMetadataFormats' }
+      response.should be_success
+      xml = XML::Document.string(response.body).root
+      prefixes = xml.find('//oai:metadataPrefix', NS_DECL).map{|e| e.content}
+      prefixes.should include('rif')
+    end
+
+    describe "when no records exist" do
+
+      it "should respond to ListIdentifiers with \"noRecordsMatch\" " do
+        get 'index', { 'verb' => 'ListIdentifiers' }
+        response.should be_success
+        xml = XML::Document.string(response.body).root
+        xml.find_first('//oai:error/@code', NS_DECL).value.should == 'noRecordsMatch'
+      end
+
+      it "should respond to ListRecords with \"noRecordsMatch\" " do
+        get 'index', { 'verb' => 'ListRecords' }
+        response.should be_success
+        xml = XML::Document.string(response.body).root
+        xml.find_first('//oai:error/@code', NS_DECL).value.should == 'noRecordsMatch'
+      end
+
+    end
+
   end
 
 end

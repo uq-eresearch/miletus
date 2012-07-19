@@ -34,15 +34,10 @@ gem 'unicorn'
 # Deploy with Capistrano
 # gem 'capistrano'
 
-# To use debugger
-# gem 'debugger'
-
 gem "activerecord"
 gem 'delayed_job_active_record'
 gem "oai", :git => "https://github.com/tjdett/ruby-oai.git", :branch => "next"
-gem 'pry-rails', :group => :development
 gem "rake"
-gem "rspec-rails"
 gem "libxml-ruby"
 gem "foreman"
 gem "clockwork"
@@ -52,4 +47,19 @@ gem "pg"
 gem "twitter-bootstrap-rails"
 gem "haml-rails"
 
-gem "minitest"
+group :test, :development do
+  gem "rspec-rails"
+  gem "minitest"
+  gem 'spork' # For running a test server (and spec_helper.rb refers to it)
+end
+
+group :development do
+  gem 'guard'
+  gem 'guard-bundler'
+  gem 'guard-rails'
+  gem 'guard-rspec'
+  gem 'rails_best_practices'
+  gem 'debugger'
+  gem 'pry-rails'
+  gem 'libnotify', :require => false unless RUBY_PLATFORM =~ /linux/i
+end
