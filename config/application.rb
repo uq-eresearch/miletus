@@ -104,5 +104,8 @@ module Miletus
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
+
+    # Add observers
+    config.active_record.observers = :rifcs_record_observer
   end
 end

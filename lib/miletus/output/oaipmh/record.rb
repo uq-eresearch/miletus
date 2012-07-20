@@ -1,8 +1,6 @@
 require 'active_record'
 require 'oai'
 
-require File.join(File.dirname(__FILE__), 'record_provider')
-
 module Miletus
   module Output
     module OAIPMH
@@ -10,6 +8,8 @@ module Miletus
       class Record < ActiveRecord::Base
 
         @@schemas = {}
+
+        attr_accessible :metadata
 
         self.table_name = 'output_oaipmh_records'
 
@@ -40,6 +40,7 @@ module Miletus
         end
 
         def self.do_get_schema(schema)
+          require File.join(File.dirname(__FILE__), 'record_provider')
           LibXML::XML::Schema.new(RecordProvider.format(schema).schema)
         end
 

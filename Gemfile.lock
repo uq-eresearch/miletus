@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/tjdett/ruby-oai.git
-  revision: 511ae10ae3ad9a9398d921a2b0e112fbb412ee3c
+  revision: 0984e646189a49d6c978fa7a096cac8ff071b152
   branch: next
   specs:
     oai (0.2.0)

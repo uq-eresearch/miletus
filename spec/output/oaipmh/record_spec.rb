@@ -11,10 +11,10 @@ describe Miletus::Output::OAIPMH::Record do
     end
 
     it "should return OAI Dublin Core if provided valid RIF-CS" do
-      fixture_file = File.join(File.dirname(__FILE__),'fixtures','rifcs-1.xml')
+      fixture_file = File.join(File.dirname(__FILE__),
+        '..', '..', 'fixtures','rifcs-party-1.xml')
       subject.metadata = File.open(fixture_file) { |f| f.read() }
       subject.to_oai_dc.should_not be(nil)
-      puts subject.to_oai_dc
       # Validate the XML
       rifcs_doc = XML::Document.string(subject.to_oai_dc)
       rifcs_schema = subject.class.get_schema('oai_dc')
@@ -33,7 +33,8 @@ describe Miletus::Output::OAIPMH::Record do
     end
 
     it "should return RIF-CS if provided valid RIF-CS" do
-      fixture_file = File.join(File.dirname(__FILE__),'fixtures','rifcs-1.xml')
+      fixture_file = File.join(File.dirname(__FILE__),
+        '..', '..', 'fixtures','rifcs-party-1.xml')
       subject.metadata = File.open(fixture_file) { |f| f.read() }
       subject.to_rif.should_not be(nil)
       # Validate the XML

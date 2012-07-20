@@ -1,6 +1,8 @@
+require 'active_record'
 require 'oai'
-require 'miletus/harvest/oaipmh_rifcs/record'
-require File.dirname(__FILE__)+'/rifcs_format'
+
+require File.join(File.dirname(__FILE__), 'record')
+require File.join(File.dirname(__FILE__), 'rifcs_format')
 
 module Miletus
   module Output
@@ -11,8 +13,7 @@ module Miletus
         repository_url 'http://localhost:3000/oai'
         admin_email 'root@localhost'
         source_model OAI::Provider::ActiveRecordWrapper.new(
-          Miletus::Harvest::OAIPMH::RIFCS::Record,
-          :timestamp_field => 'datestamp'
+          Miletus::Output::OAIPMH::Record
         )
         register_format(RifcsFormat.instance)
       end

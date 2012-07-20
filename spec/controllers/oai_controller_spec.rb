@@ -1,5 +1,8 @@
 require 'spec_helper'
 
+require 'libxml'
+require 'miletus/output/oaipmh/record'
+
 describe OaiController do
 
   NS_DECL = 'oai:http://www.openarchives.org/OAI/2.0/'
@@ -42,6 +45,35 @@ describe OaiController do
         response.should be_success
         xml = XML::Document.string(response.body).root
         xml.find_first('//oai:error/@code', NS_DECL).value.should == 'noRecordsMatch'
+      end
+
+    end
+
+    describe "when records exist" do
+
+      before(:each) do
+        fixture_file = File.join(File.dirname(__FILE__),
+          '..', 'fixtures','rifcs-party-1.xml')
+        Miletus::Output::OAIPMH::Record.new(
+          :metadata => File.open(fixture_file) { |f| f.read() }
+        ).save!
+        Miletus::Output::OAIPMH::Record.count.should > 0
+      end
+
+      it "should not respond to ListIdentifiers with \"noRecordsMatch\" " do
+        get 'index', { 'verb' => 'ListIdentifiers' }
+        response.should be_success
+        xml = XML::Document.string(response.body).root
+        xml.find_first('//oai:error', NS_DECL).should be(nil)
+        xml.find_first('//oai:ListIdentifiers', NS_DECL).should_not be(nil)
+      end
+
+      it "should not respond to ListRecords with \"noRecordsMatch\" " do
+        get 'index', { 'verb' => 'ListRecords' }
+        response.should be_success
+        xml = XML::Document.string(response.body).root
+        xml.find_first('//oai:error', NS_DECL).should be(nil)
+        xml.find_first('//oai:ListRecords', NS_DECL).should_not be(nil)
       end
 
     end
