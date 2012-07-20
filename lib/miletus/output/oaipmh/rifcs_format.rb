@@ -15,11 +15,11 @@ module Miletus
 
         def header_specification
           {
-            'xmlns:rif' => "http://ands.org.au/standards/rif-cs/registryObjects",
+            'xmlns:rif' => @namespace,
             'xmlns:xsi' => "http://www.w3.org/2001/XMLSchema-instance",
             'xsi:schemaLocation' =>
-              %{http://ands.org.au/standards/rif-cs/registryObjects
-                http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd}
+              %{#{@namespace}
+                #{@schema}}
           }
         end
       end
