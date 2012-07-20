@@ -49,42 +49,42 @@ describe Miletus::Harvest::OAIPMH::RIFCS::RecordCollection do
       r.header.datestamp.to_i.should == record.header.datestamp.to_i
       r.metadata.should == record.metadata
     end
-
   end
 
   it "marks deleted OAI::Record instances as deleted in a collection" do
-      record = Struct.new(:header, :metadata).new(
-          Struct.new(:identifier, :datestamp, :status).new(
-            'http://example.test/1',
-            DateTime.now),
-          LibXML::XML::Node.new('metadata'))
-      subject.add(record)
+    record = Struct.new(:header, :metadata).new(
+        Struct.new(:identifier, :datestamp, :status).new(
+          'http://example.test/1',
+          DateTime.now),
+        LibXML::XML::Node.new('metadata'))
+    subject.add(record)
 
-      # Check attributes are what they should be
-      r = subject.get(record.header.identifier)
-      r.header.identifier.should == record.header.identifier
-      r.header.datestamp.to_i.should == record.header.datestamp.to_i
-      r.header.deleted?.should be_false
+    # Check attributes are what they should be
+    r = subject.get(record.header.identifier)
+    r.header.identifier.should == record.header.identifier
+    r.header.datestamp.to_i.should == record.header.datestamp.to_i
+    r.header.deleted?.should be_false
 
-      subject.remove(record.header.identifier)
+    subject.remove(record.header.identifier)
 
-      # Check attributes are what they should be
-      r = subject.get(record.header.identifier)
-      r.header.identifier.should == record.header.identifier
-      r.header.datestamp.to_i.should == record.header.datestamp.to_i
-      r.header.deleted?.should be_true
-    end
+    # Check attributes are what they should be
+    r = subject.get(record.header.identifier)
+    r.header.identifier.should == record.header.identifier
+    r.header.datestamp.to_i.should == record.header.datestamp.to_i
+    r.header.deleted?.should be_true
+  end
 
   it "silently ignores new deleted OAI::Record instances in a collection" do
-      header = Struct.new(:identifier, :datestamp).new(
-            'http://example.test/1',
-            DateTime.now)
+    header = Struct.new(:identifier, :datestamp).new(
+          'http://example.test/1',
+          DateTime.now)
 
-      subject.remove(header.identifier, header.datestamp)
+    subject.remove(header.identifier, header.datestamp)
 
-      # Check attributes are what they should be
-      r = subject.get(header.identifier)
-      r.should be_nil
-    end
+    # Check attributes are what they should be
+    r = subject.get(header.identifier)
+    r.should be_nil
+  end
+
 
 end
