@@ -10,8 +10,6 @@ describe RifcsRecordObserver do
   it { should respond_to(:after_create, :after_update, :after_destroy) }
 
   it "should create a new output record for a new harvested record" do
-    # New record should have been created on a delay, not immediately
-    subject.should_receive(:delay).at_least(1).and_return(subject)
     # Load data from fixture
     fixture_file = File.join(File.dirname(__FILE__),
       '..', 'fixtures','rifcs-party-1.xml')
@@ -26,6 +24,11 @@ describe RifcsRecordObserver do
     end
     # Run hook
     subject.after_create(input_record)
+    # Work should happen on a delay
+    output_record = Miletus::Output::OAIPMH::Record.find(:first)
+    output_record.should be(nil)
+    # Run delayed jobs
+    Delayed::Worker.new.work_off
     # A new record should exist as a result
     output_record = Miletus::Output::OAIPMH::Record.find(:first)
     output_record.should_not be(nil)

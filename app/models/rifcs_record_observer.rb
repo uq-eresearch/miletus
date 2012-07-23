@@ -6,7 +6,7 @@ class RifcsRecordObserver < ActiveRecord::Observer
   observe Miletus::Harvest::OAIPMH::RIFCS::Record
 
   def after_create(record)
-    delay.process_change(:create, record)
+    JobProcessor.new(:create, record).delay.run
   end
 
   def after_update(record)
@@ -17,11 +17,12 @@ class RifcsRecordObserver < ActiveRecord::Observer
     # TODO: Implement
   end
 
-  def process_change(action, record)
-    Miletus::Output::OAIPMH::Record.new(
-      :metadata => record.to_rif
-    ).save!
+  class JobProcessor < Struct.new(:action, :record)
+    def run
+      Miletus::Output::OAIPMH::Record.new(
+        :metadata => record.to_rif
+      ).save!
+    end
   end
-
 
 end
