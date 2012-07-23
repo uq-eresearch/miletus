@@ -1,5 +1,6 @@
 require 'active_record'
 require 'oai'
+require 'time'
 
 module Miletus
   module Output
@@ -20,7 +21,15 @@ module Miletus
         end
 
         def to_rif
-          valid_rifcs? ? metadata : nil
+          return nil unless valid_rifcs?
+          doc = XML::Document.string(metadata).tap do |xml|
+            types = %w{collection party activity service}
+            pattern = types.map { |e| "//rif:#{e}"}.join(' | ')
+            xml.find(pattern, ns_decl).each do |e|
+              e.attributes['dateModified'] = (updated_at || Time.now).iso8601
+            end
+          end
+          doc.to_s
         end
 
         def self.get_schema(schema)
@@ -44,6 +53,10 @@ module Miletus
           LibXML::XML::Schema.new(RecordProvider.format(schema).schema)
         end
 
+        def ns_decl(prefix = 'rif')
+          "#{prefix}:#{RecordProvider.format(prefix).namespace}"
+        end
+
         class RifCSToOaiDcWrapper
 
           def initialize(rifcs)
@@ -51,31 +64,35 @@ module Miletus
           end
 
           def identifier
-            identifier = @doc.find_first('//rif:identifier', ns_decl)
-            identifier and identifier.content.strip
+            @doc.find('//rif:identifier', ns_decl).map do |identifier|
+              identifier.content.strip
+            end
           end
 
           def title
-            cond_tmpl(get_name_parts, [nil], "%s") or
-              cond_tmpl(get_name_parts, %w{family given}, "%s, %s")
+            get_name_parts.map do |parts|
+              cond_tmpl(parts, [nil], "%s") or
+                cond_tmpl(parts, %w{family given}, "%s, %s")
+            end
           end
 
           def date
-            d = @doc.find_first('//@dateModified', ns_decl)
-            d and d.value
+            @doc.find('//@dateModified', ns_decl).map {|d| d.value }
           end
 
           private
 
           def cond_tmpl(h, keys, tmpl)
-            keys.all? {|k| h.has_key?(k)} ? tmpl % h.values_at(*keys) : nil
+            return nil unless keys.all? {|k| h.has_key?(k)}
+            tmpl % h.values_at(*keys).map {|values| values.join(" ") }
           end
 
           def get_name_parts
-            @doc.find("//rif:name/rif:namePart",
-                      ns_decl).each_with_object({}) do |part, h|
-              k = part.attributes['type'] ? part.attributes['type'] : nil
-              h[k] = part.content.strip
+            @doc.find("//rif:name", ns_decl).map do |e|
+              e.find("rif:namePart", ns_decl).each_with_object({}) do |part, h|
+                k = part.attributes['type'] ? part.attributes['type'] : nil
+                (h[k] ||= []) << part.content.strip
+              end
             end
           end
 
