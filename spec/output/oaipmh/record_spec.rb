@@ -41,6 +41,17 @@ describe Miletus::Output::OAIPMH::Record do
         == ["Dettrick, Timothy John", "Dettrick, Tim"]
     end
 
+    it "should include descriptions when available" do
+      fixture_file = File.join(File.dirname(__FILE__),
+        '..', '..', 'fixtures',"rifcs-collection-1.xml")
+      subject.metadata = File.open(fixture_file) { |f| f.read() }
+      subject.to_oai_dc.should_not be(nil)
+      # Validate the XML
+      dc_doc = XML::Document.string(subject.to_oai_dc)
+      dc_doc.find_first("//dc:description", NS_DECL).content.should
+        match(/14 adult estuarine crocodiles were captured/)
+    end
+
   end
 
   context "RIF-CS" do

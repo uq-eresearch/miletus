@@ -22,14 +22,9 @@ module Miletus
 
         def to_rif
           return nil unless valid_rifcs?
-          doc = XML::Document.string(metadata).tap do |xml|
-            types = %w{collection party activity service}
-            pattern = types.map { |e| "//rif:#{e}"}.join(' | ')
-            xml.find(pattern, ns_decl).each do |e|
-              e.attributes['dateModified'] = (updated_at || Time.now).iso8601
-            end
-          end
-          doc.to_s
+          XML::Document.string(metadata).tap do |xml|
+            update_datetime(xml)
+          end.to_s
         end
 
         def self.get_schema(schema)
@@ -38,6 +33,14 @@ module Miletus
         end
 
         protected
+
+        def update_datetime(rifcs_doc)
+          types = %w{collection party activity service}
+          pattern = types.map { |e| "//rif:#{e}"}.join(' | ')
+          rifcs_doc.find(pattern, ns_decl).each do |e|
+            e.attributes['dateModified'] = (updated_at || Time.now).iso8601
+          end
+        end
 
         def valid_rifcs?
           begin
@@ -78,6 +81,12 @@ module Miletus
 
           def date
             @doc.find('//@dateModified', ns_decl).map {|d| d.value }
+          end
+
+          def description
+            types = %w{collection party activity service}
+            pattern = types.map { |e| "//rif:#{e}/rif:description"}.join(' | ')
+            @doc.find(pattern, ns_decl).map {|d| d.content }
           end
 
           private
