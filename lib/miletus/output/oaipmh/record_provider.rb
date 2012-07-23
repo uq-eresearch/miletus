@@ -10,7 +10,6 @@ module Miletus
 
       class RecordProvider < OAI::Provider::Base
         repository_name 'Miletus OAI Provider'
-        repository_url 'http://localhost:3000/oai'
         admin_email 'root@localhost'
         source_model OAI::Provider::ActiveRecordWrapper.new(
           Miletus::Output::OAIPMH::Record

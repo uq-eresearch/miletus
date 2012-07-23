@@ -21,6 +21,8 @@ describe OaiController do
       xml = XML::Document.string(response.body).root
       xml.find_first('//oai:Identify', NS_DECL).should_not be(nil)
       xml.find_first('//oai:protocolVersion', NS_DECL).content.should == "2.0"
+      xml.find_first('//oai:baseURL', NS_DECL).content.should \
+        == "http://test.host/oai"
     end
 
     it "lists RIF-CS as a metadata format" do
