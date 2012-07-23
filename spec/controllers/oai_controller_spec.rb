@@ -5,7 +5,8 @@ require 'miletus/output/oaipmh/record'
 
 describe OaiController do
 
-  NS_DECL = 'oai:http://www.openarchives.org/OAI/2.0/'
+  NS_DECL = %w{ oai:http://www.openarchives.org/OAI/2.0/
+                oaii:http://www.openarchives.org/OAI/2.0/oai-identifier }
 
   describe "GET 'index'" do
     it "returns application level error with no parameters" do
@@ -23,6 +24,8 @@ describe OaiController do
       xml.find_first('//oai:protocolVersion', NS_DECL).content.should == "2.0"
       xml.find_first('//oai:baseURL', NS_DECL).content.should \
         == "http://test.host/oai"
+      xml.find_first('//oaii:repositoryIdentifier', NS_DECL).content.should \
+        == "test.host"
     end
 
     it "lists RIF-CS as a metadata format" do

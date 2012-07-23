@@ -1,5 +1,6 @@
 require 'active_record'
 require 'oai'
+require 'uri'
 
 require File.join(File.dirname(__FILE__), 'record')
 require File.join(File.dirname(__FILE__), 'rifcs_format')
@@ -15,6 +16,11 @@ module Miletus
           Miletus::Output::OAIPMH::Record
         )
         register_format(RifcsFormat.instance)
+
+        def self.prefix
+          "oai:%s" % URI.parse(self.url).host
+        end
+
       end
 
     end
