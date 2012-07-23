@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects">
+   <registryObject group="The University of Queensland">
+      <key>http://dataspace.uq.edu.au/services/1</key>
+      <originatingSource>http://dataspace.uq.edu.au</originatingSource>
+      <service type="report">
+         <identifier type="url">http://dataspace.uq.edu.au/services/1#</identifier>
+         <name type="primary">
+            <namePart>Voting Patterns at the 2007 Australia Federal Election On-line</namePart>
+         </name>
+         <location>
+            <address>
+               <electronic type="url">
+                  <value>http://e-research.geosp.uq.edu.au/aus_voting2007.html</value>
+               </electronic>
+            </address>
+         </location>
+         <relatedObject>
+            <key>http://dataspace.uq.edu.au/agents/4</key>
+            <relation type="isManagedBy"/>
+         </relatedObject>
+         <relatedObject>
+            <key>http://dataspace.uq.edu.au/collections/4</key>
+            <relation type="presents"/>
+         </relatedObject>
+         <description type="brief">This web-based interactive tool supports spatial and statistical analysis, modelling and visualisation of data derived from the 2006 Australian Census of Population and Housing, voting results for the 2007 Australian Federal election, and location of polling booths from the Australian Electoral Commission. It can be used to analyse phenomena such as the relationship between voting patterns and local demographic and socio-economic data. The tool supports regression analysis, MANOVA cluster analysis and discriminant analysis of the data</description>
+      </service>
+   </registryObject>
+</registryObjects>

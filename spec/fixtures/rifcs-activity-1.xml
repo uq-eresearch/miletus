@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects">
+   <registryObject group="The University of Queensland">
+      <key>http://dataspace.uq.edu.au/activities/8</key>
+      <originatingSource>http://dataspace.uq.edu.au</originatingSource>
+      <activity type="project">
+         <identifier type="url">http://dataspace.uq.edu.au/activities/8#</identifier>
+         <name type="primary">
+            <namePart>Geochemistry, mineral geochemistry and geochronology of rock masses in Queensland based on outputs from University of Queensland Department of Earth Sciences Queensland</namePart>
+         </name>
+         <location>
+            <address>
+               <electronic type="url">
+                  <value>http://www.uq.edu.au/uqresearchers/researcher/vasconcelospmdp.html?uv_category=prj&amp;prj=805047</value>
+               </electronic>
+            </address>
+         </location>
+         <relatedObject>
+            <key>http://dataspace.uq.edu.au/agents/8</key>
+            <relation type="hasParticipant"/>
+         </relatedObject>
+         <relatedObject>
+            <key>http://dataspace.uq.edu.au/collections/6</key>
+            <relation type="hasOutput"/>
+         </relatedObject>
+         <subject type="anzsrc-for">040303</subject>
+         <subject type="anzsrc-for">0402</subject>
+         <subject type="anzsrc-for">0403</subject>
+         <subject type="anzsrc-for">040203</subject>
+         <subject type="local">digital mapping</subject>
+         <subject type="local">digital map coordinates</subject>
+         <subject type="local">analytical results</subject>
+         <subject type="local">major oxides</subject>
+         <subject type="local">trace element analysis</subject>
+         <subject type="local">whole rock analysis</subject>
+         <subject type="local">specimen information</subject>
+         <subject type="local">stable isotypes</subject>
+         <subject type="local">dating techniques</subject>
+         <subject type="local">geochemistry analysis</subject>
+         <subject type="local">geographic locality</subject>
+         <description type="brief">Project to survey geochemical and geochronological data from student theses submitted to The University of Queensland’s School of Earth Sciences (formerly the Department of Earth Sciences) from the 1940s to the present. Funded by Queensland Department of Mines &amp; Energy</description>
+      </activity>
+   </registryObject>
+</registryObjects>

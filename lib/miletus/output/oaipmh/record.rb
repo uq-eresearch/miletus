@@ -51,27 +51,36 @@ module Miletus
           end
 
           def identifier
-            @doc.find_first('//rif:identifier', ns_decl).content.strip
+            identifier = @doc.find_first('//rif:identifier', ns_decl)
+            identifier and identifier.content.strip
           end
 
           def title
-            "#{get_name_part('family')}, #{get_name_part('given')}"
+            cond_tmpl(get_name_parts, [nil], "%s") or
+              cond_tmpl(get_name_parts, %w{family given}, "%s, %s")
           end
 
           def date
-            @doc.find_first('//@dateModified', ns_decl).value
+            d = @doc.find_first('//@dateModified', ns_decl)
+            d and d.value
           end
 
           private
 
-          def get_name_part(type)
-            @doc.find_first(
-              "//rif:name/rif:namePart[@type='#{type}']",
-              ns_decl).content.strip
+          def cond_tmpl(h, keys, tmpl)
+            keys.all? {|k| h.has_key?(k)} ? tmpl % h.values_at(*keys) : nil
           end
 
-          def ns_decl
-            "rif:#{RecordProvider.format('rif').namespace}"
+          def get_name_parts
+            @doc.find("//rif:name/rif:namePart",
+                      ns_decl).each_with_object({}) do |part, h|
+              k = part.attributes['type'] ? part.attributes['type'] : nil
+              h[k] = part.content.strip
+            end
+          end
+
+          def ns_decl(prefix = 'rif')
+            "#{prefix}:#{RecordProvider.format(prefix).namespace}"
           end
 
         end
