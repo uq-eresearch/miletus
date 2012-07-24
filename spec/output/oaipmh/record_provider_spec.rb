@@ -1,4 +1,4 @@
-require 'miletus/output/oaipmh/record_provider'
+require 'miletus'
 
 describe Miletus::Output::OAIPMH::RecordProvider do
 

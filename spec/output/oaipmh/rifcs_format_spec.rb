@@ -1,7 +1,7 @@
 require 'uri'
 require 'faraday'
 require 'faraday_middleware'
-require 'miletus/output/oaipmh/rifcs_format'
+require 'miletus'
 
 describe Miletus::Output::OAIPMH::RifcsFormat do
 

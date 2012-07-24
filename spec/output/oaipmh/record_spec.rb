@@ -1,6 +1,6 @@
 require 'spec_helper'
 require 'time'
-require 'miletus/output/oaipmh/record'
+require 'miletus'
 
 describe Miletus::Output::OAIPMH::Record do
 

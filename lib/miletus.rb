@@ -1,2 +1,5 @@
-require 'miletus/harvest/oaipmh_rifcs'
-require 'miletus/output/oaipmh'
+
+module Miletus
+  require File.join(File.dirname(__FILE__), 'miletus', 'harvest')
+  require File.join(File.dirname(__FILE__), 'miletus', 'output')
+end

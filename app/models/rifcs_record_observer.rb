@@ -1,5 +1,4 @@
-require 'miletus/harvest/oaipmh_rifcs/record'
-require 'miletus/output/oaipmh/record'
+require 'miletus'
 
 class RifcsRecordObserver < ActiveRecord::Observer
 
