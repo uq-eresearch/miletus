@@ -24,7 +24,7 @@ module Miletus
           return nil unless valid_rifcs?
           XML::Document.string(metadata).tap do |xml|
             update_datetime(xml)
-          end.to_s
+          end.root.to_s
         end
 
         def self.get_schema(schema)
