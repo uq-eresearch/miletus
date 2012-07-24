@@ -6,7 +6,20 @@ module Miletus
   module Output
     module OAIPMH
 
+      module NamespaceHelper
+        def ns_decl
+          # Convenience definition for XPath matching
+          %w{ oai:http://www.openarchives.org/OAI/2.0/
+              oaii:http://www.openarchives.org/OAI/2.0/oai-identifier
+              dc:http://purl.org/dc/elements/1.1/
+              oai_dc:http://www.openarchives.org/OAI/2.0/oai_dc/
+              rif:http://ands.org.au/standards/rif-cs/registryObjects }
+        end
+        module_function :ns_decl
+      end
+
       class Record < ActiveRecord::Base
+        include NamespaceHelper
 
         @@schemas = {}
 
@@ -78,11 +91,8 @@ module Miletus
           LibXML::XML::Schema.new(RecordProvider.format(schema).schema)
         end
 
-        def ns_decl(prefix = 'rif')
-          "#{prefix}:#{RecordProvider.format(prefix).namespace}"
-        end
-
         class RifCSToOaiDcWrapper
+          include NamespaceHelper
 
           def initialize(rifcs)
             @doc = XML::Document.string(rifcs)
@@ -129,10 +139,6 @@ module Miletus
                 (h[k] ||= []) << part.content.strip
               end
             end
-          end
-
-          def ns_decl(prefix = 'rif')
-            "#{prefix}:#{RecordProvider.format(prefix).namespace}"
           end
 
         end

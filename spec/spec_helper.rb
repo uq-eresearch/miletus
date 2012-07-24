@@ -66,13 +66,6 @@ Spork.each_run do
 
 end
 
-# Convenience definition for XPath matching
-NS_DECL = %w{ oai:http://www.openarchives.org/OAI/2.0/
-              oaii:http://www.openarchives.org/OAI/2.0/oai-identifier
-              dc:http://purl.org/dc/elements/1.1/
-              oai_dc:http://www.openarchives.org/OAI/2.0/oai_dc/
-              rif:http://ands.org.au/standards/rif-cs/registryObjects }
-
 
 
 

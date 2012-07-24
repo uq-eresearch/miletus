@@ -4,6 +4,10 @@ require 'miletus/output/oaipmh/record'
 
 describe Miletus::Output::OAIPMH::Record do
 
+  let(:ns_decl) do
+    Miletus::Output::OAIPMH::NamespaceHelper::ns_decl
+  end
+
   context "OAI Dublin Core" do
     it { should respond_to(:to_oai_dc) }
 
@@ -27,35 +31,38 @@ describe Miletus::Output::OAIPMH::Record do
     end
 
     it "should handle alternate RIF-CS names" do
+      include Miletus::Output::OAIPMH::NamespaceHelper
       fixture_file = File.join(File.dirname(__FILE__),
         '..', '..', 'fixtures',"rifcs-party-1.xml")
       subject.metadata = File.open(fixture_file) { |f| f.read() }
       subject.to_oai_dc.should_not be(nil)
       # Validate the XML
       dc_doc = XML::Document.string(subject.to_oai_dc)
-      dc_doc.find("//dc:title", NS_DECL).map {|n| n.content }.should \
+      dc_doc.find("//dc:title", ns_decl).map {|n| n.content }.should \
         == ["Dettrick, Timothy John", "Dettrick, Tim"]
     end
 
     it "should include descriptions when available" do
+      include Miletus::Output::OAIPMH::NamespaceHelper
       fixture_file = File.join(File.dirname(__FILE__),
         '..', '..', 'fixtures',"rifcs-collection-1.xml")
       subject.metadata = File.open(fixture_file) { |f| f.read() }
       subject.to_oai_dc.should_not be(nil)
       # Validate the XML
       dc_doc = XML::Document.string(subject.to_oai_dc)
-      dc_doc.find_first("//dc:description", NS_DECL).content.should
+      dc_doc.find_first("//dc:description", ns_decl).content.should
         match(/14 adult estuarine crocodiles were captured/)
     end
 
     it "should include rights when available" do
+      include Miletus::Output::OAIPMH::NamespaceHelper
       fixture_file = File.join(File.dirname(__FILE__),
         '..', '..', 'fixtures',"rifcs-collection-1.xml")
       subject.metadata = File.open(fixture_file) { |f| f.read() }
       subject.to_oai_dc.should_not be(nil)
       # Validate the XML
       dc_doc = XML::Document.string(subject.to_oai_dc)
-      rights_elements = dc_doc.find("//dc:rights", NS_DECL)
+      rights_elements = dc_doc.find("//dc:rights", ns_decl)
       rights_elements.count.should be(2)
       rights_elements.each do |e|
         e.content.should \
@@ -97,11 +104,12 @@ describe Miletus::Output::OAIPMH::Record do
       subject.save!
       # Validate the XML
       rifcs_doc = XML::Document.string(subject.to_rif)
-      rifcs_doc.find_first("//@dateModified", NS_DECL).value.should \
+      rifcs_doc.find_first("//@dateModified", ns_decl).value.should \
         == subject.updated_at.iso8601
     end
 
     it "should translate RIF-CS 1.2 rights elements to 1.3" do
+      include Miletus::Output::OAIPMH::NamespaceHelper
       fixture_file = File.join(File.dirname(__FILE__),
         '..', '..', 'fixtures',"rifcs-collection-1.xml")
       subject.metadata = File.open(fixture_file) { |f| f.read() }
@@ -109,11 +117,11 @@ describe Miletus::Output::OAIPMH::Record do
       subject.save!
       # Validate the XML
       rifcs_doc = XML::Document.string(subject.to_rif)
-      rifcs_doc.find_first("//rif:rights", NS_DECL).should_not be(nil)
+      rifcs_doc.find_first("//rif:rights", ns_decl).should_not be(nil)
       rifcs_doc.find_first("//rif:rights/rif:accessRights",
-        NS_DECL).content.should match(/^The data in this project/)
+        ns_decl).content.should match(/^The data in this project/)
       rifcs_doc.find_first("//rif:rights/rif:rightsStatement",
-        NS_DECL).content.should match(/^The data is the property of/)
+        ns_decl).content.should match(/^The data is the property of/)
     end
 
   end
