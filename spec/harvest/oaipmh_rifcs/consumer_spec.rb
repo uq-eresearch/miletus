@@ -1,4 +1,4 @@
-require 'miletus/harvest/oaipmh_rifcs/consumer'
+require 'miletus'
 require 'yaml'
 
 describe Miletus::Harvest::OAIPMH::RIFCS::Consumer do

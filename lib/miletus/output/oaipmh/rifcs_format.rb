@@ -1,5 +1,3 @@
-require 'oai'
-
 module Miletus::Output::OAIPMH
 
   class RifcsFormat < OAI::Provider::Metadata::Format

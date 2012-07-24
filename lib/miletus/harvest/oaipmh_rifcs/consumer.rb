@@ -1,5 +1,3 @@
-require 'oai'
-
 module Miletus
   module Harvest
     module OAIPMH

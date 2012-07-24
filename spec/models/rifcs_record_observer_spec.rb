@@ -1,7 +1,6 @@
 require 'spec_helper'
 
-require 'miletus/harvest/oaipmh_rifcs/record'
-require 'miletus/output/oaipmh/record'
+require 'miletus'
 
 describe RifcsRecordObserver do
 

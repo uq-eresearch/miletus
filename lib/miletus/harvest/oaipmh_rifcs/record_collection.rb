@@ -1,7 +1,4 @@
-require 'active_record'
-require 'observer'
 require 'uri'
-require 'miletus/harvest/oaipmh_rifcs/record'
 
 module Miletus
   module Harvest

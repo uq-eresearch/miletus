@@ -1,7 +1,3 @@
-require 'active_record'
-require 'oai'
-require 'time'
-
 module Miletus::Output::OAIPMH
 
   class Record < ActiveRecord::Base

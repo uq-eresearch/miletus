@@ -1,7 +1,3 @@
-require 'oai'
-require 'active_record'
-require 'xml/libxml'
-
 module Miletus::Harvest::OAIPMH::RIFCS
 
   class Record < ActiveRecord::Base

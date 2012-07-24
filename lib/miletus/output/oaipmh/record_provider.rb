@@ -1,10 +1,3 @@
-require 'active_record'
-require 'oai'
-require 'uri'
-
-require File.join(File.dirname(__FILE__), 'record')
-require File.join(File.dirname(__FILE__), 'rifcs_format')
-
 module Miletus::Output::OAIPMH
 
   class RecordProvider < OAI::Provider::Base
