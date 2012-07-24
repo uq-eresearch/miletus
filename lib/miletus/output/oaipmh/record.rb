@@ -21,6 +21,9 @@ module Miletus
       class Record < ActiveRecord::Base
         include NamespaceHelper
 
+        validate :valid_rifcs?
+        after_validation :clean_metadata
+
         @@schemas = {}
 
         attr_accessible :metadata
@@ -33,12 +36,13 @@ module Miletus
           OAI::Provider::Metadata::DublinCore.instance.encode(wrapper, wrapper)
         end
 
+        def metadata=(xml)
+          xml = XML::Document.string(xml).root.to_s
+          write_attribute(:metadata, xml == "<xml/>" ? nil : xml)
+        end
+
         def to_rif
-          return nil unless valid_rifcs?
-          XML::Document.string(metadata).tap do |xml|
-            update_datetime(xml)
-            translate_old_elements(xml)
-          end.root.to_s
+          metadata
         end
 
         def self.get_schema(schema)
@@ -48,11 +52,19 @@ module Miletus
 
         protected
 
+        def clean_metadata
+          xml = XML::Document.string(read_attribute(:metadata)).tap do |xml|
+              translate_old_elements(xml)
+              update_datetime(xml)
+            end.root.to_s
+          write_attribute(:metadata, xml)
+        end
+
         def update_datetime(rifcs_doc)
           types = %w{collection party activity service}
           pattern = types.map { |e| "//rif:#{e}"}.join(' | ')
           rifcs_doc.find(pattern, ns_decl).each do |e|
-            e.attributes['dateModified'] = (updated_at || Time.now).iso8601
+            e.attributes['dateModified'] = Time.now.utc.iso8601
           end
         end
 

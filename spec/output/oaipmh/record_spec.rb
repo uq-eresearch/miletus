@@ -35,6 +35,7 @@ describe Miletus::Output::OAIPMH::Record do
       fixture_file = File.join(File.dirname(__FILE__),
         '..', '..', 'fixtures',"rifcs-party-1.xml")
       subject.metadata = File.open(fixture_file) { |f| f.read() }
+      subject.valid?.should be(true)
       subject.to_oai_dc.should_not be(nil)
       # Validate the XML
       dc_doc = XML::Document.string(subject.to_oai_dc)
@@ -47,6 +48,7 @@ describe Miletus::Output::OAIPMH::Record do
       fixture_file = File.join(File.dirname(__FILE__),
         '..', '..', 'fixtures',"rifcs-collection-1.xml")
       subject.metadata = File.open(fixture_file) { |f| f.read() }
+      subject.valid?.should be(true)
       subject.to_oai_dc.should_not be(nil)
       # Validate the XML
       dc_doc = XML::Document.string(subject.to_oai_dc)
@@ -59,6 +61,7 @@ describe Miletus::Output::OAIPMH::Record do
       fixture_file = File.join(File.dirname(__FILE__),
         '..', '..', 'fixtures',"rifcs-collection-1.xml")
       subject.metadata = File.open(fixture_file) { |f| f.read() }
+      subject.valid?.should be(true)
       subject.to_oai_dc.should_not be(nil)
       # Validate the XML
       dc_doc = XML::Document.string(subject.to_oai_dc)
@@ -101,10 +104,11 @@ describe Miletus::Output::OAIPMH::Record do
         '..', '..', 'fixtures',"rifcs-party-1.xml")
       subject.metadata = File.open(fixture_file) { |f| f.read() }
       subject.to_rif.should_not be(nil)
+      # Save
       subject.save!
-      # Validate the XML
+      # Check time was updated
       rifcs_doc = XML::Document.string(subject.to_rif)
-      rifcs_doc.find_first("//@dateModified", ns_decl).value.should \
+      rifcs_doc.find_first("//@dateModified", ns_decl).value.should\
         == subject.updated_at.iso8601
     end
 
@@ -115,7 +119,7 @@ describe Miletus::Output::OAIPMH::Record do
       subject.metadata = File.open(fixture_file) { |f| f.read() }
       subject.to_rif.should_not be(nil)
       subject.save!
-      # Validate the XML
+      # Check the XML was converted
       rifcs_doc = XML::Document.string(subject.to_rif)
       rifcs_doc.find_first("//rif:rights", ns_decl).should_not be(nil)
       rifcs_doc.find_first("//rif:rights/rif:accessRights",
