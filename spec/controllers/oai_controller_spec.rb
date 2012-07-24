@@ -5,9 +5,6 @@ require 'miletus/output/oaipmh/record'
 
 describe OaiController do
 
-  NS_DECL = %w{ oai:http://www.openarchives.org/OAI/2.0/
-                oaii:http://www.openarchives.org/OAI/2.0/oai-identifier }
-
   describe "GET 'index'" do
     it "returns application level error with no parameters" do
       get 'index'

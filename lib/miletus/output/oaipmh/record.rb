@@ -24,6 +24,7 @@ module Miletus
           return nil unless valid_rifcs?
           XML::Document.string(metadata).tap do |xml|
             update_datetime(xml)
+            translate_old_elements(xml)
           end.root.to_s
         end
 
@@ -39,6 +40,27 @@ module Miletus
           pattern = types.map { |e| "//rif:#{e}"}.join(' | ')
           rifcs_doc.find(pattern, ns_decl).each do |e|
             e.attributes['dateModified'] = (updated_at || Time.now).iso8601
+          end
+        end
+
+        def translate_old_elements(rifcs_doc)
+          pattern = ['rights', 'accessRights'].map do |t|
+            "//rif:description[@type=\"%s\"]" % t
+          end.join("|")
+          rifcs_doc.find(pattern, ns_decl).each do |e|
+            rights = e.parent.find_first("rif:rights", ns_decl)
+            ns = e.parent.namespaces.default
+            rights ||= XML::Node.new('rights', '', ns).tap do |er|
+              e.parent << er
+            end
+
+            case e.attributes['type']
+            when 'rights'
+              rights << XML::Node.new('rightsStatement', e.content, ns)
+            when 'accessRights'
+              rights << XML::Node.new('accessRights', e.content, ns)
+            end
+            e.remove!
           end
         end
 
@@ -87,6 +109,10 @@ module Miletus
             types = %w{collection party activity service}
             pattern = types.map { |e| "//rif:#{e}/rif:description"}.join(' | ')
             @doc.find(pattern, ns_decl).map {|d| d.content }
+          end
+
+          def rights
+            @doc.find("//rif:rights/*", ns_decl).map {|d| d.content }
           end
 
           private

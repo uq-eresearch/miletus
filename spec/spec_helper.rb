@@ -63,7 +63,15 @@ Spork.each_run do
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
+
 end
+
+# Convenience definition for XPath matching
+NS_DECL = %w{ oai:http://www.openarchives.org/OAI/2.0/
+              oaii:http://www.openarchives.org/OAI/2.0/oai-identifier
+              dc:http://purl.org/dc/elements/1.1/
+              oai_dc:http://www.openarchives.org/OAI/2.0/oai_dc/
+              rif:http://ands.org.au/standards/rif-cs/registryObjects }
 
 
 

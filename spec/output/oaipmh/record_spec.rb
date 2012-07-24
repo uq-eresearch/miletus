@@ -4,10 +4,6 @@ require 'miletus/output/oaipmh/record'
 
 describe Miletus::Output::OAIPMH::Record do
 
-  NS_DECL = %w{ dc:http://purl.org/dc/elements/1.1/
-                oai_dc:http://www.openarchives.org/OAI/2.0/oai_dc/
-                rif:http://ands.org.au/standards/rif-cs/registryObjects }
-
   context "OAI Dublin Core" do
     it { should respond_to(:to_oai_dc) }
 
@@ -52,6 +48,21 @@ describe Miletus::Output::OAIPMH::Record do
         match(/14 adult estuarine crocodiles were captured/)
     end
 
+    it "should include rights when available" do
+      fixture_file = File.join(File.dirname(__FILE__),
+        '..', '..', 'fixtures',"rifcs-collection-1.xml")
+      subject.metadata = File.open(fixture_file) { |f| f.read() }
+      subject.to_oai_dc.should_not be(nil)
+      # Validate the XML
+      dc_doc = XML::Document.string(subject.to_oai_dc)
+      rights_elements = dc_doc.find("//dc:rights", NS_DECL)
+      rights_elements.count.should be(2)
+      rights_elements.each do |e|
+        e.content.should \
+          match(/^(The data in this project|The data is the property of)/)
+      end
+    end
+
   end
 
   context "RIF-CS" do
@@ -82,12 +93,27 @@ describe Miletus::Output::OAIPMH::Record do
       fixture_file = File.join(File.dirname(__FILE__),
         '..', '..', 'fixtures',"rifcs-party-1.xml")
       subject.metadata = File.open(fixture_file) { |f| f.read() }
-      subject.to_oai_dc.should_not be(nil)
+      subject.to_rif.should_not be(nil)
       subject.save!
       # Validate the XML
       rifcs_doc = XML::Document.string(subject.to_rif)
       rifcs_doc.find_first("//@dateModified", NS_DECL).value.should \
         == subject.updated_at.iso8601
+    end
+
+    it "should translate RIF-CS 1.2 rights elements to 1.3" do
+      fixture_file = File.join(File.dirname(__FILE__),
+        '..', '..', 'fixtures',"rifcs-collection-1.xml")
+      subject.metadata = File.open(fixture_file) { |f| f.read() }
+      subject.to_rif.should_not be(nil)
+      subject.save!
+      # Validate the XML
+      rifcs_doc = XML::Document.string(subject.to_rif)
+      rifcs_doc.find_first("//rif:rights", NS_DECL).should_not be(nil)
+      rifcs_doc.find_first("//rif:rights/rif:accessRights",
+        NS_DECL).content.should match(/^The data in this project/)
+      rifcs_doc.find_first("//rif:rights/rif:rightsStatement",
+        NS_DECL).content.should match(/^The data is the property of/)
     end
 
   end
