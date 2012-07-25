@@ -8,6 +8,8 @@ describe Miletus::Output::OAIPMH::Record do
     Miletus::Output::OAIPMH::NamespaceHelper::ns_decl
   end
 
+  it { should respond_to(:indexed_attributes) }
+
   context "OAI Dublin Core" do
     it { should respond_to(:to_oai_dc) }
 
@@ -21,7 +23,8 @@ describe Miletus::Output::OAIPMH::Record do
           fixture_file = File.join(File.dirname(__FILE__),
             '..', '..', 'fixtures',"rifcs-#{type}-1.xml")
           subject.metadata = File.open(fixture_file) { |f| f.read() }
-          subject.to_oai_dc.should_not be(nil)
+          subject.should be_valid
+          subject.to_oai_dc.should_not be_nil
           # Validate the XML
           dc_doc = XML::Document.string(subject.to_oai_dc)
           dc_schema = subject.class.get_schema('oai_dc')
@@ -35,11 +38,12 @@ describe Miletus::Output::OAIPMH::Record do
       fixture_file = File.join(File.dirname(__FILE__),
         '..', '..', 'fixtures',"rifcs-party-1.xml")
       subject.metadata = File.open(fixture_file) { |f| f.read() }
-      subject.valid?.should be(true)
-      subject.to_oai_dc.should_not be(nil)
+      subject.should be_valid
+      subject.to_oai_dc.should_not be_nil
       # Validate the XML
       dc_doc = XML::Document.string(subject.to_oai_dc)
-      dc_doc.find("//dc:title", ns_decl).map {|n| n.content }.should \
+      title_nodes = dc_doc.find("//dc:title", ns_decl)
+      title_nodes.map {|n| n.content }.should \
         == ["Dettrick, Timothy John", "Dettrick, Tim"]
     end
 
@@ -48,11 +52,12 @@ describe Miletus::Output::OAIPMH::Record do
       fixture_file = File.join(File.dirname(__FILE__),
         '..', '..', 'fixtures',"rifcs-collection-1.xml")
       subject.metadata = File.open(fixture_file) { |f| f.read() }
-      subject.valid?.should be(true)
-      subject.to_oai_dc.should_not be(nil)
+      subject.should be_valid
+      subject.to_oai_dc.should_not be_nil
       # Validate the XML
       dc_doc = XML::Document.string(subject.to_oai_dc)
-      dc_doc.find_first("//dc:description", ns_decl).content.should
+      desc_node = dc_doc.find_first("//dc:description", ns_decl)
+      desc_node.content.should
         match(/14 adult estuarine crocodiles were captured/)
     end
 
@@ -61,12 +66,12 @@ describe Miletus::Output::OAIPMH::Record do
       fixture_file = File.join(File.dirname(__FILE__),
         '..', '..', 'fixtures',"rifcs-collection-1.xml")
       subject.metadata = File.open(fixture_file) { |f| f.read() }
-      subject.valid?.should be(true)
-      subject.to_oai_dc.should_not be(nil)
+      subject.should be_valid
+      subject.to_oai_dc.should_not be_nil
       # Validate the XML
       dc_doc = XML::Document.string(subject.to_oai_dc)
       rights_elements = dc_doc.find("//dc:rights", ns_decl)
-      rights_elements.count.should be(2)
+      rights_elements.should have(2).elements
       rights_elements.each do |e|
         e.content.should \
           match(/^(The data in this project|The data is the property of)/)
@@ -79,9 +84,9 @@ describe Miletus::Output::OAIPMH::Record do
     it { should respond_to(:to_rif) }
 
     it "should return nil if record cannot generate valid RIF-CS" do
-      subject.to_rif.should be(nil)
+      subject.to_rif.should be_nil
       subject.metadata = "<xml/>"
-      subject.to_rif.should be(nil)
+      subject.to_rif.should be_nil
     end
 
     context "should return valid RIF-CS if provided with" do
@@ -90,7 +95,7 @@ describe Miletus::Output::OAIPMH::Record do
           fixture_file = File.join(File.dirname(__FILE__),
             '..', '..', 'fixtures',"rifcs-#{type}-1.xml")
           subject.metadata = File.open(fixture_file) { |f| f.read() }
-          subject.to_rif.should_not be(nil)
+          subject.to_rif.should_not be_nil
           # Validate the XML
           rifcs_doc = XML::Document.string(subject.to_rif)
           rifcs_schema = subject.class.get_schema('rif')
@@ -103,7 +108,7 @@ describe Miletus::Output::OAIPMH::Record do
       fixture_file = File.join(File.dirname(__FILE__),
         '..', '..', 'fixtures',"rifcs-party-1.xml")
       subject.metadata = File.open(fixture_file) { |f| f.read() }
-      subject.to_rif.should_not be(nil)
+      subject.to_rif.should_not be_nil
       # Save
       subject.save!
       # Check time was updated
@@ -117,7 +122,7 @@ describe Miletus::Output::OAIPMH::Record do
       fixture_file = File.join(File.dirname(__FILE__),
         '..', '..', 'fixtures',"rifcs-collection-1.xml")
       subject.metadata = File.open(fixture_file) { |f| f.read() }
-      subject.to_rif.should_not be(nil)
+      subject.to_rif.should_not be_nil
       subject.save!
       # Check the XML was converted
       rifcs_doc = XML::Document.string(subject.to_rif)
@@ -126,6 +131,17 @@ describe Miletus::Output::OAIPMH::Record do
         ns_decl).content.should match(/^The data in this project/)
       rifcs_doc.find_first("//rif:rights/rif:rightsStatement",
         ns_decl).content.should match(/^The data is the property of/)
+    end
+
+    it "should create indexes on RIF-CS key" do
+      fixture_file = File.join(File.dirname(__FILE__),
+        '..', '..', 'fixtures',"rifcs-party-1.xml")
+      subject.metadata = File.open(fixture_file) { |f| f.read() }
+      subject.to_rif.should_not be_nil
+      # Save
+      subject.save!
+      # Check index works
+      subject.indexed_attributes.find_by_key('rifcs_key').should_not be(nil)
     end
 
   end

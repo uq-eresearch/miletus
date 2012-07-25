@@ -14,27 +14,30 @@ describe OaiController do
       get 'index'
       response.should be_success
       xml = XML::Document.string(response.body).root
-      xml.find_first('//oai:error/@code', ns_decl).value.should == 'badVerb'
+      error_node = xml.find_first('//oai:error/@code', ns_decl)
+      error_node.value.should == 'badVerb'
     end
 
     it "responds to the Identify verb" do
       get 'index', { 'verb' => 'Identify' }
       response.should be_success
       xml = XML::Document.string(response.body).root
-      xml.find_first('//oai:Identify', ns_decl).should_not be(nil)
-      xml.find_first('//oai:protocolVersion', ns_decl).content.should == "2.0"
-      xml.find_first('//oai:baseURL', ns_decl).content.should \
-        == "http://test.host/oai"
-      xml.find_first('//oaii:repositoryIdentifier', ns_decl).content.should \
-        == "test.host"
+      identify_node = xml.find_first('//oai:Identify', ns_decl)
+      identify_node.should_not be_nil
+      protocol_node = xml.find_first('//oai:protocolVersion', ns_decl)
+      protocol_node.content.should == "2.0"
+      baseurl_node = xml.find_first('//oai:baseURL', ns_decl)
+      baseurl_node.content.should == "http://test.host/oai"
+      repo_id_node = xml.find_first('//oaii:repositoryIdentifier', ns_decl)
+      repo_id_node.content.should == "test.host"
     end
 
     it "lists RIF-CS as a metadata format" do
       get 'index', { 'verb' => 'ListMetadataFormats' }
       response.should be_success
       xml = XML::Document.string(response.body).root
-      prefixes = xml.find('//oai:metadataPrefix', ns_decl).map{|e| e.content}
-      prefixes.should include('rif')
+      prefix_nodes = xml.find('//oai:metadataPrefix', ns_decl)
+      prefix_nodes.map{|e| e.content}.should include('rif')
     end
 
     describe "when no records exist" do
@@ -43,14 +46,16 @@ describe OaiController do
         get 'index', { 'verb' => 'ListIdentifiers' }
         response.should be_success
         xml = XML::Document.string(response.body).root
-        xml.find_first('//oai:error/@code', ns_decl).value.should == 'noRecordsMatch'
+        error_node = xml.find_first('//oai:error/@code', ns_decl)
+        error_node.value.should == 'noRecordsMatch'
       end
 
       it "should respond to ListRecords with \"noRecordsMatch\" " do
         get 'index', { 'verb' => 'ListRecords' }
         response.should be_success
         xml = XML::Document.string(response.body).root
-        xml.find_first('//oai:error/@code', ns_decl).value.should == 'noRecordsMatch'
+        error_node = xml.find_first('//oai:error/@code', ns_decl)
+        error_node.value.should == 'noRecordsMatch'
       end
 
     end

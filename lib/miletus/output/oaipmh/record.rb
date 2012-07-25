@@ -3,14 +3,18 @@ module Miletus::Output::OAIPMH
   class Record < ActiveRecord::Base
     include NamespaceHelper
 
+    self.table_name = 'output_oaipmh_records'
+
+    attr_accessible :metadata
+    has_many :indexed_attributes,
+      :class_name => 'Miletus::Output::OAIPMH::IndexedAttribute',
+      :foreign_key => 'record_id',
+      :autosave => true
+
     validate :valid_rifcs?
     after_validation :clean_metadata
 
     @@schemas = {}
-
-    attr_accessible :metadata
-
-    self.table_name = 'output_oaipmh_records'
 
     def to_oai_dc
       return nil unless valid_rifcs?
@@ -19,8 +23,16 @@ module Miletus::Output::OAIPMH
     end
 
     def metadata=(xml)
-      xml = XML::Document.string(xml).root.to_s
-      write_attribute(:metadata, xml == "<xml/>" ? nil : xml)
+      if xml.nil? or xml == ''
+        write_attribute(:metadata, '')
+      else
+        doc = XML::Document.string(xml)
+        key_nodes = doc.find('//rif:key', ns_decl)
+        update_indexed_attributes('rifcs_key',
+          key_nodes.map { |e| e.content.strip })
+        xml = doc.root.to_s
+        write_attribute(:metadata, xml == "<xml/>" ? nil : xml)
+      end
     end
 
     def to_rif
@@ -34,7 +46,22 @@ module Miletus::Output::OAIPMH
 
     protected
 
+    def update_indexed_attributes(key, values)
+      if indexed_attributes.find_by_key(key)
+        current = indexed_attributes.where(:key => key).map {|o| o.value}
+        created = values - current
+        deleted = current - values
+        indexed_attributes.where(:key => key, :value => deleted).delete_all
+      else
+        created = values
+      end
+      created.each do |value|
+        indexed_attributes.build(:key => key, :value => value)
+      end
+    end
+
     def clean_metadata
+      return if read_attribute(:metadata).nil?
       xml = XML::Document.string(read_attribute(:metadata)).tap do |xml|
           translate_old_elements(xml)
           update_datetime(xml)
@@ -93,9 +120,10 @@ module Miletus::Output::OAIPMH
       end
 
       def identifier
-        @doc.find('//rif:identifier', ns_decl).map do |identifier|
-          identifier.content.strip
-        end
+        # Un-ruby pattern required by lib-xml
+        # http://libxml.rubyforge.org/rdoc/classes/LibXML/XML/Document.html#M000475
+        nodes = @doc.find('//rif:identifier', ns_decl)
+        nodes.map { |identifier| identifier.content.strip }
       end
 
       def title
@@ -106,17 +134,20 @@ module Miletus::Output::OAIPMH
       end
 
       def date
-        @doc.find('//@dateModified', ns_decl).map {|d| d.value }
+        nodes = @doc.find('//@dateModified', ns_decl)
+        nodes.map {|d| d.value }
       end
 
       def description
         types = %w{collection party activity service}
         pattern = types.map { |e| "//rif:#{e}/rif:description"}.join(' | ')
-        @doc.find(pattern, ns_decl).map {|d| d.content }
+        nodes = @doc.find(pattern, ns_decl)
+        nodes.map {|d| d.content }
       end
 
       def rights
-        @doc.find("//rif:rights/*", ns_decl).map {|d| d.content }
+        nodes = @doc.find("//rif:rights/*", ns_decl)
+        nodes.map {|d| d.content }
       end
 
       private
@@ -127,8 +158,10 @@ module Miletus::Output::OAIPMH
       end
 
       def get_name_parts
-        @doc.find("//rif:name", ns_decl).map do |e|
-          e.find("rif:namePart", ns_decl).each_with_object({}) do |part, h|
+        nodes = @doc.find("//rif:name", ns_decl)
+        nodes.map do |e|
+          e_nodes = e.find("rif:namePart", ns_decl)
+          e_nodes.each_with_object({}) do |part, h|
             k = part.attributes['type'] ? part.attributes['type'] : nil
             (h[k] ||= []) << part.content.strip
           end

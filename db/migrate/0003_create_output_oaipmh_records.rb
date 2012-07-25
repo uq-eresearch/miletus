@@ -7,6 +7,14 @@ class CreateOutputOaipmhRecords < ActiveRecord::Migration
       t.text :metadata, :null => false
       t.boolean :deleted, :default => false, :null => false
     end
+
+    create_table :output_oaipmh_indexed_attributes do |t|
+      t.references :record
+      t.string :key, :null => false
+      t.text :value
+    end
+
+    add_index(:output_oaipmh_indexed_attributes, [:key, :value])
   end
 
   def self.down

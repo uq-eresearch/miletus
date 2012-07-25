@@ -5,9 +5,9 @@ guard :bundler do
 end
 
 guard :rspec, :cli => "--color --format nested --fail-fast --drb" do
-  watch(%r{(lib|spec)/.+\.rb})
+  watch(%r{(app/models|lib|spec)/.+\.rb})
 end
 
-guard :rails, :start_on_start => false do
-  watch(%r{(app|config)/.+\.rb})
-end
+# guard :rails, :start_on_start => false do
+#   watch(%r{(app|config)/.+\.rb})
+# end
