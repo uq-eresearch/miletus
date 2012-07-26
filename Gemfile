@@ -53,10 +53,10 @@ group :test, :development do
   gem "rspec-rails"
   gem "minitest"
   gem 'spork' # For running a test server (and spec_helper.rb refers to it)
+  gem 'brakeman' # For security testing
 end
 
 group :development do
-  gem 'brakeman'
   gem 'rails_best_practices'
   gem 'guard'
   gem 'guard-brakeman'
