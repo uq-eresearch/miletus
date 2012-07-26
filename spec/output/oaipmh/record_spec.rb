@@ -8,9 +8,16 @@ describe Miletus::Output::OAIPMH::Record do
     Miletus::Output::OAIPMH::NamespaceHelper::ns_decl
   end
 
+  def get_fixture(type, number = 1)
+    fixture_file = File.join(File.dirname(__FILE__),
+        '..', '..', 'fixtures',"rifcs-#{type}-#{number}.xml")
+    File.open(fixture_file) { |f| f.read() }
+  end
+
   it { should respond_to(:indexed_attributes) }
 
   context "OAI Dublin Core" do
+
     it { should respond_to(:to_oai_dc) }
 
     it "should return nil if record cannot generate valid Dublin Core" do
@@ -20,9 +27,7 @@ describe Miletus::Output::OAIPMH::Record do
     context "should return valid OAI Dublin Core if provided with" do
       %w{collection party activity service}.each do |type|
         example "a RIF-CS #{type}" do
-          fixture_file = File.join(File.dirname(__FILE__),
-            '..', '..', 'fixtures',"rifcs-#{type}-1.xml")
-          subject.metadata = File.open(fixture_file) { |f| f.read() }
+          subject.metadata = get_fixture(type)
           subject.should be_valid
           subject.to_oai_dc.should_not be_nil
           # Validate the XML
@@ -35,9 +40,7 @@ describe Miletus::Output::OAIPMH::Record do
 
     it "should handle alternate RIF-CS names" do
       include Miletus::Output::OAIPMH::NamespaceHelper
-      fixture_file = File.join(File.dirname(__FILE__),
-        '..', '..', 'fixtures',"rifcs-party-1.xml")
-      subject.metadata = File.open(fixture_file) { |f| f.read() }
+      subject.metadata = get_fixture('party')
       subject.should be_valid
       subject.to_oai_dc.should_not be_nil
       # Validate the XML
@@ -49,9 +52,7 @@ describe Miletus::Output::OAIPMH::Record do
 
     it "should include descriptions when available" do
       include Miletus::Output::OAIPMH::NamespaceHelper
-      fixture_file = File.join(File.dirname(__FILE__),
-        '..', '..', 'fixtures',"rifcs-collection-1.xml")
-      subject.metadata = File.open(fixture_file) { |f| f.read() }
+      subject.metadata = get_fixture('collection')
       subject.should be_valid
       subject.to_oai_dc.should_not be_nil
       # Validate the XML
@@ -63,9 +64,7 @@ describe Miletus::Output::OAIPMH::Record do
 
     it "should include rights when available" do
       include Miletus::Output::OAIPMH::NamespaceHelper
-      fixture_file = File.join(File.dirname(__FILE__),
-        '..', '..', 'fixtures',"rifcs-collection-1.xml")
-      subject.metadata = File.open(fixture_file) { |f| f.read() }
+      subject.metadata = get_fixture('collection')
       subject.should be_valid
       subject.to_oai_dc.should_not be_nil
       # Validate the XML
@@ -92,9 +91,7 @@ describe Miletus::Output::OAIPMH::Record do
     context "should return valid RIF-CS if provided with" do
       %w{collection party activity service}.each do |type|
         example "a RIF-CS #{type}" do
-          fixture_file = File.join(File.dirname(__FILE__),
-            '..', '..', 'fixtures',"rifcs-#{type}-1.xml")
-          subject.metadata = File.open(fixture_file) { |f| f.read() }
+          subject.metadata = get_fixture(type)
           subject.to_rif.should_not be_nil
           # Validate the XML
           rifcs_doc = Nokogiri::XML(subject.to_rif)
@@ -105,9 +102,7 @@ describe Miletus::Output::OAIPMH::Record do
     end
 
     it "should update dateModified when saved" do
-      fixture_file = File.join(File.dirname(__FILE__),
-        '..', '..', 'fixtures',"rifcs-party-1.xml")
-      subject.metadata = File.open(fixture_file) { |f| f.read() }
+      subject.metadata = get_fixture('party')
       subject.to_rif.should_not be_nil
       # Save
       subject.save!
@@ -119,9 +114,7 @@ describe Miletus::Output::OAIPMH::Record do
 
     it "should translate RIF-CS 1.2 rights elements to 1.3" do
       include Miletus::Output::OAIPMH::NamespaceHelper
-      fixture_file = File.join(File.dirname(__FILE__),
-        '..', '..', 'fixtures',"rifcs-collection-1.xml")
-      subject.metadata = File.open(fixture_file) { |f| f.read() }
+      subject.metadata = get_fixture('collection')
       subject.to_rif.should_not be_nil
       subject.save!
       # Check the XML was converted
@@ -134,9 +127,7 @@ describe Miletus::Output::OAIPMH::Record do
     end
 
     it "should create indexes on RIF-CS key" do
-      fixture_file = File.join(File.dirname(__FILE__),
-        '..', '..', 'fixtures',"rifcs-party-1.xml")
-      subject.metadata = File.open(fixture_file) { |f| f.read() }
+      subject.metadata = get_fixture('party')
       subject.to_rif.should_not be_nil
       # Save
       subject.save!
