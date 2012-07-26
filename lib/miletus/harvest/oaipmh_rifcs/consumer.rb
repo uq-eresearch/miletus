@@ -16,7 +16,8 @@ module Miletus
             end
 
             unless is_collection
-              raise ArgumentError.new("Consumer requires a collection to update.")
+              raise ArgumentError.new(
+                "Consumer requires a collection to update.")
             end
 
             @collection = recordCollection
@@ -24,7 +25,8 @@ module Miletus
           end
 
           def client
-            @client or OAI::Client.new(@collection.endpoint, :parser => 'libxml')
+            @client or OAI::Client.new(@collection.endpoint,
+                                       :parser => 'libxml')
           end
 
           # Update collection with changed records

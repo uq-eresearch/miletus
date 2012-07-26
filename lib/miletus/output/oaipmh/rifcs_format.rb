@@ -4,7 +4,8 @@ module Miletus::Output::OAIPMH
     def initialize
       @prefix = 'rif'
       @namespace = 'http://ands.org.au/standards/rif-cs/registryObjects'
-      @schema = 'http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd'
+      @schema = 'http://services.ands.org.au' +
+        '/documentation/rifcs/schema/registryObjects.xsd'
       @element_namespace = 'rif'
       @fields = [ :registryObject ]
     end

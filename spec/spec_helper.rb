@@ -16,7 +16,8 @@ Spork.prefork do
   RSpec.configure do |config|
     # ## Mock Framework
     #
-    # If you prefer to use mocha, flexmock or RR, uncomment the appropriate line:
+    # If you prefer to use mocha, flexmock or RR,
+    # uncomment the appropriate line:
     #
     # config.mock_with :mocha
     # config.mock_with :flexmock
@@ -53,7 +54,8 @@ end
 
 Spork.each_run do
   # The Spork.each_run block is run each time you run your specs.  In case you
-  # need to load files that tend to change during development, require them here.
+  # need to load files that tend to change during development,
+  # require them here.
   # With Rails, your application modules are loaded automatically, so sometimes
   # this block can remain empty.
 

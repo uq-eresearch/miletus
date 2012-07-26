@@ -1,3 +1,8 @@
+# Un-ruby pattern required by lib-xml `find` calls:
+# http://libxml.rubyforge.org/rdoc/classes/LibXML/XML/Document.html#M000475
+#
+# Please don't refactor it away unless you like segfaults!
+
 module Miletus::Output::OAIPMH
 
   class Record < ActiveRecord::Base
@@ -120,8 +125,6 @@ module Miletus::Output::OAIPMH
       end
 
       def identifier
-        # Un-ruby pattern required by lib-xml
-        # http://libxml.rubyforge.org/rdoc/classes/LibXML/XML/Document.html#M000475
         nodes = @doc.find('//rif:identifier', ns_decl)
         nodes.map { |identifier| identifier.content.strip }
       end

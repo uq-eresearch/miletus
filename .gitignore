@@ -15,6 +15,7 @@
 /tmp
 *~
 /.env
+/.secret_token
 /.buildpath
 /.project
 /bin/

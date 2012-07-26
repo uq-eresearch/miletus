@@ -2,6 +2,6 @@ language: ruby
 bundler_args: --without development
 rvm:
   - 1.9.3
-script: bundle exec rspec 
+script: bundle exec rspec && bundle exec brakeman -q
 notifications:
   email: false

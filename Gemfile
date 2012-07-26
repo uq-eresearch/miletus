@@ -43,6 +43,7 @@ gem "foreman"
 gem "clockwork"
 gem "activerecord-postgresql-adapter"
 gem "pg"
+gem "realrand" # For generating secret token
 
 gem "twitter-bootstrap-rails"
 gem "haml-rails"
@@ -54,11 +55,13 @@ group :test, :development do
 end
 
 group :development do
-  gem 'guard'
-  gem 'guard-bundler'
-  gem 'guard-rails'
-  gem 'guard-rspec'
+  gem 'brakeman'
   gem 'rails_best_practices'
+  gem 'guard'
+  gem 'guard-brakeman'
+  gem 'guard-bundler'
+  gem 'guard-rails_best_practices'
+  gem 'guard-rspec'
   gem 'debugger'
   gem 'pry-rails'
   gem 'libnotify', :require => false unless RUBY_PLATFORM =~ /linux/i
