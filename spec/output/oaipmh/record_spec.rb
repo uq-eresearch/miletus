@@ -26,9 +26,9 @@ describe Miletus::Output::OAIPMH::Record do
           subject.should be_valid
           subject.to_oai_dc.should_not be_nil
           # Validate the XML
-          dc_doc = XML::Document.string(subject.to_oai_dc)
+          dc_doc = Nokogiri::XML(subject.to_oai_dc)
           dc_schema = subject.class.get_schema('oai_dc')
-          dc_doc.validate_schema(dc_schema).should be(true)
+          dc_schema.validate(dc_doc).should be_empty
         end
       end
     end
@@ -41,8 +41,8 @@ describe Miletus::Output::OAIPMH::Record do
       subject.should be_valid
       subject.to_oai_dc.should_not be_nil
       # Validate the XML
-      dc_doc = XML::Document.string(subject.to_oai_dc)
-      title_nodes = dc_doc.find("//dc:title", ns_decl)
+      dc_doc = Nokogiri::XML(subject.to_oai_dc)
+      title_nodes = dc_doc.xpath("//dc:title", ns_decl)
       title_nodes.map {|n| n.content }.should \
         == ["Dettrick, Timothy John", "Dettrick, Tim"]
     end
@@ -55,8 +55,8 @@ describe Miletus::Output::OAIPMH::Record do
       subject.should be_valid
       subject.to_oai_dc.should_not be_nil
       # Validate the XML
-      dc_doc = XML::Document.string(subject.to_oai_dc)
-      desc_node = dc_doc.find_first("//dc:description", ns_decl)
+      dc_doc = Nokogiri::XML(subject.to_oai_dc)
+      desc_node = dc_doc.at_xpath("//dc:description", ns_decl)
       desc_node.content.should
         match(/14 adult estuarine crocodiles were captured/)
     end
@@ -69,8 +69,8 @@ describe Miletus::Output::OAIPMH::Record do
       subject.should be_valid
       subject.to_oai_dc.should_not be_nil
       # Validate the XML
-      dc_doc = XML::Document.string(subject.to_oai_dc)
-      rights_elements = dc_doc.find("//dc:rights", ns_decl)
+      dc_doc = Nokogiri::XML(subject.to_oai_dc)
+      rights_elements = dc_doc.xpath("//dc:rights", ns_decl)
       rights_elements.should have(2).elements
       rights_elements.each do |e|
         e.content.should \
@@ -97,9 +97,9 @@ describe Miletus::Output::OAIPMH::Record do
           subject.metadata = File.open(fixture_file) { |f| f.read() }
           subject.to_rif.should_not be_nil
           # Validate the XML
-          rifcs_doc = XML::Document.string(subject.to_rif)
+          rifcs_doc = Nokogiri::XML(subject.to_rif)
           rifcs_schema = subject.class.get_schema('rif')
-          rifcs_doc.validate_schema(rifcs_schema).should be(true)
+          rifcs_schema.validate(rifcs_doc).should be_empty
         end
       end
     end
@@ -112,8 +112,8 @@ describe Miletus::Output::OAIPMH::Record do
       # Save
       subject.save!
       # Check time was updated
-      rifcs_doc = XML::Document.string(subject.to_rif)
-      rifcs_doc.find_first("//@dateModified", ns_decl).value.should\
+      rifcs_doc = Nokogiri::XML(subject.to_rif)
+      rifcs_doc.at_xpath("//@dateModified", ns_decl).value.should\
         == subject.updated_at.iso8601
     end
 
@@ -125,11 +125,11 @@ describe Miletus::Output::OAIPMH::Record do
       subject.to_rif.should_not be_nil
       subject.save!
       # Check the XML was converted
-      rifcs_doc = XML::Document.string(subject.to_rif)
-      rifcs_doc.find_first("//rif:rights", ns_decl).should_not be(nil)
-      rifcs_doc.find_first("//rif:rights/rif:accessRights",
+      rifcs_doc = Nokogiri::XML(subject.to_rif)
+      rifcs_doc.at_xpath("//rif:rights", ns_decl).should_not be(nil)
+      rifcs_doc.at_xpath("//rif:rights/rif:accessRights",
         ns_decl).content.should match(/^The data in this project/)
-      rifcs_doc.find_first("//rif:rights/rif:rightsStatement",
+      rifcs_doc.at_xpath("//rif:rights/rif:rightsStatement",
         ns_decl).content.should match(/^The data is the property of/)
     end
 

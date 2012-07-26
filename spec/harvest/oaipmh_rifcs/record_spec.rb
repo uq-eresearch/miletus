@@ -21,7 +21,7 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Record do
     record = Miletus::Harvest::OAIPMH::RIFCS::Record.from_oai(oaiRecord)
     record.identifier.should == oaiRecord.header.identifier
     record.datestamp.should == oaiRecord.header.datestamp
-    record.metadata.should == oaiRecord.metadata
+    record.metadata.should == oaiRecord.metadata.to_s
   end
 
   it "converts to an OAI::Record" do
@@ -30,9 +30,9 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Record do
       :datestamp => DateTime.now,
       :metadata => '<metadata/>')
     oaiRecord = record.to_oai
-    record.identifier.should == oaiRecord.header.identifier
-    record.datestamp.should == oaiRecord.header.datestamp
-    record.metadata.should == oaiRecord.metadata
+    oaiRecord.header.identifier.should == record.identifier
+    oaiRecord.header.datestamp.should == record.datestamp
+    oaiRecord.metadata.to_s.should == record.metadata
   end
 
 end

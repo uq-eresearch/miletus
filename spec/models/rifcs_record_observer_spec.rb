@@ -21,8 +21,11 @@ describe RifcsRecordObserver do
     Miletus::Harvest::OAIPMH::RIFCS::Record.new.tap do |r|
       r.identifier = 'http://example.test/1'
       r.datestamp = Time.now
-      doc = XML::Document.string(xml)
-      r.metadata = doc.import(XML::Node.new('metadata')) << doc.root
+      r.metadata = Nokogiri::XML(xml).tap do |doc|
+        old_root = doc.root
+        doc.root = Nokogiri::XML::Node.new('metadata', doc)
+        doc.root << old_root
+      end.to_s
       r.save!
     end
   }
@@ -55,10 +58,11 @@ describe RifcsRecordObserver do
     # Change input record
     input_record.reload
     input_record.should_not be_readonly
-    doc = input_record.metadata
-    nodes = doc.find("//rif:namePart[@type='given'][text()='John']", ns_decl)
+    doc = Nokogiri::XML(input_record.metadata)
+    nodes = doc.xpath("//rif:namePart[@type='given'][text()='John']",
+      'rif' => 'http://ands.org.au/standards/rif-cs/registryObjects')
     nodes.each do |e|
-      e.remove!
+      e.remove
     end
     input_record.should_not be_readonly
     input_record.metadata = doc
@@ -70,9 +74,10 @@ describe RifcsRecordObserver do
     # Check the record was updated
     Miletus::Output::OAIPMH::Record.all.count.should == 1
     output_record = Miletus::Output::OAIPMH::Record.find(:first)
-    rifcs_doc = XML::Document.string(output_record.to_rif)
-    rifcs_doc.find("//rif:namePart[@type='given'][text()='John']",
-      ns_decl).should be_empty
+    rifcs_doc = Nokogiri::XML::Document.parse(output_record.to_rif)
+    rifcs_doc.xpath("//rif:namePart[@type='given'][text()='John']",
+      'rif' => 'http://ands.org.au/standards/rif-cs/registryObjects')\
+       .should be_empty
   end
 
 end

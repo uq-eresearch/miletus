@@ -1,3 +1,4 @@
+require 'nokogiri'
 require 'miletus'
 
 class RifcsRecordObserver < ActiveRecord::Observer
@@ -27,7 +28,7 @@ class RifcsRecordObserver < ActiveRecord::Observer
           :metadata => record.to_rif
         ).save!
       when :update
-        key_nodes = record.metadata.find('//rif:key', ns_decl)
+        key_nodes = Nokogiri::XML(record.metadata).xpath('//rif:key', ns_decl)
         existing = key_nodes.map do |e|
           tbl_name = Miletus::Output::OAIPMH::IndexedAttribute.table_name.to_sym
           Miletus::Output::OAIPMH::Record.joins(:indexed_attributes).where(

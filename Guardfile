@@ -5,7 +5,10 @@ guard :bundler do
 end
 
 guard :rspec, :cli => "--color --format nested --fail-fast --drb" do
-  watch(%r{(app/models|lib|spec)/.+\.rb})
+  watch(%r{^app/(.+)\.rb$})
+  watch(%r{^config/.+\.rb$})
+  watch(%r{^lib/.+\.rb$})
+  watch(%r{^spec/.+\.rb$})
 end
 
 guard 'brakeman' do

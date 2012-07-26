@@ -2,6 +2,7 @@
 # http://libxml.rubyforge.org/rdoc/classes/LibXML/XML/Document.html#M000475
 #
 # Please don't refactor it away unless you like segfaults!
+require 'nokogiri'
 
 module Miletus::Output::OAIPMH
 
@@ -31,10 +32,9 @@ module Miletus::Output::OAIPMH
       if xml.nil? or xml == ''
         write_attribute(:metadata, '')
       else
-        doc = XML::Document.string(xml)
-        key_nodes = doc.find('//rif:key', ns_decl)
+        doc = Nokogiri::XML(xml)
         update_indexed_attributes('rifcs_key',
-          key_nodes.map { |e| e.content.strip })
+          doc.xpath('//rif:key', ns_decl).map { |e| e.content.strip })
         xml = doc.root.to_s
         write_attribute(:metadata, xml == "<xml/>" ? nil : xml)
       end
@@ -67,7 +67,7 @@ module Miletus::Output::OAIPMH
 
     def clean_metadata
       return if read_attribute(:metadata).nil?
-      xml = XML::Document.string(read_attribute(:metadata)).tap do |xml|
+      xml = Nokogiri::XML(read_attribute(:metadata)).tap do |xml|
           translate_old_elements(xml)
           update_datetime(xml)
         end.root.to_s
@@ -77,55 +77,59 @@ module Miletus::Output::OAIPMH
     def update_datetime(rifcs_doc)
       types = %w{collection party activity service}
       pattern = types.map { |e| "//rif:#{e}"}.join(' | ')
-      rifcs_doc.find(pattern, ns_decl).each do |e|
-        e.attributes['dateModified'] = Time.now.utc.iso8601
+      rifcs_doc.xpath(pattern, ns_decl).each do |e|
+        e['dateModified'] = Time.now.utc.iso8601
       end
     end
 
     def translate_old_elements(rifcs_doc)
-      pattern = ['rights', 'accessRights'].map do |t|
-        "//rif:description[@type=\"%s\"]" % t
-      end.join("|")
-      rifcs_doc.find(pattern, ns_decl).each do |e|
-        rights = e.parent.find_first("rif:rights", ns_decl)
+      types = {'rights' => 'rightsStatement', 'accessRights' => 'accessRights'}
+      # Assemble xpath search pattern
+      pattern = types.keys.map do |t|
+          "//rif:description[@type=\"%s\"]" % t
+        end.join("|")
+      # For those description elements we can translate...
+      rifcs_doc.xpath(pattern, ns_decl).each do |e|
+        # Get the rights element or create it if necessary
+        rights = e.parent.at_xpath("rif:rights", ns_decl)
         ns = e.parent.namespaces.default
-        rights ||= XML::Node.new('rights', '', ns).tap do |er|
+        rights ||= Nokogiri::XML::Node.new('rights', rifcs_doc).tap do |er|
           e.parent << er
         end
-
-        case e.attributes['type']
-        when 'rights'
-          rights << XML::Node.new('rightsStatement', e.content, ns)
-        when 'accessRights'
-          rights << XML::Node.new('accessRights', e.content, ns)
+        # Create new element based on attribute name and insert it
+        Nokogiri::XML::Node.new(types[e['type'].to_s], rifcs_doc).tap do |node|
+          node.content = e.content
+          rights << node
+          e.remove
         end
-        e.remove!
       end
     end
 
     def valid_rifcs?
       begin
-        schema = self.class.get_schema('rif')
-        XML::Document.string(metadata).validate_schema(schema)
-      rescue TypeError, LibXML::XML::Error
+        self.class.get_schema('rif').validate(Nokogiri::XML(metadata)).empty?
+      rescue TypeError
         false
       end
     end
 
     def self.do_get_schema(schema)
       require File.join(File.dirname(__FILE__), 'record_provider')
-      LibXML::XML::Schema.new(RecordProvider.format(schema).schema)
+      require 'open-uri'
+      schema_loc = RecordProvider.format(schema).schema
+      schema_doc = Nokogiri::XML(open(schema_loc), url = schema_loc)
+      Nokogiri::XML::Schema.from_document(schema_doc)
     end
 
     class RifCSToOaiDcWrapper
       include NamespaceHelper
 
       def initialize(rifcs)
-        @doc = XML::Document.string(rifcs)
+        @doc = Nokogiri::XML(rifcs)
       end
 
       def identifier
-        nodes = @doc.find('//rif:identifier', ns_decl)
+        nodes = @doc.xpath('//rif:identifier', ns_decl)
         nodes.map { |identifier| identifier.content.strip }
       end
 
@@ -137,35 +141,30 @@ module Miletus::Output::OAIPMH
       end
 
       def date
-        nodes = @doc.find('//@dateModified', ns_decl)
-        nodes.map {|d| d.value }
+        @doc.xpath('//@dateModified', ns_decl).map {|d| d.value }
       end
 
       def description
         types = %w{collection party activity service}
         pattern = types.map { |e| "//rif:#{e}/rif:description"}.join(' | ')
-        nodes = @doc.find(pattern, ns_decl)
-        nodes.map {|d| d.content }
+        @doc.xpath(pattern, ns_decl).map {|d| d.content }
       end
 
       def rights
-        nodes = @doc.find("//rif:rights/*", ns_decl)
-        nodes.map {|d| d.content }
+        @doc.xpath("//rif:rights/*", ns_decl).map {|d| d.content }
       end
 
       private
 
       def cond_tmpl(h, keys, tmpl)
-        return nil unless keys.all? {|k| h.has_key?(k)}
+        return nil unless keys.all? {|k| h.has_key?(k) }
         tmpl % h.values_at(*keys).map {|values| values.join(" ") }
       end
 
       def get_name_parts
-        nodes = @doc.find("//rif:name", ns_decl)
-        nodes.map do |e|
-          e_nodes = e.find("rif:namePart", ns_decl)
-          e_nodes.each_with_object({}) do |part, h|
-            k = part.attributes['type'] ? part.attributes['type'] : nil
+        @doc.xpath("//rif:name", ns_decl).map do |e|
+          e.xpath("rif:namePart", ns_decl).each_with_object({}) do |part, h|
+            k = part.key?('type') ? part['type'].to_s : nil
             (h[k] ||= []) << part.content.strip
           end
         end

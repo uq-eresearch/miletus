@@ -144,6 +144,7 @@ GEM
     minitest (3.2.0)
     multi_json (1.3.6)
     multipart-post (1.1.5)
+    nokogiri (1.5.5)
     pdf-writer (1.1.8)
       color (>= 1.4.0)
       transaction-simple (~> 1.3)
@@ -270,6 +271,7 @@ DEPENDENCIES
   jquery-rails
   libxml-ruby
   minitest
+  nokogiri
   oai!
   pg
   pry-rails

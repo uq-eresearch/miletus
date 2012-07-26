@@ -1,3 +1,5 @@
+require 'nokogiri'
+
 module Miletus::Harvest::OAIPMH::RIFCS
 
   class Record < ActiveRecord::Base
@@ -39,32 +41,19 @@ module Miletus::Harvest::OAIPMH::RIFCS
       write_attribute(:metadata, xml_obj_to_str(metadata))
     end
 
-    def metadata
-      xml_str_to_obj(read_attribute(:metadata))
-    end
-
     def to_oai
       OaiRecord.new().tap do |oaiRecord|
         oaiRecord.header = oai_header
-        oaiRecord.metadata = metadata
+        oaiRecord.metadata = XML::Document.string(metadata).root rescue nil
       end
     end
 
     def to_rif
-      metadata.children.map { |obj|
-        xml_obj_to_str(obj)
-      }.join("\n")
+      doc = Nokogiri::XML::Document.parse(metadata)
+      doc.children.map { |obj| obj.to_s }.join("\n")
     end
 
     private
-
-    def xml_str_to_obj(xml)
-      begin
-        XML::Document.string(xml).root
-      rescue ArgumentError
-        nil
-      end
-    end
 
     def xml_obj_to_str(obj)
       case obj.class.name
