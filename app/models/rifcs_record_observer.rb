@@ -11,11 +11,11 @@ class RifcsRecordObserver < ActiveRecord::Observer
   end
 
   def after_update(record)
-    self.class.run_job(JobProcessor.new(:update, record)) unless record.deleted
-  end
-
-  def after_destroy(record)
-    #self.class.run_job(JobProcessor.new(:remove, record))
+    if record.deleted?
+      self.class.run_job(JobProcessor.new(:remove, record))
+    else
+      self.class.run_job(JobProcessor.new(:update, record))
+    end
   end
 
   def self.run_job(job)
@@ -39,26 +39,36 @@ class RifcsRecordObserver < ActiveRecord::Observer
             :value => retrive_global_key(record)
           )
       when :update
-        key_nodes = Nokogiri::XML(record.metadata).xpath('//rif:key', ns_decl)
-        existing = key_nodes.map do |e|
-          tbl_name = Miletus::Output::OAIPMH::IndexedAttribute.table_name.to_sym
-          key = [record.record_collection.endpoint, e.content.strip].join('|')
-          Miletus::Output::OAIPMH::Record.joins(:indexed_attributes).where(
-            tbl_name => {
-              :key => 'source_rifcs_endpoint_and_key',
-              :value => retrive_global_key(record)
-            }
-          ).pluck(:record_id)
-        end.flatten
-        return JobProcessor.new(:create, record).run if existing.empty?
-        existing_record = \
-          Miletus::Output::OAIPMH::Record.find_by_id(existing.first)
+        existing_record = get_existing_output_record(record)
+        return JobProcessor.new(:create, record).run if existing_record.nil?
         existing_record.metadata = record.to_rif
         existing_record.save!
+      when :remove
+        existing_record = get_existing_output_record(record)
+        unless existing_record.nil?
+          existing_record.deleted = true
+          existing_record.save!
+        end
       end
     end
 
     private
+
+    def get_existing_output_record(input_record)
+      key_nodes = Nokogiri::XML(record.metadata).xpath('//rif:key', ns_decl)
+      existing = key_nodes.map do |e|
+        tbl_name = Miletus::Output::OAIPMH::IndexedAttribute.table_name.to_sym
+        key = [record.record_collection.endpoint, e.content.strip].join('|')
+        Miletus::Output::OAIPMH::Record.joins(:indexed_attributes).where(
+          tbl_name => {
+            :key => 'source_rifcs_endpoint_and_key',
+            :value => retrive_global_key(record)
+          }
+        ).pluck(:record_id)
+      end.flatten
+      return nil if existing.empty?
+      Miletus::Output::OAIPMH::Record.find_by_id(existing.first)
+    end
 
     def retrive_global_key(input_record)
       doc = Nokogiri::XML(input_record.to_rif)

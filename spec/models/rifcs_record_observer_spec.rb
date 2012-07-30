@@ -6,7 +6,7 @@ describe RifcsRecordObserver do
 
   subject { RifcsRecordObserver.instance }
 
-  it { should respond_to(:after_create, :after_update, :after_destroy) }
+  it { should respond_to(:after_create, :after_update) }
 
   let(:ns_decl) do
     Miletus::Output::OAIPMH::NamespaceHelper::ns_decl
@@ -60,16 +60,13 @@ describe RifcsRecordObserver do
     output_record.to_rif.should_not be(nil)
     # Change input record
     input_record.reload
-    input_record.should_not be_readonly
     doc = Nokogiri::XML(input_record.metadata)
     nodes = doc.xpath("//rif:namePart[@type='given'][text()='John']",
       'rif' => 'http://ands.org.au/standards/rif-cs/registryObjects')
     nodes.each do |e|
       e.remove
     end
-    input_record.should_not be_readonly
     input_record.metadata = doc
-    input_record.should_not be_readonly
     input_record.save!
     # Run hook - which will happen as part of the environment
     # subject.after_update(input_record)
@@ -82,4 +79,26 @@ describe RifcsRecordObserver do
        .should be_empty
   end
 
+  it "should delete output records when the harvested record is deleted" do
+      # Disable delayed run for hooks
+      RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
+      input_record = create_input_record
+      # Run hook - which will happen as part of the environment
+      # subject.after_create(input_record)
+      Miletus::Output::OAIPMH::Record.all.count.should == 1
+      # A new record should exist as a result
+      output_record = Miletus::Output::OAIPMH::Record.find(:first)
+      output_record.should_not be(nil)
+      output_record.to_rif.should_not be(nil)
+      # Delete input record
+      input_record.reload
+      input_record.deleted = true
+      input_record.save!
+      # Run hook - which will happen as part of the environment
+      # subject.after_destroy(input_record)
+      # Check the record was updated
+      Miletus::Output::OAIPMH::Record.all.count.should == 1
+      output_record = Miletus::Output::OAIPMH::Record.find(:first)
+      output_record.should be_deleted
+    end
 end
