@@ -36,14 +36,11 @@ describe RifcsRecordObserver do
   }
 
   it "should create a new output record for a new harvested record" do
+    # Disable delayed run for hooks
+    RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
     input_record = create_input_record
     # Run hook - which will happen as part of the environment
     # subject.after_create(input_record)
-    # Work should happen on a delay
-    output_record = Miletus::Output::OAIPMH::Record.find(:first)
-    output_record.should be(nil)
-    # Run delayed jobs
-    Delayed::Worker.new.work_off
     # A new record should exist as a result
     output_record = Miletus::Output::OAIPMH::Record.find(:first)
     output_record.should_not be(nil)
@@ -51,10 +48,11 @@ describe RifcsRecordObserver do
   end
 
   it "should update output records when the harvested record changes" do
+    # Disable delayed run for hooks
+    RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
     input_record = create_input_record
     # Run hook - which will happen as part of the environment
     # subject.after_create(input_record)
-    Delayed::Worker.new.work_off
     Miletus::Output::OAIPMH::Record.all.count.should == 1
     # A new record should exist as a result
     output_record = Miletus::Output::OAIPMH::Record.find(:first)
@@ -75,7 +73,6 @@ describe RifcsRecordObserver do
     input_record.save!
     # Run hook - which will happen as part of the environment
     # subject.after_update(input_record)
-    Delayed::Worker.new.work_off
     # Check the record was updated
     Miletus::Output::OAIPMH::Record.all.count.should == 1
     output_record = Miletus::Output::OAIPMH::Record.find(:first)

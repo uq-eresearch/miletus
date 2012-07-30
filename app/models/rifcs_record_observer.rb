@@ -7,15 +7,19 @@ class RifcsRecordObserver < ActiveRecord::Observer
   observe Miletus::Harvest::OAIPMH::RIFCS::Record
 
   def after_create(record)
-    JobProcessor.new(:create, record).delay.run
+    self.class.run_job(JobProcessor.new(:create, record))
   end
 
   def after_update(record)
-    JobProcessor.new(:update, record).delay.run unless record.deleted
+    self.class.run_job(JobProcessor.new(:update, record)) unless record.deleted
   end
 
   def after_destroy(record)
-    #JobProcessor.new(:remove, record).delay.run
+    #self.class.run_job(JobProcessor.new(:remove, record))
+  end
+
+  def self.run_job(job)
+    job.delay.run
   end
 
   class JobProcessor < Struct.new(:action, :record)
