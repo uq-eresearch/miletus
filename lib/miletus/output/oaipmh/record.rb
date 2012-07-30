@@ -32,10 +32,7 @@ module Miletus::Output::OAIPMH
       if xml.nil? or xml == ''
         write_attribute(:metadata, '')
       else
-        doc = Nokogiri::XML(xml)
-        update_indexed_attributes('rifcs_key',
-          doc.xpath('//rif:key', ns_decl).map { |e| e.content.strip })
-        xml = doc.root.to_s
+        xml = Nokogiri::XML(xml).root.to_s
         write_attribute(:metadata, xml == "<xml/>" ? nil : xml)
       end
     end

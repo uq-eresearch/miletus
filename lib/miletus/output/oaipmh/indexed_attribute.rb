@@ -6,7 +6,7 @@ module Miletus::Output::OAIPMH
 
     belongs_to :record, :class_name => 'Miletus::Output::OAIPMH::Record'
 
-    attr_accessible :key, :value
+    attr_accessible :key, :value, :record
 
   end
 

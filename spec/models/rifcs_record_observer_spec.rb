@@ -17,8 +17,13 @@ describe RifcsRecordObserver do
     fixture_file = File.join(File.dirname(__FILE__),
       '..', 'fixtures','rifcs-party-1.xml')
     xml = File.open(fixture_file) { |f| f.read }
+    # Create collection
+    rc = Miletus::Harvest::OAIPMH::RIFCS::RecordCollection.create(
+      :endpoint => 'http://example.test/oai'
+    )
     # Create record
     Miletus::Harvest::OAIPMH::RIFCS::Record.new.tap do |r|
+      r.record_collection = rc
       r.identifier = 'http://example.test/1'
       r.datestamp = Time.now
       r.metadata = Nokogiri::XML(xml).tap do |doc|

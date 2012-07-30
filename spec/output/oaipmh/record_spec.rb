@@ -126,15 +126,6 @@ describe Miletus::Output::OAIPMH::Record do
         ns_decl).content.should match(/^The data is the property of/)
     end
 
-    it "should create indexes on RIF-CS key" do
-      subject.metadata = get_fixture('party')
-      subject.to_rif.should_not be_nil
-      # Save
-      subject.save!
-      # Check index works
-      subject.indexed_attributes.find_by_key('rifcs_key').should_not be(nil)
-    end
-
   end
 
 end
