@@ -4,13 +4,6 @@ guard :bundler do
   watch('Gemfile')
 end
 
-guard :rspec, :cli => "--color --format nested --fail-fast --drb" do
-  watch(%r{^app/(.+)\.rb$})
-  watch(%r{^config/.+\.rb$})
-  watch(%r{^lib/.+\.rb$})
-  watch(%r{^spec/.+\.rb$})
-end
-
 guard 'brakeman' do
   watch(%r{^app/.+\.(erb|haml|rhtml|rb)$})
   watch(%r{^config/.+\.rb$})
@@ -19,6 +12,13 @@ guard 'brakeman' do
 end
 
 guard 'rails_best_practices' do
+  watch(%r{^app/(.+)\.rb$})
+  watch(%r{^config/.+\.rb$})
+  watch(%r{^lib/.+\.rb$})
+  watch(%r{^spec/.+\.rb$})
+end
+
+guard :rspec, :cli => "--color --format nested --fail-fast --drb" do
   watch(%r{^app/(.+)\.rb$})
   watch(%r{^config/.+\.rb$})
   watch(%r{^lib/.+\.rb$})
