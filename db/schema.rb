@@ -8,8 +8,8 @@
 # database schema. If you need to create the application database on another
 # system, you should be using db:schema:load, not running all the migrations
 # from scratch. The latter is a flawed and unsustainable approach (the more
-# migrations
-# you'll amass, the slower it'll run and the greater likelihood for issues).
+# migrations you'll amass, the slower it'll run and the greater likelihood for
+# issues).
 #
 # It's strongly recommended to check this file into your version control system.
 
@@ -43,6 +43,15 @@ ActiveRecord::Schema.define(:version => 3) do
     t.text     "metadata",                                :null => false
     t.boolean  "deleted",              :default => false, :null => false
   end
+
+  create_table "output_oaipmh_indexed_attributes", :force => true do |t|
+    t.integer "record_id"
+    t.string  "key",       :null => false
+    t.text    "value"
+  end
+
+  add_index "output_oaipmh_indexed_attributes", ["key", "value"],
+    :name => "index_output_oaipmh_indexed_attributes_on_key_and_value"
 
   create_table "output_oaipmh_records", :force => true do |t|
     t.datetime "created_at",                    :null => false

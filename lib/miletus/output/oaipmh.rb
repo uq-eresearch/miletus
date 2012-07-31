@@ -1,4 +1,7 @@
 module Miletus::Output::OAIPMH
+
+  RIFCS_KEY_PREFIX = ENV['RIFCS_KEY_PREFIX'] or ''
+
   module NamespaceHelper
     def ns_decl
       # Convenience definition for XPath matching

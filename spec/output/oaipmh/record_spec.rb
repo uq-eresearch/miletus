@@ -112,6 +112,19 @@ describe Miletus::Output::OAIPMH::Record do
         == subject.updated_at.iso8601
     end
 
+    #it "should update RIF-CS key when saved" do
+    #  def get_key(doc)
+    #    doc.at_xpath("//rif:key", ns_decl).content.strip
+    #  end
+    #  original_key = get_key(Nokogiri::XML(get_fixture('party')))
+    #  subject.metadata = get_fixture('party')
+    #  subject.to_rif.should_not be_nil
+    #  # Save
+    #  subject.save!
+    #  # Check time was updated
+    #  get_key(Nokogiri::XML(subject.to_rif)).should_not == original_key
+    #end
+
     it "should translate RIF-CS 1.2 rights elements to 1.3" do
       include Miletus::Output::OAIPMH::NamespaceHelper
       subject.metadata = get_fixture('collection')

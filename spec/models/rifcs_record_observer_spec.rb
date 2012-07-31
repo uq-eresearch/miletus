@@ -95,7 +95,7 @@ describe RifcsRecordObserver do
       input_record.deleted = true
       input_record.save!
       # Run hook - which will happen as part of the environment
-      # subject.after_destroy(input_record)
+      # subject.after_update(input_record)
       # Check the record was updated
       Miletus::Output::OAIPMH::Record.all.count.should == 1
       output_record = Miletus::Output::OAIPMH::Record.find(:first)
