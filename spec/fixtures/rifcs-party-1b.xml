@@ -1,0 +1,26 @@
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<registryObject group="National Library of Australia">
+		<key>mirage.cmm.uq.edu.au/user/1</key>
+		<originatingSource type="authoritative">
+		  mirage.cmm.uq.edu.au
+		</originatingSource>
+		<party dateModified="2012-06-02T12:10:46Z" type="person">
+			<identifier type="AU-ANL:PEAU">
+			 http://nla.gov.au/nla.party-1486629
+			</identifier>
+      <name type="primary">
+        <namePart type="family">Dettrick</namePart>
+        <namePart type="given">Timothy</namePart>
+        <namePart type="given">John</namePart>
+      </name>
+			<location>
+				<address>
+					<electronic type="email">
+						<value>t.dettrick@uq.edu.au</value>
+					</electronic>
+				</address>
+			</location>
+		</party>
+	</registryObject>
+</registryObjects>

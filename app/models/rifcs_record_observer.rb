@@ -28,6 +28,8 @@ class RifcsRecordObserver < ActiveRecord::Observer
     def run
       case action
       when :create
+        existing_record = get_existing_output_record(record)
+        return JobProcessor.new(:update, record).run unless existing_record.nil?
         output_record = Miletus::Output::OAIPMH::Record.new(
           :metadata => record.to_rif
         )
@@ -38,6 +40,15 @@ class RifcsRecordObserver < ActiveRecord::Observer
             :key => 'source_rifcs_endpoint_and_key',
             :value => retrive_global_key(record)
           )
+        Nokogiri::XML(record.metadata).xpath(
+          '//rif:identifier', ns_decl).each do |e|
+            Miletus::Output::OAIPMH::IndexedAttribute\
+              .find_or_create_by_key_and_value(
+                :record => output_record,
+                :key => 'identifier',
+                :value => e.content.strip
+              )
+          end
       when :update
         existing_record = get_existing_output_record(record)
         return JobProcessor.new(:create, record).run if existing_record.nil?
@@ -55,7 +66,13 @@ class RifcsRecordObserver < ActiveRecord::Observer
     private
 
     def get_existing_output_record(input_record)
-      key_nodes = Nokogiri::XML(record.metadata).xpath('//rif:key', ns_decl)
+      get_existing_output_record_by_key(input_record) or
+        get_existing_output_record_by_identifier(input_record)
+    end
+
+    def get_existing_output_record_by_key(input_record)
+      key_nodes = Nokogiri::XML(record.metadata).xpath(
+        '//rif:registryObject/rif:key', ns_decl)
       existing = key_nodes.map do |e|
         tbl_name = Miletus::Output::OAIPMH::IndexedAttribute.table_name.to_sym
         key = [record.record_collection.endpoint, e.content.strip].join('|')
@@ -63,6 +80,23 @@ class RifcsRecordObserver < ActiveRecord::Observer
           tbl_name => {
             :key => 'source_rifcs_endpoint_and_key',
             :value => retrive_global_key(record)
+          }
+        ).pluck(:record_id)
+      end.flatten
+      return nil if existing.empty?
+      Miletus::Output::OAIPMH::Record.find_by_id(existing.first)
+    end
+
+    def get_existing_output_record_by_identifier(input_record)
+      id_nodes = Nokogiri::XML(record.metadata).xpath(
+        '//rif:identifier', ns_decl)
+      existing = id_nodes.map do |e|
+        tbl_name = Miletus::Output::OAIPMH::IndexedAttribute.table_name.to_sym
+        key = [record.record_collection.endpoint, e.content.strip].join('|')
+        Miletus::Output::OAIPMH::Record.joins(:indexed_attributes).where(
+          tbl_name => {
+            :key => 'identifier',
+            :value => e.content.strip
           }
         ).pluck(:record_id)
       end.flatten

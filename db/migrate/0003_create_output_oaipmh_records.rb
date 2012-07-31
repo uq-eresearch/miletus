@@ -15,6 +15,9 @@ class CreateOutputOaipmhRecords < ActiveRecord::Migration
     end
 
     add_index(:output_oaipmh_indexed_attributes, [:key, :value])
+    add_index(:output_oaipmh_indexed_attributes, [:record_id, :key, :value],
+      :name => "index_output_oaipmh_indexed_attributes_row_unique",
+      :unique => true)
   end
 
   def self.down

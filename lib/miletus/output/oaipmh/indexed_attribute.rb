@@ -8,6 +8,10 @@ module Miletus::Output::OAIPMH
 
     attr_accessible :key, :value, :record
 
+    def to_s
+      "#{key}: #{value} => #{record_id}"
+    end
+
   end
 
 end
