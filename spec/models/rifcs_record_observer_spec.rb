@@ -35,29 +35,33 @@ describe RifcsRecordObserver do
     end
   end
 
-  it "should create a new output record for a new harvested record" do
+  it "should create a new concept for a new harvested record" do
     # Disable delayed run for hooks
     RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
     input_record = create_input_record
     # Run hook - which will happen as part of the environment
     # subject.after_create(input_record)
+    # A new concept should exist as a result
+    concept = Miletus::Merge::Concept.find(:first)
+    concept.should_not be(nil)
+    concept.to_rif.should_not be(nil)
     # A new record should exist as a result
-    output_record = Miletus::Output::OAIPMH::Record.find(:first)
-    output_record.should_not be(nil)
-    output_record.to_rif.should_not be(nil)
+    #output_record = Miletus::Output::OAIPMH::Record.find(:first)
+    #output_record.should_not be(nil)
+    #output_record.to_rif.should_not be(nil)
   end
 
-  it "should update output records when the harvested record changes" do
+  it "should update concept when the harvested record changes" do
     # Disable delayed run for hooks
     RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
     input_record = create_input_record
     # Run hook - which will happen as part of the environment
     # subject.after_create(input_record)
-    Miletus::Output::OAIPMH::Record.all.count.should == 1
-    # A new record should exist as a result
-    output_record = Miletus::Output::OAIPMH::Record.find(:first)
-    output_record.should_not be(nil)
-    output_record.to_rif.should_not be(nil)
+    Miletus::Merge::Concept.all.count.should == 1
+    # A new concept should exist as a result
+    concept = Miletus::Merge::Concept.find(:first)
+    concept.should_not be_nil
+    concept.to_rif.should_not be_nil
     # Change input record
     input_record.reload
     doc = Nokogiri::XML(input_record.metadata)
@@ -70,63 +74,65 @@ describe RifcsRecordObserver do
     input_record.save!
     # Run hook - which will happen as part of the environment
     # subject.after_update(input_record)
-    # Check the record was updated
-    Miletus::Output::OAIPMH::Record.all.count.should == 1
-    output_record = Miletus::Output::OAIPMH::Record.find(:first)
-    rifcs_doc = Nokogiri::XML::Document.parse(output_record.to_rif)
+    # Check the concept was updated
+    Miletus::Merge::Concept.all.count.should == 1
+    concept = Miletus::Merge::Concept.find(:first)
+    rifcs_doc = Nokogiri::XML::Document.parse(concept.to_rif)
     rifcs_doc.xpath("//rif:namePart[@type='given'][text()='John']",
       'rif' => 'http://ands.org.au/standards/rif-cs/registryObjects')\
        .should be_empty
   end
 
-  it "should delete output records when the harvested record is deleted" do
-      # Disable delayed run for hooks
-      RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
-      input_record = create_input_record
-      # Run hook - which will happen as part of the environment
-      # subject.after_create(input_record)
-      Miletus::Output::OAIPMH::Record.all.count.should == 1
-      # A new record should exist as a result
-      output_record = Miletus::Output::OAIPMH::Record.find(:first)
-      output_record.should_not be(nil)
-      output_record.to_rif.should_not be(nil)
-      # Delete input record
-      input_record.reload
-      input_record.deleted = true
-      input_record.save!
-      # Run hook - which will happen as part of the environment
-      # subject.after_update(input_record)
-      # Check the record was updated
-      Miletus::Output::OAIPMH::Record.all.count.should == 1
-      output_record = Miletus::Output::OAIPMH::Record.find(:first)
-      output_record.should be_deleted
-    end
+  it "should delete facets when the harvested record is deleted" do
+    # Disable delayed run for hooks
+    RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
+    input_record = create_input_record
+    # Run hook - which will happen as part of the environment
+    # subject.after_create(input_record)
+    Miletus::Merge::Concept.all.count.should == 1
+    # A new record should exist as a result
+    concept = Miletus::Merge::Concept.find(:first)
+    concept.should_not be_nil
+    concept.to_rif.should_not be_nil
+    # Delete input record
+    input_record.reload
+    input_record.deleted = true
+    input_record.save!
+    # Run hook - which will happen as part of the environment
+    # subject.after_update(input_record)
+    # Check the record was updated
+    Miletus::Merge::Concept.all.count.should == 1
+    concept = Miletus::Merge::Concept.find(:first)
+    concept.should_not be_nil
+    concept.to_rif.should be_nil
+  end
 
-    it "should merge output record data when identifiers match" do
-      def get_identifiers(rifcs)
-        Nokogiri::XML(rifcs).xpath('//rif:identifier', ns_decl).map do |e|
-          e.content.strip
-        end
-      end
-      # Disable delayed run for hooks
-      RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
-      input_record_1 = create_input_record('party', 1)
-      # Run hook - which will happen as part of the environment
-      # subject.after_create(input_record)
-      Miletus::Output::OAIPMH::Record.all.count.should == 1
-      # Run hook - which will happen as part of the environment
-      input_record_2 = create_input_record('party', '1b')
-      Miletus::Output::OAIPMH::Record.all.count.should == 1
-      # A new record should exist as a result
-      output_record = Miletus::Output::OAIPMH::Record.find(:first)
-      output_record.should_not be(nil)
-      output_record.to_rif.should_not be(nil)
-      output_identifiers = get_identifiers(output_record.to_rif)
-      [input_record_1, input_record_2].each do |input_record|
-        get_identifiers(input_record.to_rif).each do |identifier|
-          #output_identifiers.should include(identifier)
-        end
+  it "should merge output record data when identifiers match" do
+    def get_identifiers(rifcs)
+      Nokogiri::XML(rifcs).xpath('//rif:identifier', ns_decl).map do |e|
+        e.content.strip
       end
     end
+    # Disable delayed run for hooks
+    RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
+    input_record_1 = create_input_record('party', 1)
+    # Run hook - which will happen as part of the environment
+    # subject.after_create(input_record)
+    Miletus::Merge::Concept.all.count.should == 1
+    # Run hook - which will happen as part of the environment
+    input_record_2 = create_input_record('party', '1b')
+    Miletus::Merge::Concept.all.count.should == 1
+    # A new record should exist as a result
+    concept = Miletus::Merge::Concept.find(:first)
+    concept.should_not be(nil)
+    concept.to_rif.should_not be(nil)
+    concept.should have(2).facets
+    output_identifiers = get_identifiers(concept.to_rif)
+    [input_record_1, input_record_2].each do |input_record|
+      get_identifiers(input_record.to_rif).each do |identifier|
+        #output_identifiers.should include(identifier)
+      end
+    end
+  end
 
 end

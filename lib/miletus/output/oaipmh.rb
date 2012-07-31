@@ -17,7 +17,6 @@ module Miletus::Output::OAIPMH
   end
 
   require File.join(File.dirname(__FILE__), 'oaipmh', 'record')
-  require File.join(File.dirname(__FILE__), 'oaipmh', 'indexed_attribute')
   require File.join(File.dirname(__FILE__), 'oaipmh', 'rifcs_format')
   require File.join(File.dirname(__FILE__), 'oaipmh', 'record_provider')
 end

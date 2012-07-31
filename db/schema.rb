@@ -13,7 +13,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 3) do
+ActiveRecord::Schema.define(:version => 4) do
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -32,6 +32,31 @@ ActiveRecord::Schema.define(:version => 3) do
   add_index "delayed_jobs", ["priority", "run_at"],
     :name => "delayed_jobs_priority"
 
+  create_table "merge_concepts", :force => true do |t|
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "merge_facets", :force => true do |t|
+    t.integer  "concept_id"
+    t.string   "key"
+    t.text     "metadata"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "merge_indexed_attributes", :force => true do |t|
+    t.integer "concept_id"
+    t.string  "key",        :null => false
+    t.text    "value"
+  end
+
+  add_index "merge_indexed_attributes", ["concept_id", "key", "value"],
+    :name => "index_merge_indexed_attributes_on_concept_id_and_key_and_value",
+    :unique => true
+  add_index "merge_indexed_attributes", ["key", "value"],
+    :name => "index_merge_indexed_attributes_on_key_and_value"
+
   create_table "oaipmh_rifcs_record_collections", :force => true do |t|
     t.string "endpoint", :null => false
   end
@@ -44,20 +69,11 @@ ActiveRecord::Schema.define(:version => 3) do
     t.boolean  "deleted",              :default => false, :null => false
   end
 
-  create_table "output_oaipmh_indexed_attributes", :force => true do |t|
-    t.integer "record_id"
-    t.string  "key",       :null => false
-    t.text    "value"
-  end
-
-  add_index "output_oaipmh_indexed_attributes", ["key", "value"],
-    :name => "index_output_oaipmh_indexed_attributes_on_key_and_value"
-
   create_table "output_oaipmh_records", :force => true do |t|
-    t.datetime "created_at",                    :null => false
-    t.datetime "updated_at",                    :null => false
-    t.text     "metadata",                      :null => false
-    t.boolean  "deleted",    :default => false, :null => false
+    t.integer  "underlying_concept_id"
+    t.text     "metadata"
+    t.datetime "created_at",            :null => false
+    t.datetime "updated_at",            :null => false
   end
 
 end

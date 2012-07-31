@@ -117,6 +117,7 @@ module Miletus
     config.assets.version = '1.0'
 
     # Add observers
-    config.active_record.observers = :rifcs_record_observer
+    config.active_record.observers = :rifcs_record_observer,
+      :oaipmh_output_observer
   end
 end

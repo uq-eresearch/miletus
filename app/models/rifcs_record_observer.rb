@@ -28,80 +28,51 @@ class RifcsRecordObserver < ActiveRecord::Observer
     def run
       case action
       when :create
-        existing_record = get_existing_output_record(record)
-        return JobProcessor.new(:update, record).run unless existing_record.nil?
-        output_record = Miletus::Output::OAIPMH::Record.new(
+        concept = get_existing_concept(record)
+        concept ||= Miletus::Merge::Concept.create()
+        concept.facets.create(
+          :key => retrive_global_key(record),
           :metadata => record.to_rif
         )
-        output_record.save!
-        Miletus::Output::OAIPMH::IndexedAttribute\
-          .find_or_create_by_key_and_value(
-            :record => output_record,
-            :key => 'source_rifcs_endpoint_and_key',
-            :value => retrive_global_key(record)
-          )
         Nokogiri::XML(record.metadata).xpath(
           '//rif:identifier', ns_decl).each do |e|
-            Miletus::Output::OAIPMH::IndexedAttribute\
-              .find_or_create_by_key_and_value(
-                :record => output_record,
-                :key => 'identifier',
-                :value => e.content.strip
-              )
+            concept.indexed_attributes.find_or_create_by_key_and_value(
+              :key => 'identifier',
+              :value => e.content.strip
+            )
           end
       when :update
-        existing_record = get_existing_output_record(record)
-        return JobProcessor.new(:create, record).run if existing_record.nil?
-        existing_record.metadata = record.to_rif
-        existing_record.save!
+        facet = get_existing_facet(record)
+        return JobProcessor.new(:create, record).run if facet.nil?
+        facet.metadata = record.to_rif
+        facet.save!
       when :remove
-        existing_record = get_existing_output_record(record)
-        unless existing_record.nil?
-          existing_record.deleted = true
-          existing_record.save!
+        facet = get_existing_facet(record)
+        unless facet.nil?
+          facet.destroy
         end
       end
     end
 
     private
 
-    def get_existing_output_record(input_record)
-      get_existing_output_record_by_key(input_record) or
-        get_existing_output_record_by_identifier(input_record)
-    end
-
-    def get_existing_output_record_by_key(input_record)
-      key_nodes = Nokogiri::XML(record.metadata).xpath(
-        '//rif:registryObject/rif:key', ns_decl)
-      existing = key_nodes.map do |e|
-        tbl_name = Miletus::Output::OAIPMH::IndexedAttribute.table_name.to_sym
-        key = [record.record_collection.endpoint, e.content.strip].join('|')
-        Miletus::Output::OAIPMH::Record.joins(:indexed_attributes).where(
-          tbl_name => {
-            :key => 'source_rifcs_endpoint_and_key',
-            :value => retrive_global_key(record)
-          }
-        ).pluck(:record_id)
-      end.flatten
-      return nil if existing.empty?
-      Miletus::Output::OAIPMH::Record.find_by_id(existing.first)
-    end
-
-    def get_existing_output_record_by_identifier(input_record)
-      id_nodes = Nokogiri::XML(record.metadata).xpath(
+    def get_existing_concept(input_record)
+      id_nodes = Nokogiri::XML(input_record.to_rif).xpath(
         '//rif:identifier', ns_decl)
       existing = id_nodes.map do |e|
-        tbl_name = Miletus::Output::OAIPMH::IndexedAttribute.table_name.to_sym
-        key = [record.record_collection.endpoint, e.content.strip].join('|')
-        Miletus::Output::OAIPMH::Record.joins(:indexed_attributes).where(
-          tbl_name => {
+        Miletus::Merge::Concept.joins(:indexed_attributes).where(
+          Miletus::Merge::IndexedAttribute.table_name.to_sym => {
             :key => 'identifier',
             :value => e.content.strip
           }
-        ).pluck(:record_id)
+        ).pluck(:concept_id)
       end.flatten
       return nil if existing.empty?
-      Miletus::Output::OAIPMH::Record.find_by_id(existing.first)
+      Miletus::Merge::Concept.find_by_id(existing.first)
+    end
+
+    def get_existing_facet(input_record)
+      Miletus::Merge::Facet.find_by_key(retrive_global_key(record))
     end
 
     def retrive_global_key(input_record)

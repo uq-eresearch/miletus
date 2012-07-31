@@ -12,10 +12,8 @@ module Miletus::Output::OAIPMH
     self.table_name = 'output_oaipmh_records'
 
     attr_accessible :metadata
-    has_many :indexed_attributes,
-      :class_name => 'Miletus::Output::OAIPMH::IndexedAttribute',
-      :foreign_key => 'record_id',
-      :autosave => true
+    belongs_to :underlying_concept,
+      :class_name => 'Miletus::Merge::Concept'
 
     validate :valid_rifcs?
     after_validation :clean_metadata
@@ -26,6 +24,10 @@ module Miletus::Output::OAIPMH
       return nil unless valid_rifcs?
       wrapper = RifCSToOaiDcWrapper.new(to_rif)
       OAI::Provider::Metadata::DublinCore.instance.encode(wrapper, wrapper)
+    end
+
+    def deleted?
+      underlying_concept.nil? ? false : underlying_concept.facets.empty?
     end
 
     def metadata=(xml)
