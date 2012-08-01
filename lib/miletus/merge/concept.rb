@@ -1,7 +1,6 @@
 module Miletus::Merge
 
   class Concept < ActiveRecord::Base
-    include Miletus::NamespaceHelper
 
     self.table_name = 'merge_concepts'
 
@@ -10,32 +9,51 @@ module Miletus::Merge
       :dependent => :destroy, :order => [:key, :value]
 
     def to_rif
-      input_docs = facets.map {|f| f.to_rif}.reject do |xml|
-        xml.nil? or Nokogiri::XML(xml).root.nil?
-      end
+      input_docs = facets.map {|f| f.to_rif}.reject {|xml| xml.nil?}\
+        .map {|xml| RifCsDoc.new(xml)}
       return nil if input_docs.empty?
-      output_doc = input_docs.first.clone
-      output_doc = merge_rifcs_identifiers(input_docs, output_doc)
+      rifcs_doc = input_docs.first.clone
+      rifcs_doc.merge_rifcs_identifiers(input_docs).to_s
     end
 
-    def merge_rifcs_identifiers(input_docs, output_doc)
-      # Get all identifier elements, unique in content
-      identifiers = input_docs.map do |xml|
-        Nokogiri::XML(xml).xpath("//rif:identifier", ns_decl).map {|n| n.dup}
-      end.reduce(:|).uniq {|e| e.content.strip}
-      # Remove identifiers from output and substitute merged set
-      output_doc = Nokogiri::XML(output_doc)
-      types = %w{collection party activity service}
-      pattern = types.map { |e| "//rif:#{e}"}.join(' | ')
-      base = output_doc.at_xpath(pattern, ns_decl)
-      base.xpath("//rif:identifier", ns_decl).remove
-      base.children.first.before(
-        Nokogiri::XML::NodeSet.new(output_doc, identifiers))
-      base.xpath("//rif:identifier", ns_decl).each do |n|
-        n.namespace = base.namespace
+    class RifCsDoc
+      include Miletus::NamespaceHelper
+
+      def initialize(xml)
+        @doc = Nokogiri::XML(xml)
       end
-      output_doc.to_s
+
+      def identifiers
+        @doc.xpath("//rif:identifier", ns_decl)
+      end
+
+      def merge_rifcs_identifiers(input_docs)
+        # Get all identifier elements, unique in content
+        identifiers = deduplicate_by_content(input_docs.map {|d| d.identifiers})
+        types = %w{collection party activity service}
+        pattern = types.map { |e| "//rif:#{e}"}.join(' | ')
+        base = @doc.at_xpath(pattern, ns_decl)
+        base.xpath("//rif:identifier", ns_decl).remove
+        base.children.first.before(
+          Nokogiri::XML::NodeSet.new(@doc, identifiers))
+        base.xpath("//rif:identifier", ns_decl).each do |n|
+          n.namespace = base.namespace
+        end
+        self
+      end
+
+      def to_s
+        @doc.to_s
+      end
+
+      private
+
+      def deduplicate_by_content(nodesets)
+        nodesets.map {|n| n.to_ary}.reduce(:|).uniq {|e| e.content.strip }
+      end
+
     end
+
 
 
   end

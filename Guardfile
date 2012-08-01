@@ -13,14 +13,14 @@ end
 
 guard 'rails_best_practices' do
   watch(%r{^app/(.+)\.rb$})
-  watch(%r{^config/.+\.rb$})
-  watch(%r{^lib/.+\.rb$})
-  watch(%r{^spec/.+\.rb$})
+  watch(%r{^config/(.+)\.rb$})
+  watch(%r{^lib/(.+)\.rb$})
+  watch(%r{^spec/(.+)\.rb$})
 end
 
 guard :rspec, :cli => "--color --format nested --fail-fast --drb" do
   watch(%r{^app/(.+)\.rb$})
-  watch(%r{^config/.+\.rb$})
-  watch(%r{^lib/.+\.rb$})
-  watch(%r{^spec/.+\.rb$})
+  watch(%r{^config/(.+)\.rb$})
+  watch(%r{^lib/(.+)\.rb$})
+  watch(%r{^spec/(.+)\.rb$})
 end

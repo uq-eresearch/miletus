@@ -8,7 +8,12 @@ module Miletus::Merge
     belongs_to :concept, :touch => true
 
     def to_rif
-      metadata
+      begin
+        doc = Nokogiri::XML(metadata)
+        doc.root.nil? ? nil : doc.to_s
+      rescue
+        nil
+      end
     end
 
   end
