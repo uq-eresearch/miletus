@@ -5,7 +5,7 @@ require 'miletus'
 describe Miletus::Output::OAIPMH::Record do
 
   let(:ns_decl) do
-    Miletus::Output::OAIPMH::NamespaceHelper::ns_decl
+    Miletus::NamespaceHelper::ns_decl
   end
 
   def get_fixture(type, number = 1)
@@ -39,7 +39,7 @@ describe Miletus::Output::OAIPMH::Record do
     end
 
     it "should handle alternate RIF-CS names" do
-      include Miletus::Output::OAIPMH::NamespaceHelper
+      include Miletus::NamespaceHelper
       subject.metadata = get_fixture('party')
       subject.should be_valid
       subject.to_oai_dc.should_not be_nil
@@ -51,7 +51,7 @@ describe Miletus::Output::OAIPMH::Record do
     end
 
     it "should include descriptions when available" do
-      include Miletus::Output::OAIPMH::NamespaceHelper
+      include Miletus::NamespaceHelper
       subject.metadata = get_fixture('collection')
       subject.should be_valid
       subject.to_oai_dc.should_not be_nil
@@ -63,7 +63,7 @@ describe Miletus::Output::OAIPMH::Record do
     end
 
     it "should include rights when available" do
-      include Miletus::Output::OAIPMH::NamespaceHelper
+      include Miletus::NamespaceHelper
       subject.metadata = get_fixture('collection')
       subject.should be_valid
       subject.to_oai_dc.should_not be_nil
@@ -113,7 +113,7 @@ describe Miletus::Output::OAIPMH::Record do
     end
 
     it "should translate RIF-CS 1.2 rights elements to 1.3" do
-      include Miletus::Output::OAIPMH::NamespaceHelper
+      include Miletus::NamespaceHelper
       subject.metadata = get_fixture('collection')
       subject.to_rif.should_not be_nil
       subject.save!

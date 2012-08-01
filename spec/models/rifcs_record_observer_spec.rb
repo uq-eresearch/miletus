@@ -9,7 +9,7 @@ describe RifcsRecordObserver do
   it { should respond_to(:after_create, :after_update) }
 
   let(:ns_decl) do
-    Miletus::Output::OAIPMH::NamespaceHelper::ns_decl
+    Miletus::NamespaceHelper::ns_decl
   end
 
   def create_input_record(type = 'party', fixture_id = 1)
@@ -45,10 +45,6 @@ describe RifcsRecordObserver do
     concept = Miletus::Merge::Concept.find(:first)
     concept.should_not be(nil)
     concept.to_rif.should_not be(nil)
-    # A new record should exist as a result
-    #output_record = Miletus::Output::OAIPMH::Record.find(:first)
-    #output_record.should_not be(nil)
-    #output_record.to_rif.should_not be(nil)
   end
 
   it "should update concept when the harvested record changes" do
@@ -108,11 +104,6 @@ describe RifcsRecordObserver do
   end
 
   it "should merge output record data when identifiers match" do
-    def get_identifiers(rifcs)
-      Nokogiri::XML(rifcs).xpath('//rif:identifier', ns_decl).map do |e|
-        e.content.strip
-      end
-    end
     # Disable delayed run for hooks
     RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
     input_record_1 = create_input_record('party', 1)
@@ -127,12 +118,6 @@ describe RifcsRecordObserver do
     concept.should_not be(nil)
     concept.to_rif.should_not be(nil)
     concept.should have(2).facets
-    output_identifiers = get_identifiers(concept.to_rif)
-    [input_record_1, input_record_2].each do |input_record|
-      get_identifiers(input_record.to_rif).each do |identifier|
-        #output_identifiers.should include(identifier)
-      end
-    end
   end
 
 end

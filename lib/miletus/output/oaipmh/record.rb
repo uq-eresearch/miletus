@@ -7,7 +7,7 @@ require 'nokogiri'
 module Miletus::Output::OAIPMH
 
   class Record < ActiveRecord::Base
-    include NamespaceHelper
+    include Miletus::NamespaceHelper
 
     self.table_name = 'output_oaipmh_records'
 
@@ -133,7 +133,7 @@ module Miletus::Output::OAIPMH
     end
 
     class RifCSToOaiDcWrapper
-      include NamespaceHelper
+      include Miletus::NamespaceHelper
 
       def initialize(rifcs)
         @doc = Nokogiri::XML(rifcs)

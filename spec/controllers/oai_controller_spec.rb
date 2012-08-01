@@ -6,7 +6,7 @@ require 'miletus/output/oaipmh/record'
 describe OaiController do
 
   let(:ns_decl) do
-    Miletus::Output::OAIPMH::NamespaceHelper::ns_decl
+    Miletus::NamespaceHelper::ns_decl
   end
 
   describe "GET 'index'" do

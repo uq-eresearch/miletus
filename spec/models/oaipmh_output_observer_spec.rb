@@ -9,7 +9,7 @@ describe OaipmhOutputObserver do
   it { should respond_to(:after_update) }
 
   let(:ns_decl) do
-    Miletus::Output::OAIPMH::NamespaceHelper::ns_decl
+    Miletus::NamespaceHelper::ns_decl
   end
 
   def create_concept(type = 'party', fixture_id = 1)

@@ -7,6 +7,10 @@ module Miletus::Merge
     attr_accessible :key, :metadata
     belongs_to :concept, :touch => true
 
+    def to_rif
+      metadata
+    end
+
   end
 
 end

@@ -2,7 +2,7 @@ require 'nokogiri'
 require 'miletus'
 
 class RifcsRecordObserver < ActiveRecord::Observer
-  include Miletus::Output::OAIPMH::NamespaceHelper
+  include Miletus::NamespaceHelper
 
   observe Miletus::Harvest::OAIPMH::RIFCS::Record
 
@@ -23,7 +23,7 @@ class RifcsRecordObserver < ActiveRecord::Observer
   end
 
   class JobProcessor < Struct.new(:action, :record)
-    include Miletus::Output::OAIPMH::NamespaceHelper
+    include Miletus::NamespaceHelper
 
     def run
       case action
