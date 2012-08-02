@@ -1,8 +1,10 @@
 require 'equivalent-xml'
+require 'set'
 
 module Miletus::Merge
 
   class Concept < ActiveRecord::Base
+    include Miletus::NamespaceHelper
 
     self.table_name = 'merge_concepts'
 
@@ -11,12 +13,68 @@ module Miletus::Merge
       :dependent => :destroy, :order => [:key, :value]
 
     def to_rif
-      input_docs = facets.map {|f| f.to_rif}.reject {|xml| xml.nil?}\
-        .map {|xml| RifCsDoc.create(xml)}
+      input_docs = rifcs_facets
       return nil if input_docs.empty?
       rifcs_doc = input_docs.first.clone
       rifcs_doc.merge_rifcs_elements(input_docs)
       rifcs_doc.root.to_xml(:indent => 2)
+    end
+
+    def update_indexed_attributes_from_facet_rifcs
+      input_docs = rifcs_facets
+      update_indexed_attributes('identifier',
+        content_from_nodes(input_docs, '//rif:identifier'))
+      update_indexed_attributes('relatedKey',
+        content_from_nodes(input_docs, '//rif:relatedObject/rif:key'))
+    end
+
+    def related_concepts
+      inbound_related_concepts.to_set | outbound_related_concepts.to_set
+    end
+
+    private
+
+    def inbound_related_concepts
+      in_keys = facets.pluck(:key)
+      return [] if in_keys.compact.empty?
+      self.class.joins(:indexed_attributes).where(
+          ["#{tn(:indexed_attributes)}.key = 'relatedKey'",
+           "#{tn(:indexed_attributes)}.value IN (?)"].join(' AND '),
+          in_keys
+        )
+    end
+
+    def outbound_related_concepts
+      out_keys = indexed_attributes.where(:key => 'relatedKey').pluck(:value)
+      return [] if out_keys.compact.empty?
+      self.class.joins(:facets).where(
+          "#{tn(:facets)}.key in (?)", out_keys
+        )
+    end
+
+    def tn(relation)
+      self.class.reflect_on_association(relation).klass.table_name
+    end
+
+    def content_from_nodes(docs, xpath)
+      docs.map{|doc| doc.xpath(xpath, ns_decl) # Get nodesets matching pattern
+        }.map{|n| n.to_ary.map {|e| e.content.strip} # Get content values
+        }.reduce(:|) # Join arrays together
+    end
+
+    def rifcs_facets
+      facets.map {|f| f.to_rif}.reject {|xml| xml.nil?}\
+        .map {|xml| RifCsDoc.create(xml)}
+    end
+
+    def update_indexed_attributes(key, new_values)
+      self.transaction do
+        current_values = indexed_attributes.where(:key => key).select(:value)
+        (new_values - current_values).each do |v|
+          indexed_attributes.find_or_create_by_key_and_value(key, v)
+        end
+        indexed_attributes.where(:id => current_values - new_values).delete_all
+      end
     end
 
     class RifCsDoc < Nokogiri::XML::Document
@@ -24,6 +82,8 @@ module Miletus::Merge
 
       def self.create(xml)
         instance = self.parse(xml) {|cfg| cfg.noblanks}
+        # Strip leading and trailing whitespace,
+        # as it's not meaningful in RIF-CS
         instance.xpath('//text()').each do |node|
           node.content = node.content.strip
         end

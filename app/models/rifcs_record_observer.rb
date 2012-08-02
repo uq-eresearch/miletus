@@ -34,13 +34,7 @@ class RifcsRecordObserver < ActiveRecord::Observer
           :key => retrive_global_key(record),
           :metadata => record.to_rif
         )
-        Nokogiri::XML(record.metadata).xpath(
-          '//rif:identifier', ns_decl).each do |e|
-            concept.indexed_attributes.find_or_create_by_key_and_value(
-              :key => 'identifier',
-              :value => e.content.strip
-            )
-          end
+        concept.update_indexed_attributes_from_facet_rifcs
       when :update
         facet = get_existing_facet(record)
         return JobProcessor.new(:create, record).run if facet.nil?
@@ -77,9 +71,9 @@ class RifcsRecordObserver < ActiveRecord::Observer
 
     def retrive_global_key(input_record)
       doc = Nokogiri::XML(input_record.to_rif)
-      key_e = doc.at_xpath('//rif:key', ns_decl)
+      key_e = doc.at_xpath('//rif:registryObject/rif:key', ns_decl)
       begin
-        "%s|%s" % [input_record.record_collection.endpoint, key_e.content.strip]
+        key_e.content.strip
       rescue NoMethodError
         nil
       end
