@@ -25,12 +25,7 @@ describe Miletus::Merge::Concept do
     # Create multi-faceted concept
     concept = Miletus::Merge::Concept.create()
     [1, '1b'].map {|n| get_fixture('party', n) }.each do |fixture_xml|
-      xml = Nokogiri::XML(fixture_xml).tap do |doc|
-        old_root = doc.root
-        doc.root = Nokogiri::XML::Node.new('metadata', doc)
-        doc.root << old_root
-      end.to_s
-      concept.facets.create(:metadata => xml)
+      concept.facets.create(:metadata => fixture_xml)
     end
     concept.should have(2).facets
     concept.to_rif.should_not be(nil)
@@ -38,6 +33,9 @@ describe Miletus::Merge::Concept do
     concept.facets.each do |f|
       get_identifiers(f.to_rif).to_set.should be_subset(merged_identifiers)
     end
+    merged_doc = Nokogiri::XML(concept.to_rif)
+    merged_doc.xpath('//rif:location', ns_decl).count.should == 2
+    merged_doc.xpath('//rif:name', ns_decl).count.should == 2
   end
 
 end

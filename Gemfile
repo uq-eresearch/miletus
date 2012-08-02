@@ -45,6 +45,7 @@ gem "clockwork"
 gem "activerecord-postgresql-adapter"
 gem "pg"
 gem "realrand" # For generating secret token
+gem "equivalent-xml"
 
 gem "twitter-bootstrap-rails"
 gem "haml-rails"

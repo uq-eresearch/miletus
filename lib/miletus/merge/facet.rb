@@ -10,7 +10,7 @@ module Miletus::Merge
     def to_rif
       begin
         doc = Nokogiri::XML(metadata)
-        doc.root.nil? ? nil : doc.to_s
+        doc.root.nil? ? nil : doc.root.to_s
       rescue
         nil
       end

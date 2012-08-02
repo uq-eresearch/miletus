@@ -1,3 +1,5 @@
+require 'equivalent-xml'
+
 module Miletus::Merge
 
   class Concept < ActiveRecord::Base
@@ -10,46 +12,70 @@ module Miletus::Merge
 
     def to_rif
       input_docs = facets.map {|f| f.to_rif}.reject {|xml| xml.nil?}\
-        .map {|xml| RifCsDoc.new(xml)}
+        .map {|xml| RifCsDoc.create(xml)}
       return nil if input_docs.empty?
       rifcs_doc = input_docs.first.clone
-      rifcs_doc.merge_rifcs_identifiers(input_docs).to_s
+      rifcs_doc.merge_rifcs_elements(input_docs)
+      rifcs_doc.root.to_xml(:indent => 2)
     end
 
-    class RifCsDoc
+    class RifCsDoc < Nokogiri::XML::Document
       include Miletus::NamespaceHelper
 
-      def initialize(xml)
-        @doc = Nokogiri::XML(xml)
+      def self.create(xml)
+        instance = self.parse(xml) {|cfg| cfg.noblanks}
+        instance.xpath('//text()').each do |node|
+          node.content = node.content.strip
+        end
+        instance
       end
 
-      def identifiers
-        @doc.xpath("//rif:identifier", ns_decl)
-      end
-
-      def merge_rifcs_identifiers(input_docs)
-        # Get all identifier elements, unique in content
-        identifiers = deduplicate_by_content(input_docs.map {|d| d.identifiers})
-        types = %w{collection party activity service}
-        pattern = types.map { |e| "//rif:#{e}"}.join(' | ')
-        base = @doc.at_xpath(pattern, ns_decl)
-        base.xpath("//rif:identifier", ns_decl).remove
-        base.children.first.before(
-          Nokogiri::XML::NodeSet.new(@doc, identifiers))
-        base.xpath("//rif:identifier", ns_decl).each do |n|
-          n.namespace = base.namespace
+      def merge_rifcs_elements(input_docs)
+        ["//rif:identifier", "//rif:name", "//rif:location"].each do |pattern|
+          # Get all identifier elements, unique in content
+          merged_nodes = deduplicate_by_content(input_docs.map do |d|
+            copy_nodes(d.xpath(pattern, ns_decl))
+          end.reduce(:|))
+          replace_all(xpath(pattern, ns_decl),
+            Nokogiri::XML::NodeSet.new(self, merged_nodes))
         end
         self
       end
 
-      def to_s
-        @doc.to_s
-      end
-
       private
 
-      def deduplicate_by_content(nodesets)
-        nodesets.map {|n| n.to_ary}.reduce(:|).uniq {|e| e.content.strip }
+      def copy_nodes(nodeset)
+        nodeset.to_ary.map { |n| n = n.dup }.map do |n|
+          n.default_namespace = n.namespace
+          n
+        end
+      end
+
+      def deduplicate_by_content(nodes)
+        nodes.uniq {|e| EquivalentWrapper.new(e) }
+      end
+
+      def replace_all(orig_tags, tags)
+        orig_tags[1..-1].each {|m| m.remove} if orig_tags.count > 1
+        orig_tags.first.swap(tags)
+      end
+
+      class EquivalentWrapper < Struct.new(:node)
+        def hash
+          node.name.hash
+        end
+
+        def ==(other)
+          EquivalentXml.equivalent?(node, other.node, opts = {
+            :element_order => false,
+            :normalize_whitespace => true
+          })
+        end
+
+        def eql?(other)
+          self == other
+        end
+
       end
 
     end
