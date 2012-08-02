@@ -12,11 +12,16 @@ module Miletus::Merge
     has_many :indexed_attributes,
       :dependent => :destroy, :order => [:key, :value]
 
+    def key
+      "%s%d" % [key_prefix, id]
+    end
+
     def to_rif
       input_docs = rifcs_facets
       return nil if input_docs.empty?
       rifcs_doc = input_docs.first.clone
       rifcs_doc.merge_rifcs_elements(input_docs)
+      rifcs_doc.key = key
       rifcs_doc.root.to_xml(:indent => 2)
     end
 
@@ -33,6 +38,15 @@ module Miletus::Merge
     end
 
     private
+
+    def key_prefix
+      if ENV.has_key? 'CONCEPT_KEY_PREFIX'
+        ENV['CONCEPT_KEY_PREFIX']
+      else
+        require 'socket'
+        'urn:%s:' % Socket.gethostname
+      end
+    end
 
     def inbound_related_concepts
       in_keys = facets.pluck(:key)
@@ -88,6 +102,12 @@ module Miletus::Merge
           node.content = node.content.strip
         end
         instance
+      end
+
+      def key=(value)
+        key_e = at_xpath("//rif:registryObject/rif:key", ns_decl)
+        return false if key_e.nil?
+        key_e.content = value
       end
 
       def merge_rifcs_elements(input_docs)

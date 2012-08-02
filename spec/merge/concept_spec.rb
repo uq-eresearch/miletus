@@ -20,7 +20,7 @@ describe Miletus::Merge::Concept do
     end
   end
 
-  it { should respond_to(:facets) }
+  it { should respond_to(:facets, :indexed_attributes, :key) }
 
   it "should merge facet metadata when identifiers match" do
     # Create multi-faceted concept
@@ -37,6 +37,19 @@ describe Miletus::Merge::Concept do
     merged_doc = Nokogiri::XML(concept.to_rif)
     merged_doc.xpath('//rif:location', ns_decl).count.should == 2
     merged_doc.xpath('//rif:name', ns_decl).count.should == 2
+  end
+
+  it "should replace existing RIF-CS key with its own" do
+    # Create multi-faceted concept
+    concept = Miletus::Merge::Concept.create()
+    [1, '1b'].map {|n| get_fixture('party', n) }.each do |fixture_xml|
+      concept.facets.create(:metadata => fixture_xml)
+    end
+    concept.should have(2).facets
+    concept.to_rif.should_not be(nil)
+    merged_doc = Nokogiri::XML(concept.to_rif)
+    key_e = merged_doc.at_xpath('//rif:registryObject/rif:key', ns_decl)
+    key_e.content.strip.should == concept.key
   end
 
   it "should index identifiers" do
