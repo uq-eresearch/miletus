@@ -9,7 +9,6 @@ class OaipmhOutputObserver < ActiveRecord::Observer
     concept = concept_or_facet.concept rescue concept_or_facet
     update_record_from_concept(concept)
     concept.related_concepts.each do |related_concept|
-      puts concept
       update_record_from_concept(related_concept)
     end
   end
