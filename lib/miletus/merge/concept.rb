@@ -22,6 +22,7 @@ module Miletus::Merge
       rifcs_doc = input_docs.first.clone
       rifcs_doc.merge_rifcs_elements(input_docs)
       rifcs_doc.key = key
+      rifcs_doc.translate_keys(related_key_dictionary)
       rifcs_doc.root.to_xml(:indent => 2)
     end
 
@@ -38,6 +39,12 @@ module Miletus::Merge
     end
 
     private
+
+    def related_key_dictionary
+      Hash[*outbound_related_concepts.map do |c|
+        c.facets.map {|f| [f.key, c.key] }
+      end.flatten]
+    end
 
     def key_prefix
       if ENV.has_key? 'CONCEPT_KEY_PREFIX'
@@ -108,6 +115,13 @@ module Miletus::Merge
         key_e = at_xpath("//rif:registryObject/rif:key", ns_decl)
         return false if key_e.nil?
         key_e.content = value
+      end
+
+      def translate_keys(dictionary)
+        xpath("//rif:relatedObject/rif:key", ns_decl).each do |e|
+          k = e.content.strip
+          e.content = dictionary[k] if dictionary.key? k
+        end
       end
 
       def merge_rifcs_elements(input_docs)
