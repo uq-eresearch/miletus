@@ -12,11 +12,14 @@ describe OaipmhOutputObserver do
     Miletus::NamespaceHelper::ns_decl
   end
 
-  def create_concept(type = 'party', fixture_id = 1)
-    # Load data from fixture
+  def get_fixture(type, number = 1)
     fixture_file = File.join(File.dirname(__FILE__),
-      '..', 'fixtures',"rifcs-#{type}-#{fixture_id}.xml")
-    xml = File.open(fixture_file) { |f| f.read }
+        '..', 'fixtures',"rifcs-#{type}-#{number}.xml")
+    File.open(fixture_file) { |f| f.read() }
+  end
+
+  def create_concept(type = 'party', fixture_id = 1)
+    xml = get_fixture(type, fixture_id)
     # Create concept
     concept = Miletus::Merge::Concept.create()
     # Create record
@@ -90,6 +93,30 @@ describe OaipmhOutputObserver do
     output_record.should_not be_nil
     output_record.should be_deleted
   end
+
+  it "should regenerate output records when related concepts change" do
+    # Disable delayed run for hooks
+    RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
+    concepts = \
+      [get_fixture('collection', 1), get_fixture('party', 1)].map do |xml|
+        concept = Miletus::Merge::Concept.create()
+        k = Nokogiri::XML(xml)\
+          .at_xpath('//rif:registryObject/rif:key', ns_decl).content.strip
+        concept.facets.create(:key => k, :metadata => xml)
+        # Update attributes
+        concept.update_indexed_attributes_from_facet_rifcs
+        concept
+      end
+    # Two new records should exist as a result
+    Miletus::Output::OAIPMH::Record.count.should == 2
+    Miletus::Output::OAIPMH::Record.all.each do |record|
+      doc = Nokogiri::XML(record.to_rif)
+      doc.xpath('//rif:relatedObject/rif:key', ns_decl).each do |other_key_e|
+        concepts.map{ |c| c.key }.should include(other_key_e.content.strip)
+      end
+    end
+  end
+
 
 
 end

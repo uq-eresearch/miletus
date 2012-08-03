@@ -79,7 +79,7 @@ describe Miletus::Merge::Concept do
       k = Nokogiri::XML(xml).at_xpath('//rif:registryObject/rif:key', ns_decl)\
         .content.strip
       concept.facets.create(:key => k, :metadata => xml)
-      # Update
+      # Update attributes
       concept.update_indexed_attributes_from_facet_rifcs
     end
     Miletus::Merge::Concept.count.should == 2

@@ -38,6 +38,10 @@ module Miletus::Merge
       inbound_related_concepts.to_set | outbound_related_concepts.to_set
     end
 
+    def to_s
+      "%s incorporating %s" % [key, facets.pluck(:key).inspect]
+    end
+
     private
 
     def related_key_dictionary

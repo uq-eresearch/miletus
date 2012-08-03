@@ -81,18 +81,6 @@ module Miletus::Output::OAIPMH
       end
     end
 
-    #def replace_rifcs_keys
-    #  return if read_attribute(:metadata).nil?
-    #  xml = Nokogiri::XML(read_attribute(:metadata)).tap do |xml|
-    #      xml.xpath("//rif:registryObject/rif:key", ns_decl).each do |e|
-    #        e.content = "%s%d" %
-    #           [Miletus::Output::OAIPMH::RIFCS_KEY_PREFIX, id]
-    #      end
-    #    end.root.to_s
-    #  write_attribute(:metadata, xml)
-    #  save!
-    #end
-
     def translate_old_elements(rifcs_doc)
       types = {'rights' => 'rightsStatement', 'accessRights' => 'accessRights'}
       # Assemble xpath search pattern
