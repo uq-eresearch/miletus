@@ -155,7 +155,7 @@ module Miletus::Merge
 
       def replace_all(orig_tags, tags)
         orig_tags[1..-1].each {|m| m.remove} if orig_tags.count > 1
-        orig_tags.first.swap(tags)
+        orig_tags.first.swap(tags) unless orig_tags.first.nil?
       end
 
       class EquivalentWrapper < Struct.new(:node)
