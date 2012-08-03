@@ -7,7 +7,11 @@ class OaipmhOutputObserver < ActiveRecord::Observer
 
   def update_record(concept_or_facet)
     concept = concept_or_facet.concept rescue concept_or_facet
+    Rails.logger.info("Updating OAIPMH output record for %s" % concept)
     update_record_from_concept(concept)
+    Rails.logger.info(
+      "Updating related OAIPMH output records for %s including: %s" %
+      [concept, concept.related_concepts.inspect])
     concept.related_concepts.each do |related_concept|
       update_record_from_concept(related_concept)
     end

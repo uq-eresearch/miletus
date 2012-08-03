@@ -84,7 +84,7 @@ module Miletus::Merge
     def content_from_nodes(docs, xpath)
       docs.map{|doc| doc.xpath(xpath, ns_decl) # Get nodesets matching pattern
         }.map{|n| n.to_ary.map {|e| e.content.strip} # Get content values
-        }.reduce(:|) # Join arrays together
+        }.reduce(:|) or [] # Join arrays together, and handle nil case
     end
 
     def rifcs_facets

@@ -34,7 +34,6 @@ class RifcsRecordObserver < ActiveRecord::Observer
           :key => retrive_global_key(record),
           :metadata => record.to_rif
         )
-        concept.update_indexed_attributes_from_facet_rifcs
       when :update
         facet = get_existing_facet(record)
         return JobProcessor.new(:create, record).run if facet.nil?

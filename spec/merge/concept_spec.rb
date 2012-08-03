@@ -56,8 +56,6 @@ describe Miletus::Merge::Concept do
     fixture_metadata = get_fixture('party')
     concept = Miletus::Merge::Concept.create()
     concept.facets.create(:metadata => fixture_metadata)
-    # Update
-    concept.update_indexed_attributes_from_facet_rifcs
     # Indexed attributes should be created
     concept.indexed_attributes.where(:key => 'identifier').count.should ==
       get_identifiers(fixture_metadata).count
@@ -67,8 +65,6 @@ describe Miletus::Merge::Concept do
     fixture_metadata = get_fixture('collection')
     concept = Miletus::Merge::Concept.create()
     concept.facets.create(:metadata => fixture_metadata)
-    # Update
-    concept.update_indexed_attributes_from_facet_rifcs
     # Indexed attributes should be created
     concept.indexed_attributes.where(:key => 'relatedKey').count.should == 1
   end
@@ -79,8 +75,6 @@ describe Miletus::Merge::Concept do
       k = Nokogiri::XML(xml).at_xpath('//rif:registryObject/rif:key', ns_decl)\
         .content.strip
       concept.facets.create(:key => k, :metadata => xml)
-      # Update attributes
-      concept.update_indexed_attributes_from_facet_rifcs
     end
     Miletus::Merge::Concept.count.should == 2
     Miletus::Merge::Concept.all.each do |concept|
