@@ -17,7 +17,7 @@ describe Miletus::Output::OAIPMH::Record do
     it { should respond_to(:to_oai_dc) }
 
     it "should return nil if record cannot generate valid Dublin Core" do
-      subject.to_oai_dc.should be(nil)
+      subject.to_oai_dc.should be_nil
     end
 
     context "should return valid OAI Dublin Core if provided with" do
@@ -28,8 +28,7 @@ describe Miletus::Output::OAIPMH::Record do
           subject.to_oai_dc.should_not be_nil
           # Validate the XML
           dc_doc = Nokogiri::XML(subject.to_oai_dc)
-          dc_schema = schema_by_prefix('oai_dc')
-          dc_schema.validate(dc_doc).should be_empty
+          ns_by_prefix('oai_dc').schema.valid?(dc_doc).should be_true
         end
       end
     end
@@ -91,7 +90,7 @@ describe Miletus::Output::OAIPMH::Record do
           subject.to_rif.should_not be_nil
           # Validate the XML
           rifcs_doc = Nokogiri::XML(subject.to_rif)
-          schema_by_prefix('rif').validate(rifcs_doc).should be_empty
+          ns_by_prefix('rif').schema.valid?(rifcs_doc).should be_true
         end
       end
     end

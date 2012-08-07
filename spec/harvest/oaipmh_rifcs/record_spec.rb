@@ -52,7 +52,7 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Record do
       :datestamp => DateTime.now,
       :metadata => fixture_xml)
     rifcs_doc = Nokogiri::XML(record.to_rif)
-    schema_by_prefix('rif').validate(rifcs_doc).should be_empty
+    ns_by_prefix('rif').schema.valid?(rifcs_doc).should be_true
   end
 
 end

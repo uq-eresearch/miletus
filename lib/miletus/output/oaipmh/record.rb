@@ -101,7 +101,7 @@ module Miletus::Output::OAIPMH
 
     def valid_rifcs?
       begin
-        schema_by_prefix('rif').validate(Nokogiri::XML(metadata)).empty?
+        ns_by_prefix('rif').schema.valid?(Nokogiri::XML(metadata))
       rescue TypeError
         false
       end

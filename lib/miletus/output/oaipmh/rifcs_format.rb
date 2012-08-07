@@ -3,10 +3,10 @@ module Miletus::Output::OAIPMH
   class RifcsFormat < OAI::Provider::Metadata::Format
     def initialize
       @prefix = 'rif'
-      @namespace = 'http://ands.org.au/standards/rif-cs/registryObjects'
-      @schema = 'http://services.ands.org.au' +
-        '/documentation/rifcs/schema/registryObjects.xsd'
-      @element_namespace = 'rif'
+      ns_obj = Miletus::NamespaceHelper::ns_by_prefix(@prefix)
+      @namespace = ns_obj.uri
+      @schema = ns_obj.schema_location
+      @element_namespace = @prefix
       @fields = [ :registryObject ]
     end
 
