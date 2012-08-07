@@ -50,6 +50,8 @@ gem "equivalent-xml"
 gem "twitter-bootstrap-rails"
 gem "haml-rails"
 
+gem 'sru', '~> 0.0.9'
+
 group :test, :development do
   gem "rspec-rails"
   gem "minitest"
