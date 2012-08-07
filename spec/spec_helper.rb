@@ -49,6 +49,10 @@ Spork.prefork do
         raise ActiveRecord::Rollback
       end
     end
+
+    # Mixin namespace helpers
+    config.include Miletus::NamespaceHelper
+
   end
 end
 

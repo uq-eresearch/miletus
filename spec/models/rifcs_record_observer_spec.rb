@@ -8,10 +8,6 @@ describe RifcsRecordObserver do
 
   it { should respond_to(:after_create, :after_update) }
 
-  let(:ns_decl) do
-    Miletus::NamespaceHelper::ns_decl
-  end
-
   def create_input_record(type = 'party', fixture_id = 1)
     # Load data from fixture
     fixture_file = File.join(File.dirname(__FILE__),

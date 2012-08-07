@@ -8,10 +8,6 @@ describe OaipmhOutputObserver do
 
   it { should respond_to(:after_update) }
 
-  let(:ns_decl) do
-    Miletus::NamespaceHelper::ns_decl
-  end
-
   def get_fixture(type, number = 1)
     fixture_file = File.join(File.dirname(__FILE__),
         '..', 'fixtures',"rifcs-#{type}-#{number}.xml")

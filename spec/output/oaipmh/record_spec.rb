@@ -4,10 +4,6 @@ require 'miletus'
 
 describe Miletus::Output::OAIPMH::Record do
 
-  let(:ns_decl) do
-    Miletus::NamespaceHelper::ns_decl
-  end
-
   def get_fixture(type, number = 1)
     fixture_file = File.join(File.dirname(__FILE__),
         '..', '..', 'fixtures',"rifcs-#{type}-#{number}.xml")
@@ -32,7 +28,7 @@ describe Miletus::Output::OAIPMH::Record do
           subject.to_oai_dc.should_not be_nil
           # Validate the XML
           dc_doc = Nokogiri::XML(subject.to_oai_dc)
-          dc_schema = subject.class.get_schema('oai_dc')
+          dc_schema = schema_by_prefix('oai_dc')
           dc_schema.validate(dc_doc).should be_empty
         end
       end
@@ -95,8 +91,7 @@ describe Miletus::Output::OAIPMH::Record do
           subject.to_rif.should_not be_nil
           # Validate the XML
           rifcs_doc = Nokogiri::XML(subject.to_rif)
-          rifcs_schema = subject.class.get_schema('rif')
-          rifcs_schema.validate(rifcs_doc).should be_empty
+          schema_by_prefix('rif').validate(rifcs_doc).should be_empty
         end
       end
     end

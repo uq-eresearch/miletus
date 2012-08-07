@@ -43,11 +43,6 @@ module Miletus::Output::OAIPMH
       metadata
     end
 
-    def self.get_schema(schema)
-      # Memoize fetching schemas
-      @@schemas[schema] ||= self.do_get_schema(schema)
-    end
-
     protected
 
     def update_indexed_attributes(key, values)
@@ -106,18 +101,10 @@ module Miletus::Output::OAIPMH
 
     def valid_rifcs?
       begin
-        self.class.get_schema('rif').validate(Nokogiri::XML(metadata)).empty?
+        schema_by_prefix('rif').validate(Nokogiri::XML(metadata)).empty?
       rescue TypeError
         false
       end
-    end
-
-    def self.do_get_schema(schema)
-      require File.join(File.dirname(__FILE__), 'record_provider')
-      require 'open-uri'
-      schema_loc = RecordProvider.format(schema).schema
-      schema_doc = Nokogiri::XML(open(schema_loc), url = schema_loc)
-      Nokogiri::XML::Schema.from_document(schema_doc)
     end
 
     class RifCSToOaiDcWrapper

@@ -3,10 +3,6 @@ require 'miletus/harvest/oaipmh_rifcs/record'
 
 describe Miletus::Harvest::OAIPMH::RIFCS::Record do
 
-  let(:ns_decl) do
-    Miletus::NamespaceHelper::ns_decl
-  end
-
   def get_xml_fixture(type, number = 1)
     fixture_file = File.join(File.dirname(__FILE__),
         '..', '..', 'fixtures',"rifcs-#{type}-#{number}.xml")
@@ -55,8 +51,8 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Record do
       :identifier => 'http://example.test/1',
       :datestamp => DateTime.now,
       :metadata => fixture_xml)
-    doc = Nokogiri::XML(record.to_rif)
-    doc.at_xpath('/rif:registryObjects', ns_decl).should_not be_nil
+    rifcs_doc = Nokogiri::XML(record.to_rif)
+    schema_by_prefix('rif').validate(rifcs_doc).should be_empty
   end
 
 end
