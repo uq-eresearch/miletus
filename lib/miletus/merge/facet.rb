@@ -1,6 +1,7 @@
 module Miletus::Merge
 
   class Facet < ActiveRecord::Base
+    include Miletus::NamespaceHelper
 
     self.table_name = 'merge_facets'
 
@@ -14,12 +15,8 @@ module Miletus::Merge
     end
 
     def to_rif
-      begin
-        doc = Nokogiri::XML(metadata)
-        doc.root.nil? ? nil : doc.root.to_s
-      rescue
-        nil
-      end
+      doc = Nokogiri::XML(metadata)
+      ns_by_prefix('rif').schema.valid?(doc) ? doc.root.to_s : nil
     end
 
   end
