@@ -1,0 +1,102 @@
+#!/usr/bin/env ruby
+#
+# Utility to test the retrieval of a NLA Party Identifier
+# from Trove.
+#
+# Copyright (C) 2012, The University of Queensland.                             
+#----------------------------------------------------------------
+
+$VERBOSE = true
+
+$LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
+
+require 'optparse'
+require 'miletus/trove_sru'
+
+#----------------------------------------------------------------
+
+def process_command_line
+
+  # Specify command line options
+
+  options = {}
+  opt_parser = OptionParser.new do |opt|
+    opt.banner = "Usage: PROG [options] {rifcsFiles}"
+
+    opt.separator "Options:"
+
+    opt.on("-t", "--type str", "identifier type") do |param|
+      options[:type] = param
+    end
+
+    opt.on("-v", "--verbose", "verbose output") do
+      options[:verbose] = true
+    end
+
+    opt.on("-h", "--help", "show help message") do
+      $stderr.puts opt_parser
+      exit 0
+    end
+  end
+  opt_parser.version = 1.0
+  opt_parser.release = 1
+
+  # Parse parameters
+
+  begin
+    opt_parser.parse!
+  rescue OptionParser::InvalidOption => e
+    $stderr.puts "Usage error: #{e.message} (--help for help)"
+    exit 2
+  rescue OptionParser::InvalidArgument => e
+    $stderr.puts "Usage error: #{e.message}"
+    exit 2
+  end
+
+  # Defaults (if needed)
+
+  if ! options[:type]
+    options[:type] = 'AU-QU'
+  end
+
+  if ARGV.empty?
+    $stderr.puts "Usage error: missing search value (-h for help)"
+    exit 2
+  end
+
+  return [ ARGV, options[:type], options[:verbose] ]
+
+end # def process_command_line
+
+#----------------------------------------------------------------
+
+def main
+
+  ids, type, verbose = process_command_line
+
+  success = true
+
+  ids.each do |value|
+    if verbose
+      print "{#{type}}#{value}: "
+    end
+
+    nla_id = TroveSRU.lookup_nla_id(type, value)
+
+    if nla_id
+      if verbose
+        print "{#{TroveSRU::NLA_PARTY_ID_TYPE}}"
+      end
+      puts nla_id
+    else
+      puts "no match"
+      success = false
+    end
+  end
+
+  return (success ? 0 : 1)
+end
+
+exit main
+
+#EOF
