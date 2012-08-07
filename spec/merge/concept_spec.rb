@@ -35,6 +35,27 @@ describe Miletus::Merge::Concept do
     merged_doc.xpath('//rif:name', ns_decl).count.should == 2
   end
 
+  it "should merge facet metadata with some missing elements" do
+    # Create multi-faceted concept
+    ['1b', '1c'].permutation.each do |permutation|
+      concept = Miletus::Merge::Concept.create()
+      permutation.map {|n| get_fixture('party', n) }.each do |fixture_xml|
+        concept.facets.create(:metadata => fixture_xml)
+      end
+      concept.should have(2).facets
+      concept.to_rif.should_not be(nil)
+      merged_identifiers = get_identifiers(concept.to_rif).to_set
+      concept.facets.each do |f|
+        get_identifiers(f.to_rif).to_set.should be_subset(merged_identifiers)
+      end
+      merged_doc = Nokogiri::XML(concept.to_rif)
+      merged_doc.xpath('//rif:location', ns_decl).count.should == 1
+      merged_doc.xpath('//rif:name', ns_decl).count.should == 1
+      ns_by_prefix('rif').schema.valid?(merged_doc).should be_true
+      concept.destroy
+    end
+  end
+
   it "should replace existing RIF-CS key with its own" do
     # Create multi-faceted concept
     concept = Miletus::Merge::Concept.create()

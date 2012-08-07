@@ -29,7 +29,8 @@ module Miletus::Merge
     def update_indexed_attributes_from_facet_rifcs
       input_docs = rifcs_facets
       update_indexed_attributes('identifier',
-        content_from_nodes(input_docs, '//rif:identifier'))
+        content_from_nodes(input_docs,
+          '//rif:registryObject/rif:*/rif:identifier'))
       update_indexed_attributes('relatedKey',
         content_from_nodes(input_docs, '//rif:relatedObject/rif:key'))
     end
@@ -129,13 +130,19 @@ module Miletus::Merge
       end
 
       def merge_rifcs_elements(input_docs)
-        ["//rif:identifier", "//rif:name", "//rif:location"].each do |pattern|
+        patterns = [
+          "//rif:registryObject/rif:*/rif:identifier",
+          "//rif:name",
+          "//rif:location"]
+        alt_parent = at_xpath("//rif:registryObject/rif:*[last()]", ns_decl)
+        patterns.each do |pattern|
           # Get all identifier elements, unique in content
           merged_nodes = deduplicate_by_content(input_docs.map do |d|
             copy_nodes(d.xpath(pattern, ns_decl))
           end.reduce(:|))
           replace_all(xpath(pattern, ns_decl),
-            Nokogiri::XML::NodeSet.new(self, merged_nodes))
+            Nokogiri::XML::NodeSet.new(self, merged_nodes),
+            alt_parent)
         end
         self
       end
@@ -153,9 +160,13 @@ module Miletus::Merge
         nodes.uniq {|e| EquivalentWrapper.new(e) }
       end
 
-      def replace_all(orig_tags, tags)
+      def replace_all(orig_tags, tags, alt_parent)
         orig_tags[1..-1].each {|m| m.remove} if orig_tags.count > 1
-        orig_tags.first.swap(tags) unless orig_tags.first.nil?
+        if orig_tags.first.nil?
+          alt_parent << tags
+        else
+          orig_tags.first.swap(tags)
+        end
       end
 
       class EquivalentWrapper < Struct.new(:node)
