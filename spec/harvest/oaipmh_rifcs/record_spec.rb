@@ -3,6 +3,16 @@ require 'miletus/harvest/oaipmh_rifcs/record'
 
 describe Miletus::Harvest::OAIPMH::RIFCS::Record do
 
+  let(:ns_decl) do
+    Miletus::NamespaceHelper::ns_decl
+  end
+
+  def get_xml_fixture(type, number = 1)
+    fixture_file = File.join(File.dirname(__FILE__),
+        '..', '..', 'fixtures',"rifcs-#{type}-#{number}.xml")
+    File.open(fixture_file) { |f| f.read() }
+  end
+
   it "is creatable with no arguments" do
     Miletus::Harvest::OAIPMH::RIFCS::Record.new()
   end
@@ -33,6 +43,20 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Record do
     oaiRecord.header.identifier.should == record.identifier
     oaiRecord.header.datestamp.should == record.datestamp
     oaiRecord.metadata.to_s.should == record.metadata
+  end
+
+  it "produces a valid RIF-CS record" do
+    fixture_xml = Nokogiri::XML(get_xml_fixture('collection')).tap do |doc|
+      old_root = doc.root
+      doc.root = Nokogiri::XML::Node.new('metadata', doc)
+      doc.root << old_root
+    end.to_s
+    record = Miletus::Harvest::OAIPMH::RIFCS::Record.new(
+      :identifier => 'http://example.test/1',
+      :datestamp => DateTime.now,
+      :metadata => fixture_xml)
+    doc = Nokogiri::XML(record.to_rif)
+    doc.at_xpath('/rif:registryObjects', ns_decl).should_not be_nil
   end
 
 end

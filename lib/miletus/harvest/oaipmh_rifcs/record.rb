@@ -50,7 +50,7 @@ module Miletus::Harvest::OAIPMH::RIFCS
 
     def to_rif
       doc = Nokogiri::XML::Document.parse(metadata)
-      doc.children.map { |obj| obj.to_s }.join("\n")
+      doc.root.children.map { |obj| obj.to_s }.join("\n")
     end
 
     private

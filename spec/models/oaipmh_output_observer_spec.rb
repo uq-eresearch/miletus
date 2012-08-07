@@ -24,11 +24,7 @@ describe OaipmhOutputObserver do
     concept = Miletus::Merge::Concept.create()
     # Create record
     concept.facets.create(
-      :metadata => Nokogiri::XML(xml).tap do |doc|
-        old_root = doc.root
-        doc.root = Nokogiri::XML::Node.new('metadata', doc)
-        doc.root << old_root
-      end.to_s
+      :metadata => Nokogiri::XML(xml).to_s
     )
     concept
   end

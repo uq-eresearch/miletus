@@ -45,6 +45,8 @@ describe RifcsRecordObserver do
     concept = Miletus::Merge::Concept.find(:first)
     concept.should_not be(nil)
     concept.to_rif.should_not be(nil)
+    doc = Nokogiri::XML(concept.to_rif)
+    doc.at_xpath('/rif:registryObjects', ns_decl).should_not be_nil
   end
 
   it "should update concept when the harvested record changes" do
