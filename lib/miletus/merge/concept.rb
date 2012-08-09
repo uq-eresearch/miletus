@@ -4,6 +4,7 @@ require 'set'
 module Miletus::Merge
 
   class Concept < ActiveRecord::Base
+    extend Miletus::NamespaceHelper
     include Miletus::NamespaceHelper
 
     self.table_name = 'merge_concepts'
@@ -14,6 +15,21 @@ module Miletus::Merge
 
     def key
       "%s%d" % [key_prefix, id]
+    end
+
+    def self.find_existing(xml)
+      id_nodes = Nokogiri::XML(xml).xpath(
+        '//rif:identifier', ns_decl)
+      existing = id_nodes.map do |e|
+        joins(:indexed_attributes).where(
+          IndexedAttribute.table_name.to_sym => {
+            :key => 'identifier',
+            :value => e.content.strip
+          }
+        ).pluck(:concept_id)
+      end.flatten
+      return nil if existing.empty?
+      find_by_id(existing.first)
     end
 
     def to_rif

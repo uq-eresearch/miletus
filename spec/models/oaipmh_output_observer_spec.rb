@@ -55,7 +55,7 @@ describe OaipmhOutputObserver do
     nodes.each do |e|
       e.remove
     end
-    facet.metadata = doc
+    facet.metadata = doc.root.to_s
     facet.save!
     # The concept should update as a result
     output_record = Miletus::Output::OAIPMH::Record.find(:first)
@@ -92,9 +92,7 @@ describe OaipmhOutputObserver do
     concepts = \
       [get_fixture('collection', 1), get_fixture('party', 1)].map do |xml|
         concept = Miletus::Merge::Concept.create()
-        k = Nokogiri::XML(xml)\
-          .at_xpath('//rif:registryObject/rif:key', ns_decl).content.strip
-        concept.facets.create(:key => k, :metadata => xml)
+        concept.facets.create(:metadata => xml)
         concept
       end
     # Two new records should exist as a result

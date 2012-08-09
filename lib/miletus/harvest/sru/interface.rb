@@ -4,11 +4,41 @@ module Miletus::Harvest::SRU::Interface
 
     self.table_name = 'sru_interfaces'
 
-    attr_accessible :endpoint
+    attr_accessible :endpoint, :schema
 
     validates :endpoint, :presence => true
     validates_format_of :endpoint, :with => URI::regexp(%w(http https))
     validates_uniqueness_of :endpoint
+
+    def lookup(type, value)
+      client = SRU::Client.new(endpoint)
+
+      # Create Common/Contextual Query Language (CQL) query
+
+      # According to <http://www.loc.gov/standards/sru/specs/cql.html>:
+      #
+      # Double quotes enclosing a sequence of any characters except
+      # double quote (unless preceded by backslash (\)). Backslash
+      # escapes the character following it. The resultant value includes
+      # all backslash characters except those releasing a double quote
+      # (this allows other systems to interpret the backslash
+      # character). The surrounding double quotes are not included.
+
+      escaped_value = value.gsub('"', '\"')
+
+      cql_query = "rec.identifier=\"#{escaped_value}\""
+
+      # Search (returns a SRU::SearchRetrieveResponse object)
+
+      records = client.search_retrieve(cql_query,
+                              :maximumRecords => 2,
+                              :resultSetTTL => 0,
+                              :recordSchema => RIFCS_SCHEMA)
+
+      num_records = records.number_of_records
+      return nil if num_records.zero?
+      raise DataError, "multiple matches found: #{value}" if num_records > 1
+    end
 
   end
 end

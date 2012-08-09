@@ -89,9 +89,7 @@ describe Miletus::Merge::Concept do
   it "should find related concepts using keys and map them in RIF-CS" do
     [get_fixture('collection', 1), get_fixture('party', 1)].each do |xml|
       concept = Miletus::Merge::Concept.create()
-      k = Nokogiri::XML(xml).at_xpath('//rif:registryObject/rif:key', ns_decl)\
-        .content.strip
-      concept.facets.create(:key => k, :metadata => xml)
+      concept.facets.create(:metadata => xml)
     end
     Miletus::Merge::Concept.count.should == 2
     Miletus::Merge::Concept.all.each do |concept|
