@@ -1,5 +1,5 @@
 
-module Miletus::Harvest::SRU::Interface
+module Miletus::Harvest::SRU
   class Interface < ActiveRecord::Base
 
     self.table_name = 'sru_interfaces'
@@ -10,7 +10,7 @@ module Miletus::Harvest::SRU::Interface
     validates_format_of :endpoint, :with => URI::regexp(%w(http https))
     validates_uniqueness_of :endpoint
 
-    def lookup(type, value)
+    def lookup(value)
       client = SRU::Client.new(endpoint)
 
       # Create Common/Contextual Query Language (CQL) query
@@ -33,11 +33,13 @@ module Miletus::Harvest::SRU::Interface
       records = client.search_retrieve(cql_query,
                               :maximumRecords => 2,
                               :resultSetTTL => 0,
-                              :recordSchema => RIFCS_SCHEMA)
+                              :recordSchema => schema)
 
       num_records = records.number_of_records
       return nil if num_records.zero?
       raise DataError, "multiple matches found: #{value}" if num_records > 1
+      # Get the contents of the first record
+      Nokogiri::XML(records.first.to_s).root.children.first.to_s
     end
 
   end

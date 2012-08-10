@@ -118,6 +118,6 @@ module Miletus
 
     # Add observers
     config.active_record.observers = :rifcs_record_observer,
-      :oaipmh_output_observer
+      :oaipmh_output_observer, :sru_rifcs_lookup_observer
   end
 end

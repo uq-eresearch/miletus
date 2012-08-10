@@ -34,29 +34,34 @@ gem 'unicorn'
 # Deploy with Capistrano
 # gem 'capistrano'
 
-gem "activerecord"
+gem 'activerecord'
 gem 'delayed_job_active_record'
-gem "oai", :git => "https://github.com/tjdett/ruby-oai.git", :branch => "next"
-gem "rake"
-gem "libxml-ruby"
-gem "nokogiri"
-gem "foreman"
-gem "clockwork"
-gem "activerecord-postgresql-adapter"
-gem "pg"
-gem "realrand" # For generating secret token
-gem "equivalent-xml"
+gem 'oai', :git => 'https://github.com/tjdett/ruby-oai.git', :branch => 'next'
+gem 'rake'
+gem 'libxml-ruby'
+gem 'nokogiri'
+gem 'foreman'
+gem 'clockwork'
+gem 'activerecord-postgresql-adapter'
+gem 'pg'
+gem 'realrand' # For generating secret token
+gem 'equivalent-xml'
 
-gem "twitter-bootstrap-rails"
-gem "haml-rails"
+gem 'twitter-bootstrap-rails'
+gem 'haml-rails'
 
 gem 'sru', '~> 0.0.9'
 
+group :test do
+  gem 'webmock' # For VCR
+end
+
 group :test, :development do
-  gem "rspec-rails"
-  gem "minitest"
+  gem 'rspec-rails'
+  gem 'minitest'
   gem 'spork' # For running a test server (and spec_helper.rb refers to it)
   gem 'brakeman' # For security testing
+  gem 'vcr' # For playing back remote service tests
 end
 
 group :development do

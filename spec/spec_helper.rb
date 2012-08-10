@@ -66,10 +66,17 @@ Spork.each_run do
   ActiveRecord::Base.establish_connection(ENV["DATABASE_URL"])
   ActiveRecord::Migrator.up "db/migrate"
 
+  # Set up the VCR to record/playback
+  require 'vcr'
+  VCR.configure do |c|
+    c.allow_http_connections_when_no_cassette = true
+    c.cassette_library_dir = 'spec/fixtures/vcr_cassettes'
+    c.hook_into :webmock # or :fakeweb
+  end
+
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
-
 end
 
 

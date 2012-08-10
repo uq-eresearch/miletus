@@ -78,6 +78,7 @@ ActiveRecord::Schema.define(:version => 5) do
 
   create_table "sru_interfaces", :force => true do |t|
     t.string "endpoint", :null => false
+    t.string "schema",   :null => false
   end
 
 end
