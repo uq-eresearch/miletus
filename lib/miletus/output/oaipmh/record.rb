@@ -45,20 +45,6 @@ module Miletus::Output::OAIPMH
 
     protected
 
-    def update_indexed_attributes(key, values)
-      if indexed_attributes.find_by_key(key)
-        current = indexed_attributes.where(:key => key).map {|o| o.value}
-        created = values - current
-        deleted = current - values
-        indexed_attributes.where(:key => key, :value => deleted).delete_all
-      else
-        created = values
-      end
-      created.each do |value|
-        indexed_attributes.build(:key => key, :value => value)
-      end
-    end
-
     def clean_metadata
       return if read_attribute(:metadata).nil?
       xml = Nokogiri::XML(read_attribute(:metadata)).tap do |xml|
@@ -100,11 +86,7 @@ module Miletus::Output::OAIPMH
     end
 
     def valid_rifcs?
-      begin
-        ns_by_prefix('rif').schema.valid?(Nokogiri::XML(metadata))
-      rescue TypeError
-        false
-      end
+      ns_by_prefix('rif').schema.valid?(Nokogiri::XML(metadata))
     end
 
     class RifCSToOaiDcWrapper

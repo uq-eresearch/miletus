@@ -1,7 +1,5 @@
 require 'spec_helper'
 
-require 'miletus'
-
 describe RifcsRecordObserver do
 
   subject { RifcsRecordObserver.instance }

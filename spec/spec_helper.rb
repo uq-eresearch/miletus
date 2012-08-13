@@ -3,11 +3,22 @@ require 'spork'
 #uncomment the following line to use spork with the debugger
 #require 'spork/ext/ruby-debug'
 
+def start_simplecov
+  require 'simplecov'
+  SimpleCov.start :rails
+  require 'miletus'
+end
+
 Spork.prefork do
   # The Spork.prefork block is run only once when the spork server is started.
   # You typically want to place most of your (slow) initializer code in here, in
   # particular, require'ing any 3rd-party gems that you don't normally modify
   # during development.
+
+  # SimpleCov initialisation, as demonstrated in:
+  # https://github.com/colszowka/simplecov/issues/42#issuecomment-4440284
+  start_simplecov unless ENV['DRB']
+
   ENV["RAILS_ENV"] ||= 'test'
   require File.expand_path("../../config/environment", __FILE__)
   require 'rspec/rails'
@@ -62,6 +73,9 @@ Spork.each_run do
   # require them here.
   # With Rails, your application modules are loaded automatically, so sometimes
   # this block can remain empty.
+
+  # SimpleCov initialisation
+  start_simplecov if ENV['DRB']
 
   ActiveRecord::Base.establish_connection(ENV["DATABASE_URL"])
   ActiveRecord::Migrator.up "db/migrate"

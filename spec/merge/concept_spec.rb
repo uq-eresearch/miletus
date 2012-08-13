@@ -1,6 +1,5 @@
 require 'spec_helper'
 require 'time'
-require 'miletus'
 
 describe Miletus::Merge::Concept do
 
@@ -56,17 +55,36 @@ describe Miletus::Merge::Concept do
     end
   end
 
-  it "should replace existing RIF-CS key with its own" do
-    # Create multi-faceted concept
-    concept = Miletus::Merge::Concept.create()
-    [1, '1b'].map {|n| get_fixture('party', n) }.each do |fixture_xml|
-      concept.facets.create(:metadata => fixture_xml)
+  describe "RIF-CS key replacement" do
+
+    def create_concept_for_key_replacement
+      # Create multi-faceted concept
+      concept = Miletus::Merge::Concept.create()
+      [1, '1b'].map {|n| get_fixture('party', n) }.each do |fixture_xml|
+        concept.facets.create(:metadata => fixture_xml)
+      end
+      concept.should have(2).facets
+      concept.to_rif.should_not be(nil)
+      concept
     end
-    concept.should have(2).facets
-    concept.to_rif.should_not be(nil)
-    merged_doc = Nokogiri::XML(concept.to_rif)
-    key_e = merged_doc.at_xpath('//rif:registryObject/rif:key', ns_decl)
-    key_e.content.strip.should == concept.key
+
+    it "should replace existing RIF-CS key with its own" do
+      concept = create_concept_for_key_replacement
+      merged_doc = Nokogiri::XML(concept.to_rif)
+      key_e = merged_doc.at_xpath('//rif:registryObject/rif:key', ns_decl)
+      key_e.content.strip.should == concept.key
+    end
+
+    it "should use ENV['CONCEPT_KEY_PREFIX'] as the key prefix if available" do
+      concept = create_concept_for_key_replacement
+      prefix = 'http://example.test/prefix/'
+      begin
+        ENV['CONCEPT_KEY_PREFIX'] = prefix
+        concept.key.should match(/^#{Regexp.escape(prefix)}/)
+      ensure
+        ENV.delete('CONCEPT_KEY_PREFIX')
+      end
+    end
   end
 
   it "should index identifiers" do

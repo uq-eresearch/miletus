@@ -49,10 +49,6 @@ module Miletus
             update
           end
 
-          def to_s
-            @collection.to_s
-          end
-
           private
 
           def add_record(header)

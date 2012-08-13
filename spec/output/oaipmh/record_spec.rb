@@ -1,6 +1,5 @@
 require 'spec_helper'
 require 'time'
-require 'miletus'
 
 describe Miletus::Output::OAIPMH::Record do
 
@@ -11,6 +10,14 @@ describe Miletus::Output::OAIPMH::Record do
   end
 
   it { should respond_to(:underlying_concept) }
+
+  it "should handle writing empty metadata" do
+    [nil, ''].each do |metadata|
+      lambda do
+        Miletus::Output::OAIPMH::Record.create(:metadata => metadata)
+      end.should_not raise_error
+    end
+  end
 
   context "OAI Dublin Core" do
 

@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 require 'libxml'
-require 'miletus/output/oaipmh/record'
 
 describe OaiController do
 

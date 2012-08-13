@@ -1,4 +1,4 @@
-require 'miletus'
+require 'spec_helper'
 
 describe Miletus::Output::OAIPMH::RecordProvider do
 

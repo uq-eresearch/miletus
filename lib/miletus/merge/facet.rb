@@ -35,11 +35,8 @@ module Miletus::Merge
       doc = Nokogiri::XML(xml)
       key_e = doc.at_xpath('//rif:registryObject/rif:key',
         Miletus::NamespaceHelper.ns_decl)
-      begin
-        key_e.content.strip
-      rescue NoMethodError
-        nil
-      end
+      return nil if key_e.nil?
+      key_e.content.strip
     end
 
 

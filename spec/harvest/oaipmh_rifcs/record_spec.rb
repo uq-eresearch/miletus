@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'miletus/harvest/oaipmh_rifcs/record'
 
 describe Miletus::Harvest::OAIPMH::RIFCS::Record do
 

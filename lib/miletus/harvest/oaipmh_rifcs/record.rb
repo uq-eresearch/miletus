@@ -59,8 +59,6 @@ module Miletus::Harvest::OAIPMH::RIFCS
       case obj.class.name
         when 'LibXML::XML::Node'
           XML::Document.new().try{|d| d.root = d.import(obj) }.to_s
-        when 'REXML::Element'
-          REXML::Document.new().try{|d| d.add(obj) }.to_s
         else
           obj.to_s
       end

@@ -1,7 +1,5 @@
 require 'spec_helper'
 
-require 'miletus'
-
 describe SruRifcsLookupObserver do
 
   subject { SruRifcsLookupObserver.instance }
@@ -12,6 +10,15 @@ describe SruRifcsLookupObserver do
     fixture_file = File.join(File.dirname(__FILE__),
         '..', 'fixtures',"rifcs-#{type}-#{number}.xml")
     File.open(fixture_file) { |f| f.read() }
+  end
+
+  it "should normally run jobs using delayed_job" do
+    test_job = Object.new.tap do |obj|
+      obj.should_receive(:delay).and_return do
+        Object.new.tap {|o| o.should_receive(:run)}
+      end
+    end
+    SruRifcsLookupObserver.run_job(test_job)
   end
 
   it "should do a new lookup when a facet is created" do

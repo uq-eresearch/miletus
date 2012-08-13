@@ -59,6 +59,7 @@ end
 group :test, :development do
   gem 'rspec-rails'
   gem 'minitest'
+  gem 'simplecov', :require => false
   gem 'spork' # For running a test server (and spec_helper.rb refers to it)
   gem 'brakeman' # For security testing
   gem 'vcr' # For playing back remote service tests

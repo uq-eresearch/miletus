@@ -1,7 +1,5 @@
 require 'spec_helper'
 
-require 'miletus'
-
 describe OaipmhOutputObserver do
 
   subject { OaipmhOutputObserver.instance }
