@@ -34,9 +34,7 @@ describe SruRifcsLookupObserver do
       # Create concept
       concept = Miletus::Merge::Concept.create()
       # Create record
-      concept.facets.create(
-        :metadata => Nokogiri::XML(xml).to_s
-      )
+      concept.facets.create(:metadata => Nokogiri::XML(xml).to_s)
       concept.should have(2).facets
       concept.facets.any?{ |f| f.to_rif.nil? }.should be_false
     end
