@@ -60,6 +60,18 @@ module SRU
 
       return result
     end
+
+    # Returns the RIF-CS registryObject key as a string.
+
+    def rifcs_key(record)
+
+      @namespaces['r'] =
+        'http://ands.org.au/standards/rif-cs/registryObjects'
+
+      return xpath(record, 'r:registryObjects/r:registryObject/r:key',
+                   @namespaces)
+    end
+
   end
 end
 
@@ -101,6 +113,10 @@ class TroveSRU
   # matching algorithm and is awaiting manual processing in the
   # Trove Identities Manager (TIM).
   #
+  # This implementation assumes the NLA Party Identifier is the value
+  # of the registryObject "key". Although copies of it also appear as
+  # a RIF-CS identifier and as an electronic address.
+  #
   # *type* - the identifier type attribute
   #
   # *value* - the identifier value
@@ -124,6 +140,10 @@ class TroveSRU
     # (this allows other systems to interpret the backslash
     # character). The surrounding double quotes are not included.
 
+    if value =~ /\\$/
+      raise DataError, "CQL query cannot support identifier ending with slash"
+    end
+
     escaped_value = value.gsub('"', '\"')
 
     cql_query = "rec.identifier=\"#{escaped_value}\""
@@ -137,12 +157,24 @@ class TroveSRU
 
     num_records = records.number_of_records
     if num_records.zero?
-      return nil # none found
+      # No match found
+      return nil
 
     elsif 1 < num_records
+      # Multiple records match the identifier: must be an error
       raise DataError, "multiple matches found: #{value}"
 
     else
+      # Exactly one record match
+
+      # Check that the requested identifier is found in the result as
+      # an identifier.  This is to catch false matches, where the SRU
+      # query returns a match when it should not (perhaps there was a
+      # substring that matched).
+      #
+      # This problem does occur with the Trove SRU interface.
+      # For example, searching for "mirage.cmm.uq.edu.au/user/1"
+      # or "mirage.cmm.uq.edu.au/user" both returns a result.
 
       ids = nil
       records.each do |r|
@@ -150,32 +182,29 @@ class TroveSRU
         ids = records.rifcs_identifiers(r)
       end
 
-      # Check that the requested ID is present (this might not be a
-      # correct check to make)
+      # Check that the requested ID is present
 
       desired_ids = ids[type]
+
       if desired_ids
-        if ! desired_ids.find(value)
-          raise DataError, "value not in result: #{value}"
+        if ! desired_ids.include?(value)
+          return nil # identifier value not in result record
         end
       else
-          raise DataError, "type not in result: #{type}"
+        return nil # identifier type of identifier not in result record
       end
 
-      # Find the NLA Party Identifier
+      # Extract the RIF-CS registryObject key
 
-      nla_party_ids = ids[NLA_PARTY_ID_TYPE]
-      if ! nla_party_ids
-        raise DataError, "no NLA Party Identifier in result"
-      elsif nla_party_ids.length == 0
-        raise DataError, "no NLA Party Identifier in result"
-      elsif 1 < nla_party_ids.length
-        if nla_party_ids.index { |i| i != nla_party_ids[0] }
-          raise DataError, "multiple different NLA Party Identifiers"
+      result = nil
+      records.each do |r|
+        if result
+          raise DataError, "multiple records, but number of records is one"
         end
+        result = records.rifcs_key(r)
       end
+      return result
 
-      return nla_party_ids[0]
     end
 
   end
