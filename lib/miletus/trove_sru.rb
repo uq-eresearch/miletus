@@ -117,7 +117,7 @@ class TroveSRU
   # of the registryObject "key". Although copies of it also appear as
   # a RIF-CS identifier and as an electronic address.
   #
-  # *type* - the identifier type attribute
+  # *type* - the identifier type attribute. Nil if it doesn't matter.
   #
   # *value* - the identifier value
   #
@@ -176,22 +176,41 @@ class TroveSRU
       # For example, searching for "mirage.cmm.uq.edu.au/user/1"
       # or "mirage.cmm.uq.edu.au/user" both returns a result.
 
+      # Extract all the identifiers
+
       ids = nil
       records.each do |r|
         raise DataError, "multiple matches found: #{value}" if ! ids.nil?
         ids = records.rifcs_identifiers(r)
       end
 
-      # Check that the requested ID is present
+      # Check that the requested ID (and optionally the type) is present
 
-      desired_ids = ids[type]
+      if type
+        # Type matters
 
-      if desired_ids
-        if ! desired_ids.include?(value)
-          return nil # identifier value not in result record
+        desired_ids = ids[type]
+
+        if desired_ids
+          if ! desired_ids.include?(value)
+            return nil # identifier value not in result record
+          end
+        else
+          return nil # identifier type of identifier not in result record
         end
+
       else
-        return nil # identifier type of identifier not in result record
+        # Type does not matter
+
+        found = false
+        ids.each_value do |v|
+          if v.include?(value)
+            found = true
+          end
+        end
+        if ! found
+          return nil # identifier (of any type) not in result record
+        end
       end
 
       # Extract the RIF-CS registryObject key
