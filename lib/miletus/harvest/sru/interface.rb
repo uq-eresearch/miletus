@@ -1,18 +1,18 @@
 
 module Miletus::Harvest::SRU
   class Interface < ActiveRecord::Base
+    include Miletus::NamespaceHelper
 
     self.table_name = 'sru_interfaces'
 
-    attr_accessible :endpoint, :schema
+    store :details, :accessors => [:schema, :exclude_xpaths]
+    attr_accessible :endpoint, :schema, :exclude_xpaths
 
     validates :endpoint, :presence => true
     validates_format_of :endpoint, :with => URI::regexp(%w(http https))
     validates_uniqueness_of :endpoint
 
-    def lookup(value)
-      client = SRU::Client.new(endpoint)
-
+    def lookup_by_identifier(value)
       # Create Common/Contextual Query Language (CQL) query
 
       # According to <http://www.loc.gov/standards/sru/specs/cql.html>:
@@ -23,10 +23,15 @@ module Miletus::Harvest::SRU
       # all backslash characters except those releasing a double quote
       # (this allows other systems to interpret the backslash
       # character). The surrounding double quotes are not included.
-
       escaped_value = value.gsub('"', '\"')
 
-      cql_query = "rec.identifier=\"#{escaped_value}\""
+      lookup("rec.identifier=\"#{escaped_value}\"")
+    end
+
+    private
+
+    def lookup(cql_query)
+      client = SRU::Client.new(endpoint)
 
       # Search (returns a SRU::SearchRetrieveResponse object)
 
@@ -38,8 +43,18 @@ module Miletus::Harvest::SRU
       num_records = records.number_of_records
       return nil if num_records.zero?
       raise DataError, "multiple matches found: #{value}" if num_records > 1
+
       # Get the contents of the first record
-      Nokogiri::XML(records.first.to_s).root.children.first.to_s
+      doc = Nokogiri::XML(records.first.to_s).root.children.first
+      doc = filter_nodes(doc) unless exclude_xpaths.nil?
+      doc.to_s
+    end
+
+    def filter_nodes(doc)
+      exclude_xpaths.each do |p|
+        doc.xpath(p, ns_decl).tap {|matches| matches.each { |n| n.remove } }
+      end
+      doc
     end
 
   end

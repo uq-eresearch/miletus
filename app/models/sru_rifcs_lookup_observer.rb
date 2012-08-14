@@ -27,7 +27,9 @@ class SruRifcsLookupObserver < ActiveRecord::Observer
         :key => 'identifier').pluck(:value)
 
       xml = nil
-      identifiers.detect { |identifier| xml = interface.lookup(identifier) }
+      identifiers.detect do |identifier|
+        xml = interface.lookup_by_identifier(identifier)
+      end
       return nil if xml.nil?
 
       facet = Miletus::Merge::Facet.find_existing(xml)
