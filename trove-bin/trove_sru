@@ -15,17 +15,20 @@ require 'miletus/trove_sru'
 
 #----------------------------------------------------------------
 
+DEFAULT_ID_TYPE = 'AU-QU'
+
 def process_command_line
 
   # Specify command line options
 
   options = {}
   opt_parser = OptionParser.new do |opt|
-    opt.banner = "Usage: PROG [options] {rifcsFiles}"
+    opt.banner = "Usage: PROG [options] {identifier}"
 
     opt.separator "Options:"
 
-    opt.on("-t", "--type str", "identifier type") do |param|
+    opt.on("-t", "--type str",
+           "identifier type (default: #{DEFAULT_ID_TYPE})") do |param|
       options[:type] = param
     end
 
@@ -56,7 +59,7 @@ def process_command_line
   # Defaults (if needed)
 
   if ! options[:type]
-    options[:type] = 'AU-QU'
+    options[:type] = DEFAULT_ID_TYPE
   end
 
   if ARGV.empty?
