@@ -50,7 +50,8 @@ gem 'equivalent-xml'
 gem 'twitter-bootstrap-rails'
 gem 'haml-rails'
 
-gem 'sru', '~> 0.0.9'
+gem 'sru',
+  :git => 'https://github.com/tjdett/sru-ruby.git', :branch => 'proxy-handling'
 
 group :test do
   gem 'webmock' # For VCR
