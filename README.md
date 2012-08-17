@@ -1,6 +1,9 @@
 # Miletus
 
-[![Build Status](https://secure.travis-ci.org/uq-eresearch/miletus.png?branch=master)](http://travis-ci.org/uq-eresearch/miletus)
+[![Build Status](https://secure.travis-ci.org/uq-eresearch/miletus.png)
+](http://travis-ci.org/uq-eresearch/miletus)
+[![Dependency Status](https://gemnasium.com/uq-eresearch/miletus.png)
+](https://gemnasium.com/uq-eresearch/miletus)
 
 ## Overview
 
