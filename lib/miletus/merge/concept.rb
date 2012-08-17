@@ -105,7 +105,7 @@ module Miletus::Merge
     end
 
     def rifcs_facets
-      facets.map {|f| f.to_rif}.reject {|xml| xml.nil?}\
+      facets.order(:created_at).map {|f| f.to_rif}.reject {|xml| xml.nil?}\
         .map {|xml| RifCsDoc.create(xml)}
     end
 
