@@ -1,6 +1,7 @@
 require 'miletus'
 
 class OaipmhOutputObserver < ActiveRecord::Observer
+  include Miletus::NamespaceHelper
 
   observe Miletus::Merge::Concept
   observe Miletus::Merge::Facet

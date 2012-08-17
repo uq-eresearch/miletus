@@ -103,6 +103,17 @@ describe OaipmhOutputObserver do
     end
   end
 
-
+  it "should create sets based on identifier types" do
+    # Disable delayed run for hooks
+    RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
+    concepts = \
+      [get_fixture('collection', 1), get_fixture('party', 1)].map do |xml|
+        concept = Miletus::Merge::Concept.create()
+        concept.facets.create(:metadata => xml)
+        concept
+      end
+    # Two new records should exist as a result
+    Miletus::Output::OAIPMH::Set.count.should > 0
+  end
 
 end

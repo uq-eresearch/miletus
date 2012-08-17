@@ -14,9 +14,14 @@ module Miletus::Output::OAIPMH
     attr_accessible :metadata
     belongs_to :underlying_concept,
       :class_name => 'Miletus::Merge::Concept'
+    has_and_belongs_to_many :sets,
+      :class_name => 'Set',
+      :join_table => 'output_oaipmh_record_set_memberships',
+      :uniq => true
 
     validate :valid_rifcs?
     after_validation :clean_metadata
+    after_save :update_set_memberships
 
     @@schemas = {}
 
@@ -39,11 +44,34 @@ module Miletus::Output::OAIPMH
       end
     end
 
+    def self.sets
+      Miletus::Output::OAIPMH::Set.scoped
+    end
+
     def to_rif
       metadata
     end
 
     protected
+
+    def record_type
+      Nokogiri::XML(to_rif).at_xpath(
+        "//rif:registryObject/*[last()]", ns_decl).name
+    end
+
+    def update_set_memberships
+      type_attrs = Nokogiri::XML(to_rif).xpath(
+        "//rif:identifier/@type", ns_decl)
+      type_attrs.map{|a| a.value}.each do |type|
+        spec = "#{record_type}:identifier:#{type}"
+        set = Miletus::Output::OAIPMH::Set.find_or_create_by_spec(
+          :spec => spec,
+          :name => "#{type} identifier #{record_type}",
+          :description =>
+            "#{record_type} records with identifiers of type \"#{type}\".")
+        set.records << self
+      end
+    end
 
     def clean_metadata
       return if read_attribute(:metadata).nil?

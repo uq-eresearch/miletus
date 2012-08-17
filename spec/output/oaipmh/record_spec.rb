@@ -9,7 +9,7 @@ describe Miletus::Output::OAIPMH::Record do
     File.open(fixture_file) { |f| f.read() }
   end
 
-  it { should respond_to(:underlying_concept) }
+  it { should respond_to(:sets, :underlying_concept) }
 
   it "should handle writing empty metadata" do
     [nil, ''].each do |metadata|

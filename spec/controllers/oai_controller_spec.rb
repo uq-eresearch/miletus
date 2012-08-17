@@ -41,20 +41,24 @@ describe OaiController do
 
     describe "when no records exist" do
 
-      it "should respond to ListIdentifiers with \"noRecordsMatch\" " do
-        get 'index', { 'verb' => 'ListIdentifiers' }
-        response.should be_success
-        xml = Nokogiri::XML(response.body).root
-        error_node = xml.at_xpath('//oai:error/@code', ns_decl)
-        error_node.value.should == 'noRecordsMatch'
+      describe "ListIdentifiers" do
+        it "should respond with \"noRecordsMatch\" " do
+          get 'index', { 'verb' => 'ListIdentifiers' }
+          response.should be_success
+          xml = Nokogiri::XML(response.body).root
+          error_node = xml.at_xpath('//oai:error/@code', ns_decl)
+          error_node.value.should == 'noRecordsMatch'
+        end
       end
 
-      it "should respond to ListRecords with \"noRecordsMatch\" " do
-        get 'index', { 'verb' => 'ListRecords' }
-        response.should be_success
-        xml = Nokogiri::XML(response.body).root
-        error_node = xml.at_xpath('//oai:error/@code', ns_decl)
-        error_node.value.should == 'noRecordsMatch'
+      describe "ListRecords" do
+        it "should respond with \"noRecordsMatch\" " do
+          get 'index', { 'verb' => 'ListRecords' }
+          response.should be_success
+          xml = Nokogiri::XML(response.body).root
+          error_node = xml.at_xpath('//oai:error/@code', ns_decl)
+          error_node.value.should == 'noRecordsMatch'
+        end
       end
 
     end
@@ -70,20 +74,66 @@ describe OaiController do
         Miletus::Output::OAIPMH::Record.count.should > 0
       end
 
-      it "should not respond to ListIdentifiers with \"noRecordsMatch\" " do
-        get 'index', { 'verb' => 'ListIdentifiers' }
-        response.should be_success
-        xml = Nokogiri::XML(response.body).root
-        xml.at_xpath('//oai:error', ns_decl).should be(nil)
-        xml.at_xpath('//oai:ListIdentifiers', ns_decl).should_not be(nil)
+      describe "ListIdentifiers" do
+        it "should not respond with \"noRecordsMatch\" " do
+          get 'index', { 'verb' => 'ListIdentifiers' }
+          response.should be_success
+          xml = Nokogiri::XML(response.body).root
+          xml.at_xpath('//oai:error', ns_decl).should be_nil
+          xml.at_xpath('//oai:ListIdentifiers', ns_decl).should_not be_nil
+        end
       end
 
-      it "should not respond to ListRecords with \"noRecordsMatch\" " do
-        get 'index', { 'verb' => 'ListRecords' }
-        response.should be_success
-        xml = Nokogiri::XML(response.body).root
-        xml.at_xpath('//oai:error', ns_decl).should be(nil)
-        xml.at_xpath('//oai:ListRecords', ns_decl).should_not be(nil)
+      describe "ListRecords" do
+        it "should respond with the records that currently exist" do
+          Miletus::Output::OAIPMH::Record.count.should == 1
+          get 'index', { 'verb' => 'ListRecords' }
+          response.should be_success
+          xml = Nokogiri::XML(response.body).root
+          xml.at_xpath('//oai:error', ns_decl).should be_nil
+          xml.at_xpath('//oai:ListRecords', ns_decl).should_not be_nil
+          xml.at_xpath('//oai:record', ns_decl).should_not be_nil
+          xml.xpath('//oai:header/oai:setSpec', ns_decl).count.should > 1
+        end
+
+        it "should put records in sets" do
+          Miletus::Output::OAIPMH::Record.count.should == 1
+          get 'index', {
+            'verb' => 'ListRecords',
+            'set' => 'party:identifier:AU-QU' }
+          response.should be_success
+          xml = Nokogiri::XML(response.body).root
+          xml.at_xpath('//oai:error', ns_decl).should be_nil
+          xml.at_xpath('//oai:ListRecords', ns_decl).should_not be_nil
+          xml.xpath('//oai:record', ns_decl).count.should == 1
+          xml.xpath('//oai:header/oai:setSpec', ns_decl).count.should > 1
+          get 'index', {
+            'verb' => 'ListRecords',
+            'set' => 'nosuchset' }
+          xml = Nokogiri::XML(response.body).root
+          response.should be_success
+          error_node = xml.at_xpath('//oai:error/@code', ns_decl)
+          error_node.should_not be_nil
+          error_node.value.should == 'noRecordsMatch'
+        end
+      end
+
+      describe "ListSets" do
+        it "should not respond with an error" do
+          get 'index', { 'verb' => 'ListSets' }
+          response.should be_success
+          xml = Nokogiri::XML(response.body).root
+          xml.at_xpath('//oai:error', ns_decl).should be_nil
+          xml.at_xpath('//oai:ListSets', ns_decl).should_not be_nil
+        end
+
+        it "should respond with any sets that exist" do
+          Miletus::Output::OAIPMH::Set.count.should > 0
+          get 'index', { 'verb' => 'ListSets' }
+          response.should be_success
+          xml = Nokogiri::XML(response.body).root
+          xml.at_xpath('//oai:ListSets/oai:set', ns_decl).should_not be_nil
+        end
       end
 
     end
