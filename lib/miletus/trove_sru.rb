@@ -88,7 +88,8 @@ class TroveSRU
 
   # The URL for Trove's people and organisations SRU interface.
 
-  SRU_INTERFACE = 'http://www.nla.gov.au/apps/srw/search/peopleaustralia'
+  SRU_URL_PRODUCTION = 'http://www.nla.gov.au/apps/srw/search/peopleaustralia'
+  SRU_URL_TEST = 'http://www-test.nla.gov.au/apps/srw/search/peopleaustralia'
 
   # Schema value for RIF-CS. Passed to the SRU searchRetrive operation
   # as the recordSchema parameter to indicate that the results must
@@ -121,13 +122,13 @@ class TroveSRU
   #
   # *value* - the identifier value
   #
+  # *use_test* - query the production Trove or the test Trove
+  #
   # Returns the NLA Party Identifer as a string, or {nil} if not found
   #
   # Raises DataError if an internal error occurs
 
-  def self.lookup_nla_id(type, value)
-
-    client = SRU::Client.new(SRU_INTERFACE)
+  def self.lookup_nla_id(type, value, use_test = nil)
 
     # Create Common/Contextual Query Language (CQL) query
 
@@ -140,13 +141,17 @@ class TroveSRU
     # (this allows other systems to interpret the backslash
     # character). The surrounding double quotes are not included.
 
-    if value =~ /\\$/
-      raise DataError, "CQL query cannot support identifier ending with slash"
+    if value.end_with?('\\')
+      raise DataError, "CQL query cannot support value ending with backslash"
     end
 
     escaped_value = value.gsub('"', '\"')
 
     cql_query = "rec.identifier=\"#{escaped_value}\""
+
+    # Connect
+
+    client = SRU::Client.new(use_test ? SRU_URL_TEST : SRU_URL_PRODUCTION)
 
     # Search (returns a SRU::SearchRetrieveResponse object)
 

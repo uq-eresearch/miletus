@@ -3,6 +3,8 @@
 # Utility to test the retrieval of a NLA Party Identifier
 # from Trove.
 #
+# e.g. trove-sru -v mirage.cmm.uq.edu.au/user/1
+#
 # Copyright (C) 2012, The University of Queensland.                             
 #----------------------------------------------------------------
 
@@ -30,7 +32,11 @@ def process_command_line
       options[:type] = param
     end
 
-    opt.on("-v", "--verbose", "verbose output") do
+    opt.on("-d", "--demo", "use Trove Test instead of Trove production") do
+      options[:demo] = true
+    end
+
+    opt.on("-v", "--verbose", "verbose output: show query information") do
       options[:verbose] = true
     end
 
@@ -65,7 +71,7 @@ def process_command_line
     exit 2
   end
 
-  return [ ARGV, options[:type], options[:verbose] ]
+  return [ ARGV, options[:type], options[:demo], options[:verbose] ]
 
 end # def process_command_line
 
@@ -73,27 +79,37 @@ end # def process_command_line
 
 def main
 
-  ids, type, verbose = process_command_line
-
-  success = true
+  ids, type, demo, verbose = process_command_line
 
   ids.each do |value|
     if verbose
-      print "{#{type}}" if type
-      print "#{value}: "
+      puts (demo ? 'Querying Trove Test' : 'Querying Trove (production)')
+      print "  Identifier type = "
+      print type ? type : '<any type>'
+      puts
+      puts "  Identifier value = #{value}"
     end
 
-    nla_id = TroveSRU.lookup_nla_id(type, value)
+    begin
+      nla_id = TroveSRU.lookup_nla_id(type, value, demo)
 
-    if nla_id
-      puts nla_id
-    else
-      puts "no match"
-      success = false
+      if nla_id
+        puts nla_id
+        return 0
+      else
+        puts '<no match>'
+        return 1
+      end
+
+    rescue TroveSRU::DataError => e
+      $stderr.puts "Error: #{e}"
+      return 1
+    rescue SRU::Exception => e
+      $stderr.puts "Error: #{e}"
+      return 1
     end
+
   end
-
-  return (success ? 0 : 1)
 end
 
 exit main
