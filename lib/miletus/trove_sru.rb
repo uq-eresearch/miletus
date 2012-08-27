@@ -160,76 +160,73 @@ class TroveSRU
                             :resultSetTTL => 0,
                             :recordSchema => RIFCS_SCHEMA)
 
+    # Check "numberOfRecords" claims to have exactly one record
+
     num_records = records.number_of_records
     if num_records.zero?
       # No match found
       return nil
-
     elsif 1 < num_records
       # Multiple records match the identifier: must be an error
       raise DataError, "multiple matches found: #{value}"
+    end
+
+    # Check that the requested identifier is found in the result as
+    # an identifier.  This is to catch false matches, where the SRU
+    # query returns a match when it should not (perhaps there was a
+    # substring that matched).
+    #
+    # This problem does occur with the Trove SRU interface.
+    # For example, searching for "mirage.cmm.uq.edu.au/user/1"
+    # or "mirage.cmm.uq.edu.au/user" both returns a result.
+
+    # Extract all the identifiers from what should be the one and only record
+
+    ids = nil
+    records.each do |r|
+      raise DataError, "multiple matches found: #{value}" if ! ids.nil?
+      ids = records.rifcs_identifiers(r)
+    end
+
+    # Check that the requested ID (and optionally the type) is present
+
+    if type
+      # Type matters
+
+      desired_ids = ids[type]
+
+      if desired_ids
+        if ! desired_ids.include?(value)
+          return nil # identifier value not in result record
+        end
+      else
+        return nil # identifier type of identifier not in result record
+      end
 
     else
-      # Exactly one record match
+      # Type does not matter
 
-      # Check that the requested identifier is found in the result as
-      # an identifier.  This is to catch false matches, where the SRU
-      # query returns a match when it should not (perhaps there was a
-      # substring that matched).
-      #
-      # This problem does occur with the Trove SRU interface.
-      # For example, searching for "mirage.cmm.uq.edu.au/user/1"
-      # or "mirage.cmm.uq.edu.au/user" both returns a result.
-
-      # Extract all the identifiers
-
-      ids = nil
-      records.each do |r|
-        raise DataError, "multiple matches found: #{value}" if ! ids.nil?
-        ids = records.rifcs_identifiers(r)
-      end
-
-      # Check that the requested ID (and optionally the type) is present
-
-      if type
-        # Type matters
-
-        desired_ids = ids[type]
-
-        if desired_ids
-          if ! desired_ids.include?(value)
-            return nil # identifier value not in result record
-          end
-        else
-          return nil # identifier type of identifier not in result record
-        end
-
-      else
-        # Type does not matter
-
-        found = false
-        ids.each_value do |v|
-          if v.include?(value)
-            found = true
-          end
-        end
-        if ! found
-          return nil # identifier (of any type) not in result record
+      found = false
+      ids.each_value do |v|
+        if v.include?(value)
+          found = true
         end
       end
-
-      # Extract the RIF-CS registryObject key
-
-      result = nil
-      records.each do |r|
-        if result
-          raise DataError, "multiple records, but number of records is one"
-        end
-        result = records.rifcs_key(r)
+      if ! found
+        return nil # identifier (of any type) not in result record
       end
-      return result
-
     end
+
+    # Extract the RIF-CS registryObject key
+
+    result = nil
+    records.each do |r|
+      if result
+        raise DataError, "multiple records, but number of records is one"
+      end
+      result = records.rifcs_key(r)
+    end
+    return result
 
   end
 

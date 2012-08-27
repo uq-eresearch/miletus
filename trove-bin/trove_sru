@@ -3,9 +3,9 @@
 # Utility to test the retrieval of a NLA Party Identifier
 # from Trove.
 #
-# e.g. trove-sru -v mirage.cmm.uq.edu.au/user/1
+# e.g. trove_sru -v mirage.cmm.uq.edu.au/user/1
 #
-# Copyright (C) 2012, The University of Queensland.                             
+# Copyright (C) 2012, The University of Queensland.
 #----------------------------------------------------------------
 
 $VERBOSE = true
