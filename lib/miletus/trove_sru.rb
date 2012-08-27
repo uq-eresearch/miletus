@@ -106,6 +106,63 @@ class TroveSRU
   class DataError < StandardError
   end
 
+  # Check that the requested identifier is found in the result as
+  # an identifier.  This is to catch false matches, where the SRU
+  # query returns a match when it should not (perhaps there was a
+  # substring that matched).
+  #
+  # This problem does occur with the Trove SRU interface.
+  # For example, searching for "mirage.cmm.uq.edu.au/user/1"
+  # or "mirage.cmm.uq.edu.au/user" both returns a result.
+  #
+  # *type* - identifier type (nil if it doesn't matter)
+  # *value* - identifier value
+  # *records* - result from SRU searchRequest operation
+  #
+  # Returns true if the specified type and value is an identifier
+  # in the one and only record in the supplied records.
+
+  def self.has_id?(type, value, records)
+
+    # Extract all the identifiers from what should be the one and only record
+
+    ids = nil
+    records.each do |r|
+      raise DataError, "multiple matches found: #{value}" if ! ids.nil?
+      ids = records.rifcs_identifiers(r)
+    end
+
+    # Check that the requested ID (and optionally the type) is present
+
+    if type
+      # Type matters
+
+      desired_ids = ids[type]
+      if ! desired_ids
+        return false # identifier of type not in result record
+      end
+
+      if ! desired_ids.include?(value)
+        return false # identifier value not in result record
+      end
+
+    else
+      # Type does not matter
+
+      found = false
+      ids.each_value do |v|
+        if v.include?(value)
+          found = true
+        end
+      end
+      if ! found
+        return false # identifier (of any type) not in result record
+      end
+    end
+
+    return true
+  end
+
   # Obtain the NLA Party Identifier corresponding to a party record
   # that was uploaded to Trove.
   #
@@ -171,53 +228,13 @@ class TroveSRU
       raise DataError, "multiple matches found: #{value}"
     end
 
-    # Check that the requested identifier is found in the result as
-    # an identifier.  This is to catch false matches, where the SRU
-    # query returns a match when it should not (perhaps there was a
-    # substring that matched).
-    #
-    # This problem does occur with the Trove SRU interface.
-    # For example, searching for "mirage.cmm.uq.edu.au/user/1"
-    # or "mirage.cmm.uq.edu.au/user" both returns a result.
+    # Check record contains the searched for type and value
 
-    # Extract all the identifiers from what should be the one and only record
-
-    ids = nil
-    records.each do |r|
-      raise DataError, "multiple matches found: #{value}" if ! ids.nil?
-      ids = records.rifcs_identifiers(r)
+    if ! has_id?(type, value, records)
+      return nil
     end
 
-    # Check that the requested ID (and optionally the type) is present
-
-    if type
-      # Type matters
-
-      desired_ids = ids[type]
-
-      if desired_ids
-        if ! desired_ids.include?(value)
-          return nil # identifier value not in result record
-        end
-      else
-        return nil # identifier type of identifier not in result record
-      end
-
-    else
-      # Type does not matter
-
-      found = false
-      ids.each_value do |v|
-        if v.include?(value)
-          found = true
-        end
-      end
-      if ! found
-        return nil # identifier (of any type) not in result record
-      end
-    end
-
-    # Extract the RIF-CS registryObject key
+    # Extract the RIF-CS registryObject key and return it as the result
 
     result = nil
     records.each do |r|
