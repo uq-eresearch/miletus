@@ -92,25 +92,30 @@ module Miletus::Output::OAIPMH
 
     def translate_old_elements(rifcs_doc)
       types = {'rights' => 'rightsStatement', 'accessRights' => 'accessRights'}
-      # Assemble xpath search pattern
-      pattern = types.keys.map do |t|
-          "//rif:description[@type=\"%s\"]" % t
-        end.join("|")
       # For those description elements we can translate...
-      rifcs_doc.xpath(pattern, ns_decl).each do |e|
+      find_description_elements_with_types(rifcs_doc, types.keys).each do |e|
         # Get the rights element or create it if necessary
-        rights = e.parent.at_xpath("rif:rights", ns_decl)
-        ns = e.parent.namespaces.default
-        rights ||= Nokogiri::XML::Node.new('rights', rifcs_doc).tap do |er|
-          e.parent << er
-        end
+        rights = find_or_create_rifcs_rights_element(e.parent)
         # Create new element based on attribute name and insert it
-        Nokogiri::XML::Node.new(types[e['type'].to_s], rifcs_doc).tap do |node|
-          node.content = e.content
-          rights << node
-          e.remove
-        end
+        node = Nokogiri::XML::Node.new(types[e['type'].to_s], rifcs_doc)
+        node.content = e.content
+        rights << node
+        e.remove
       end
+    end
+
+    def find_description_elements_with_types(rifcs_doc, types)
+      pattern = types.map do |t|
+        "//rif:description[@type=\"%s\"]" % t
+      end.join("|")
+      rifcs_doc.xpath(pattern, ns_decl)
+    end
+
+    def find_or_create_rifcs_rights_element(node)
+      rights = node.at_xpath("rif:rights", ns_decl)
+      rights ||= Nokogiri::XML::Node.new('rights', node.document)
+      node << rights
+      rights
     end
 
     def valid_rifcs?
