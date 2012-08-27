@@ -7,14 +7,14 @@ class RifcsRecordObserver < ActiveRecord::Observer
   observe Miletus::Harvest::OAIPMH::RIFCS::Record
 
   def after_create(record)
-    self.class.run_job(JobProcessor.new(:create, record))
+    self.class.run_job(CreateFacetJob.new(record))
   end
 
   def after_update(record)
     if record.deleted?
-      self.class.run_job(JobProcessor.new(:remove, record))
+      self.class.run_job(RemoveFacetJob.new(record))
     else
-      self.class.run_job(JobProcessor.new(:update, record))
+      self.class.run_job(UpdateFacetJob.new(record))
     end
   end
 
@@ -22,27 +22,28 @@ class RifcsRecordObserver < ActiveRecord::Observer
     job.delay.run
   end
 
-  class JobProcessor < Struct.new(:action, :record)
-
+  class CreateFacetJob < Struct.new(:record)
     def run
-      case action
-      when :create
-        concept = Miletus::Merge::Concept.find_existing(record.to_rif)
-        concept ||= Miletus::Merge::Concept.create()
-        concept.facets.create(:metadata => record.to_rif)
-      when :update
-        facet = Miletus::Merge::Facet.find_existing(record.to_rif)
-        return JobProcessor.new(:create, record).run if facet.nil?
-        facet.metadata = record.to_rif
-        facet.save!
-      when :remove
-        facet = Miletus::Merge::Facet.find_existing(record.to_rif)
-        unless facet.nil?
-          facet.destroy
-        end
-      end
+      concept = Miletus::Merge::Concept.find_existing(record.to_rif)
+      concept ||= Miletus::Merge::Concept.create()
+      concept.facets.create(:metadata => record.to_rif)
     end
+  end
 
+  class UpdateFacetJob < Struct.new(:record)
+    def run
+      facet = Miletus::Merge::Facet.find_existing(record.to_rif)
+      return CreateFacetJob.new(record).run if facet.nil?
+      facet.metadata = record.to_rif
+      facet.save!
+    end
+  end
+
+  class RemoveFacetJob < Struct.new(:record)
+    def run
+      facet = Miletus::Merge::Facet.find_existing(record.to_rif)
+      facet.destroy unless facet.nil?
+    end
   end
 
 end
