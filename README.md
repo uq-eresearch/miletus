@@ -4,6 +4,8 @@
 ](http://travis-ci.org/uq-eresearch/miletus)
 [![Dependency Status](https://gemnasium.com/uq-eresearch/miletus.png)
 ](https://gemnasium.com/uq-eresearch/miletus)
+[![Code Climate](https://codeclimate.com/badge.png)
+](https://codeclimate.com/github/uq-eresearch/miletus)
 
 ## Overview
 
