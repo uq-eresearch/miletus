@@ -55,6 +55,39 @@ describe Miletus::Merge::Concept do
     end
   end
 
+  describe "RIF-CS group replacement" do
+
+    def create_concept_for_group_replacement
+      # Create multi-faceted concept
+      concept = Miletus::Merge::Concept.create()
+      [1, '1b'].map {|n| get_fixture('party', n) }.each do |fixture_xml|
+        concept.facets.create(:metadata => fixture_xml)
+      end
+      concept.should have(2).facets
+      concept.to_rif.should_not be(nil)
+      concept
+    end
+
+    it "should replace existing RIF-CS group with its own" do
+      concept = create_concept_for_group_replacement
+      merged_doc = Nokogiri::XML(concept.to_rif)
+      key_e = merged_doc.at_xpath('//rif:registryObject/@group', ns_decl)
+      key_e.content.strip.should == concept.group
+    end
+
+    it "should use ENV['CONCEPT_GROUP'] as the group name if available" do
+      concept = create_concept_for_group_replacement
+      group_name = 'The University of Queensland'
+      begin
+        ENV['CONCEPT_GROUP'] = group_name
+        concept.group.should == group_name
+      ensure
+        ENV.delete('CONCEPT_GROUP')
+      end
+    end
+
+  end
+
   describe "RIF-CS key replacement" do
 
     def create_concept_for_key_replacement

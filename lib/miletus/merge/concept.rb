@@ -13,6 +13,14 @@ module Miletus::Merge
     has_many :indexed_attributes,
       :dependent => :destroy, :order => [:key, :value]
 
+    def group
+      if ENV.has_key? 'CONCEPT_GROUP'
+        ENV['CONCEPT_GROUP']
+      else
+        key_prefix
+      end
+    end
+
     def key
       "%s%d" % [key_prefix, id]
     end
@@ -37,6 +45,7 @@ module Miletus::Merge
       return nil if input_docs.empty?
       rifcs_doc = input_docs.first.clone
       rifcs_doc.merge_rifcs_elements(input_docs)
+      rifcs_doc.group = group
       rifcs_doc.key = key
       rifcs_doc.translate_keys(related_key_dictionary)
       rifcs_doc.root.to_xml(:indent => 2)
@@ -130,6 +139,12 @@ module Miletus::Merge
           node.content = node.content.strip
         end
         instance
+      end
+
+      def group=(value)
+        group_e = at_xpath("//rif:registryObject/@group", ns_decl)
+        return false if group_e.nil?
+        group_e.content = value
       end
 
       def key=(value)
