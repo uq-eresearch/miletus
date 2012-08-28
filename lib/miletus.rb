@@ -8,6 +8,22 @@ module Miletus
 
     class Namespace < Struct.new(:uri, :prefix, :schema_location)
 
+      def self.instances
+        @@instances ||= [
+          Namespace.new('http://www.openarchives.org/OAI/2.0/',
+            'oai', 'http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd'),
+          Namespace.new('http://www.openarchives.org/OAI/2.0/oai-identifier',
+            'oaii', 'http://www.openarchives.org/OAI/2.0/oai-identifier.xsd'),
+          Namespace.new('http://purl.org/dc/elements/1.1/',
+            'dc', 'http://dublincore.org/schemas/xmls/simpledc20021212.xsd'),
+          Namespace.new('http://www.openarchives.org/OAI/2.0/oai_dc/',
+            'oai_dc', 'http://www.openarchives.org/OAI/2.0/oai_dc.xsd'),
+          Namespace.new('http://ands.org.au/standards/rif-cs/registryObjects',
+            'rif','http://services.ands.org.au' +
+              '/documentation/rifcs/schema/registryObjects.xsd')
+        ]
+      end
+
       def schema
         @schema_obj ||= build_schema_object
       end
@@ -22,33 +38,18 @@ module Miletus
 
     end
 
-    @@namespaces = [
-      Namespace.new('http://www.openarchives.org/OAI/2.0/',
-        'oai', 'http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd'),
-      Namespace.new('http://www.openarchives.org/OAI/2.0/oai-identifier',
-        'oaii', 'http://www.openarchives.org/OAI/2.0/oai-identifier.xsd'),
-      Namespace.new('http://purl.org/dc/elements/1.1/',
-        'dc', 'http://dublincore.org/schemas/xmls/simpledc20021212.xsd'),
-      Namespace.new('http://www.openarchives.org/OAI/2.0/oai_dc/',
-        'oai_dc', 'http://www.openarchives.org/OAI/2.0/oai_dc.xsd'),
-      Namespace.new('http://ands.org.au/standards/rif-cs/registryObjects',
-        'rif','http://services.ands.org.au' +
-          '/documentation/rifcs/schema/registryObjects.xsd')
-    ]
-
     # Lookup on
     Namespace.members.each do |key|
       method_sym = ("ns_by_%s" % key).to_sym
       define_method(method_sym) do |value|
-        idx = @@namespaces.index { |obj| obj.send(key) == value }
-        idx.nil? ? nil : @@namespaces[idx]
+        Namespace.instances.find { |obj| obj.send(key) == value }
       end
       module_function method_sym
     end
 
     def ns_decl
       # Convenience definition for XPath matching
-      @@namespaces.each_with_object({}) do |ns, obj|
+      Namespace.instances.each_with_object({}) do |ns, obj|
         obj[ns.prefix] = ns.uri
       end
     end
