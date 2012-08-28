@@ -23,34 +23,34 @@ class Rails::Application::Configuration
       'development' => ENV['DATABASE_URL'],
       'production' => ENV['DATABASE_URL']
     }
-    config.each_key do |key|
-      # Based on how Heroku do it: https://gist.github.com/1059446
-      begin
-        uri = URI.parse(config[key])
-
-        # Values
-        adapter = uri.scheme
-        adapter = "postgresql" if adapter == "postgres"
-        database = (uri.path || "").split("/")[1]
-        username = uri.user
-        password = uri.password
-        host = uri.host
-        port = uri.port
-
-        config[key] = {
-          'adapter' => adapter,
-          'database' => database,
-          'username' => username,
-          'password' => password,
-          'host' => host,
-          'port' => port
-        }
-      rescue URI::InvalidURIError
+    config.each do |key, value|
+      env_config = get_database_environment_from_database_url(value)
+      if env_config.nil?
         config.delete(key)
+      else
+        config[key] = env_config
       end
     end
 
     config
+  end
+
+  def get_database_environment_from_database_url(db_url)
+    # Based on how Heroku do it: https://gist.github.com/1059446
+    begin
+      uri = URI.parse(db_url)
+
+      return {
+        'adapter' => adapter == "postgres" ? "postgresql" : uri.scheme,
+        'database' => (uri.path || "").split("/")[1],
+        'username' => uri.user,
+        'password' => uri.password,
+        'host' => uri.host,
+        'port' => uri.port
+      }
+    rescue URI::InvalidURIError
+      nil
+    end
   end
 
 end
