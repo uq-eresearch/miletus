@@ -15,7 +15,8 @@ module Miletus::Merge
 
     def group
       if ENV.has_key? 'CONCEPT_GROUP'
-        ENV['CONCEPT_GROUP']
+        # Get env variable (substitution fixes a common Foreman bug)
+        ENV['CONCEPT_GROUP'].gsub('\ ', ' ')
       else
         key_prefix
       end
