@@ -138,14 +138,10 @@ class TroveSRU
       # Type matters
 
       desired_ids = ids[type]
-      if ! desired_ids
-        return false # identifier of type not in result record
-      end
-
-      if ! desired_ids.include?(value)
-        return false # identifier value not in result record
-      end
-
+      # identifier of type not in result record
+      return false if desired_ids.nil?
+      # identifier value not in result record
+      return false unless desired_ids.include?(value)
     else
       # Type does not matter
 
@@ -207,44 +203,30 @@ class TroveSRU
     cql_query = "rec.identifier=\"#{escaped_value}\""
 
     # Connect
-
     client = SRU::Client.new(use_test ? SRU_URL_TEST : SRU_URL_PRODUCTION)
 
     # Search (returns a SRU::SearchRetrieveResponse object)
-
     records = client.search_retrieve(cql_query,
                             :maximumRecords => 2,
                             :resultSetTTL => 0,
                             :recordSchema => RIFCS_SCHEMA)
 
     # Check "numberOfRecords" claims to have exactly one record
-
     num_records = records.number_of_records
-    if num_records.zero?
-      # No match found
-      return nil
-    elsif 1 < num_records
-      # Multiple records match the identifier: must be an error
-      raise DataError, "multiple matches found: #{value}"
+    case
+      when num_records.zero?
+        # No match found
+        return nil
+      when num_records > 1
+        # Multiple records match the identifier: must be an error
+        raise DataError, "multiple matches found: #{value}"
     end
 
     # Check record contains the searched for type and value
-
-    if ! has_id?(type, value, records)
-      return nil
-    end
+    return nil unless has_id?(type, value, records)
 
     # Extract the RIF-CS registryObject key and return it as the result
-
-    result = nil
-    records.each do |r|
-      if result
-        raise DataError, "multiple records, but number of records is one"
-      end
-      result = records.rifcs_key(r)
-    end
-    return result
-
+    records.rifcs_key(records.first)
   end
 
 end

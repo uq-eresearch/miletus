@@ -20,50 +20,90 @@ describe TroveSRU do
 
   describe "#self.lookup_nla_id" do
 
+    def cassette_name(value)
+      'nla_lookup_for_%s' % value.gsub('/','_')
+    end
+
     it "does not work with values ending in a backslash character" do
-      lambda {
-        TroveSRU.lookup_nla_id(nil, 'foobar\\', USE_TEST)
-      }.should raise_error(TroveSRU::DataError)
+      value = 'foobar\\'
+      VCR.use_cassette(cassette_name(value)) do
+        lambda {
+          TroveSRU.lookup_nla_id(nil, value, USE_TEST)
+        }.should raise_error(TroveSRU::DataError)
+      end
     end
 
     it "successfully returns NLA Party Identifier (any type)" do
-      nla = TroveSRU.lookup_nla_id(nil, TARGET_VALUE, USE_TEST)
-      nla.should == EXPECTED_NLA_ID
+      value = TARGET_VALUE
+      VCR.use_cassette(cassette_name(value)) do
+        nla = TroveSRU.lookup_nla_id(nil, value, USE_TEST)
+        nla.should == EXPECTED_NLA_ID
+      end
     end
 
     it "successfully returns NLA Party Identifier (explicit type)" do
-      nla = TroveSRU.lookup_nla_id(TARGET_TYPE, TARGET_VALUE, USE_TEST)
-      nla.should == EXPECTED_NLA_ID
+      value = TARGET_VALUE
+      VCR.use_cassette(cassette_name(value)) do
+        nla = TroveSRU.lookup_nla_id(TARGET_TYPE, value, USE_TEST)
+        nla.should == EXPECTED_NLA_ID
+      end
     end
 
     it "works with the other SRU service too" do
-      nla = TroveSRU.lookup_nla_id(TARGET_TYPE, TARGET_VALUE, ! USE_TEST)
-      nla.should == EXPECTED_NLA_ID
+      value = TARGET_VALUE
+      VCR.use_cassette("%s_with_other" % cassette_name(value)) do
+        nla = TroveSRU.lookup_nla_id(TARGET_TYPE, value, ! USE_TEST)
+        nla.should == EXPECTED_NLA_ID
+      end
     end
 
     it "fails when no value match (any type)" do
-      nla = TroveSRU.lookup_nla_id(nil, WRONG_VALUE, USE_TEST)
-      nla.should == nil
+      value = WRONG_VALUE
+      VCR.use_cassette(cassette_name(value)) do
+        nla = TroveSRU.lookup_nla_id(nil, value, USE_TEST)
+        nla.should == nil
+      end
     end
 
     it "fails when no value match (explicit type)" do
-      nla = TroveSRU.lookup_nla_id(TARGET_TYPE, WRONG_VALUE, USE_TEST)
-      nla.should == nil
+      value = WRONG_VALUE
+      VCR.use_cassette(cassette_name(value)) do
+        nla = TroveSRU.lookup_nla_id(TARGET_TYPE, value, USE_TEST)
+        nla.should == nil
+      end
     end
 
     it "fails when value matches, but explicit type does not" do
-      nla = TroveSRU.lookup_nla_id(WRONG_TYPE, TARGET_VALUE, USE_TEST)
-      nla.should == nil
+      value = WRONG_VALUE
+      VCR.use_cassette(cassette_name(value)) do
+        nla = TroveSRU.lookup_nla_id(WRONG_TYPE, value, USE_TEST)
+        nla.should == nil
+      end
     end
 
     it "fails for false-positive value matches (any type)" do
-      nla = TroveSRU.lookup_nla_id(nil, TARGET_VALUE.chop, USE_TEST)
-      nla.should == nil
+      value = TARGET_VALUE.chop
+      VCR.use_cassette(cassette_name(value)) do
+        nla = TroveSRU.lookup_nla_id(nil, value, USE_TEST)
+        nla.should == nil
+      end
     end
 
     it "fails for false-positive value matches (explicit type)" do
-      nla = TroveSRU.lookup_nla_id(TARGET_TYPE, TARGET_VALUE.chop, USE_TEST)
-      nla.should == nil
+      value = TARGET_VALUE.chop
+      VCR.use_cassette(cassette_name(value)) do
+        nla = TroveSRU.lookup_nla_id(TARGET_TYPE, value, USE_TEST)
+        nla.should == nil
+      end
+    end
+
+    it "throws an error if multiple values are returned" do
+      value = 'dataspace.uq.edu.au'
+      VCR.use_cassette(cassette_name(value)) do
+        lambda {
+          TroveSRU.lookup_nla_id(nil, value, USE_TEST)
+        }.should raise_error(TroveSRU::DataError)
+      end
     end
 
   end
