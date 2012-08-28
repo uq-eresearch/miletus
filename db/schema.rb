@@ -69,16 +69,31 @@ ActiveRecord::Schema.define(:version => 5) do
     t.boolean  "deleted",              :default => false, :null => false
   end
 
+  create_table "output_oaipmh_record_set_memberships", :force => true do |t|
+    t.integer "record_id"
+    t.integer "set_id"
+  end
+
   create_table "output_oaipmh_records", :force => true do |t|
     t.integer  "underlying_concept_id"
+    t.integer  "set_memberships_id"
     t.text     "metadata"
     t.datetime "created_at",            :null => false
     t.datetime "updated_at",            :null => false
   end
 
+  create_table "output_oaipmh_sets", :force => true do |t|
+    t.integer  "set_memberships_id"
+    t.string   "spec",               :null => false
+    t.string   "name",               :null => false
+    t.string   "description"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
+  end
+
   create_table "sru_interfaces", :force => true do |t|
     t.string "endpoint", :null => false
-    t.string "schema",   :null => false
+    t.text   "details",  :null => false
   end
 
 end
