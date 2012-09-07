@@ -23,10 +23,14 @@ class SruRifcsLookupObserver < ActiveRecord::Observer
     include Miletus::NamespaceHelper
 
     def run
-      identifiers = concept.indexed_attributes.where(
-        :key => 'identifier').pluck(:value)
+      identifiers = \
+        concept.indexed_attributes.where(
+          :key => 'identifier').pluck(:value) +
+        concept.indexed_attributes.where(
+          :key => 'email').pluck(:value).map {|e| "mailto:%s" % e }
 
       xml = nil
+
       identifiers.detect do |identifier|
         xml = interface.lookup_by_identifier(identifier)
       end

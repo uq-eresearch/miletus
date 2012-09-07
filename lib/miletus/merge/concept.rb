@@ -59,6 +59,10 @@ module Miletus::Merge
           '//rif:registryObject/rif:*/rif:identifier'))
       update_indexed_attributes('relatedKey',
         content_from_nodes(input_docs, '//rif:relatedObject/rif:key'))
+      update_indexed_attributes('email',
+        content_from_nodes(input_docs,
+          '//rif:registryObject/rif:party/rif:location/rif:address'+
+          '/rif:electronic[@type="email"]/rif:value'))
     end
 
     def related_concepts

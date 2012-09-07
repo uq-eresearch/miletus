@@ -37,7 +37,6 @@ module Miletus::Harvest::SRU
 
       records = client.search_retrieve(cql_query,
                               :maximumRecords => 2,
-                              :resultSetTTL => 0,
                               :recordSchema => schema)
 
       num_records = records.number_of_records
