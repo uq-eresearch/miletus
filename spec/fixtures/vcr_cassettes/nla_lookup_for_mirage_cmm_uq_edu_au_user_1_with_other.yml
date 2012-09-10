@@ -19,7 +19,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Tue, 28 Aug 2012 06:10:32 GMT
+      - Mon, 10 Sep 2012 01:58:06 GMT
       Content-Type:
       - text/xml;charset=ISO-8859-1
       X-Cache:
@@ -166,7 +166,7 @@ http_interactions:
         type=\"retrieveSchema\">info:srw/schema/1/dc-v1.1</default>\n          </configInfo>\n
         \       </explain>\n      </SRW:recordData>\n    </SRW:record>\n  </SRW:explainResponse>\n"
     http_version: 
-  recorded_at: Tue, 28 Aug 2012 06:10:32 GMT
+  recorded_at: Mon, 10 Sep 2012 01:58:06 GMT
 - request:
     method: get
     uri: http://www.nla.gov.au/apps/srw/search/peopleaustralia?maximumRecords=2&operation=searchRetrieve&query=rec.identifier=%22mirage.cmm.uq.edu.au/user/1%22&recordSchema=http://ands.org.au/standards/rif-cs/registryObjects&resultSetTTL=0&version=1.1
@@ -186,7 +186,7 @@ http_interactions:
       Server:
       - nginx
       Date:
-      - Tue, 28 Aug 2012 06:10:32 GMT
+      - Mon, 10 Sep 2012 01:58:06 GMT
       Content-Type:
       - text/xml;charset=UTF-8
       Content-Length:
@@ -207,7 +207,7 @@ http_interactions:
         xmlns=\"http://ands.org.au/standards/rif-cs/registryObjects\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><registryObject
         group=\"National Library of Australia\"><key>http://nla.gov.au/nla.party-1486629</key><originatingSource
         type=\"authoritative\">http://trove.nla.gov.au/people</originatingSource><party
-        dateModified=\"2012-05-06T17:15:10Z\" type=\"person\"><identifier type=\"AU-ANL:PEAU\">http://nla.gov.au/nla.party-1486629</identifier><identifier
+        dateModified=\"2012-09-05T17:15:04Z\" type=\"person\"><identifier type=\"AU-ANL:PEAU\">http://nla.gov.au/nla.party-1486629</identifier><identifier
         type=\"AU-QU\">http://services.ands.org.au/home/orca/rda/view.php?key=mirage.cmm.uq.edu.au/user/1</identifier><identifier
         type=\"AU-QU\">mirage.cmm.uq.edu.au/user/1</identifier><name type=\"alternative\"><namePart
         type=\"given\">Tim</namePart><namePart type=\"family\">Dettrick</namePart></name><location><address><electronic
@@ -215,5 +215,5 @@ http_interactions:
         xmlns:ns2=\"http://www.loc.gov/zing/srw/\"><version>1.1</version><query>rec.identifier=&quot;mirage.cmm.uq.edu.au/user/1&quot;</query><xQuery><ns3:searchClause
         xmlns:ns3=\"http://www.loc.gov/zing/cql/xcql/\"><ns3:index>rec.identifier</ns3:index><ns3:relation><ns3:value>=</ns3:value></ns3:relation><ns3:term>mirage.cmm.uq.edu.au/user/1</ns3:term></ns3:searchClause></xQuery><maximumRecords>2</maximumRecords><recordSchema>http://ands.org.au/standards/rif-cs/registryObjects</recordSchema><resultSetTTL>0</resultSetTTL></echoedSearchRetrieveRequest></searchRetrieveResponse>"
     http_version: 
-  recorded_at: Tue, 28 Aug 2012 06:10:32 GMT
+  recorded_at: Mon, 10 Sep 2012 01:58:06 GMT
 recorded_with: VCR 2.2.4
