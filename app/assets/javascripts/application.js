@@ -12,5 +12,8 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require underscore
+//= require underscore.string.min.js
 //= require twitter/bootstrap
+//= require google-code-prettify-rails/prettify
 //= require_tree .

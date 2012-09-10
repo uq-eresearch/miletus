@@ -26,6 +26,12 @@ module Miletus::Merge
       "%s%d" % [key_prefix, id]
     end
 
+    def self.find_by_key!(key)
+      _, _, id = key.partition(key_prefix)
+      raise ActiveRecord::RecordNotFound("Invalid prefix") unless id =~ /^\d+$/
+      find_by_id!(id.to_i)
+    end
+
     def self.find_existing(xml)
       id_nodes = Nokogiri::XML(xml).xpath(
         '//rif:identifier', ns_decl)
@@ -82,6 +88,10 @@ module Miletus::Merge
     end
 
     def key_prefix
+      self.class.key_prefix
+    end
+
+    def self.key_prefix
       if ENV.has_key? 'CONCEPT_KEY_PREFIX'
         ENV['CONCEPT_KEY_PREFIX']
       else

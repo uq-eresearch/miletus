@@ -12,6 +12,7 @@
     <![endif]-->
 
     <%= stylesheet_link_tag "application", :media => "all" %>
+    <%= javascript_include_tag "application" %>
 
     <link href="images/favicon.ico" rel="shortcut icon">
     <link href="images/apple-touch-icon.png" rel="apple-touch-icon">
@@ -39,11 +40,8 @@
     </div>
 
     <div class="container-fluid">
-      <div class="row-fluid">
-        <div class="span12">
-          <%= yield %>
-        </div>
-      </div><!--/row-->
+
+      <%= yield %>
 
       <footer>
         <p>&copy; Company 2012</p>

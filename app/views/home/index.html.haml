@@ -1,17 +1,39 @@
-%h1 OAI-PMH RIF-CS Record Collections
+%div.page-header
+  %h1 Metadata Records
 
-- @collections.each do |rc|
-  %h2= rc.endpoint
 
-  %table.table
-    %thead
-      %tr
-        %th Identifier
-        %th Datestamp
-        %th Size
-    %tbody
-      - rc.records.each do |r|
+%div.row-fluid
+  %div.span6
+    %h2 Stats
+
+    %ul.unstyled
+      - @stats.each do |k,v|
+        %li
+          %span.lead{ :style => 'display: inline-block; width: 3em; text-align: right' }
+            = v
+          %span= k
+
+    %h2 Concepts
+
+    %table.table
+      %thead
         %tr
-          %td= r.identifier
-          %td= r.datestamp
-          %td= "#{r.metadata.to_s.length} bytes"
+          %th Key
+          %th Facets
+          %th Size
+          %th Last Modified
+      %tbody
+        - @concepts.each do |c|
+          %tr
+            %td
+              %a{:href => concept_path(c.key)}= c.key
+            %td= c.facets.count
+            %td= "#{("%s" % c.to_rif).length} bytes"
+            %td= c.updated_at
+
+  %div.span6
+
+    %h2 OAI-PMH Feed
+
+    %pre
+      %code#oaipmh-feed.prettyprint.linenums
