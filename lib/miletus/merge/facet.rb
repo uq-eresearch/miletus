@@ -21,7 +21,8 @@ module Miletus::Merge
 
     def to_rif
       doc = Nokogiri::XML(metadata)
-      ns_by_prefix('rif').schema.valid?(doc) ? doc.root.to_s : nil
+      ns_by_prefix('rif').schema.valid?(doc) ?
+        clean_rifcs_doc(doc).root.to_s : nil
     end
 
     private
@@ -39,6 +40,47 @@ module Miletus::Merge
       key_e.content.strip
     end
 
+    def clean_rifcs_doc(doc)
+      translate_old_elements(doc)
+      update_datetime(doc)
+      doc
+    end
+
+    def update_datetime(rifcs_doc)
+      types = %w{collection party activity service}
+      pattern = types.map { |e| "//rif:#{e}"}.join(' | ')
+      rifcs_doc.xpath(pattern, ns_decl).each do |e|
+        e['dateModified'] = (updated_at or Time.now).utc.iso8601
+      end
+    end
+
+    def translate_old_elements(rifcs_doc)
+      types = {'rights' => 'rightsStatement', 'accessRights' => 'accessRights'}
+      # For those description elements we can translate...
+      find_description_elements_with_types(rifcs_doc, types.keys).each do |e|
+        # Get the rights element or create it if necessary
+        rights = find_or_create_rifcs_rights_element(e.parent)
+        # Create new element based on attribute name and insert it
+        node = Nokogiri::XML::Node.new(types[e['type'].to_s], rifcs_doc)
+        node.content = e.content
+        rights << node
+        e.remove
+      end
+    end
+
+    def find_description_elements_with_types(rifcs_doc, types)
+      pattern = types.map do |t|
+        "//rif:description[@type=\"%s\"]" % t
+      end.join("|")
+      rifcs_doc.xpath(pattern, ns_decl)
+    end
+
+    def find_or_create_rifcs_rights_element(node)
+      rights = node.at_xpath("rif:rights", ns_decl)
+      rights ||= Nokogiri::XML::Node.new('rights', node.document)
+      node << rights
+      rights
+    end
 
   end
 

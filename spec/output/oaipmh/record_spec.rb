@@ -82,6 +82,7 @@ describe Miletus::Output::OAIPMH::Record do
   end
 
   context "RIF-CS" do
+
     it { should respond_to(:to_rif) }
 
     it "should return nil if record cannot generate valid RIF-CS" do
