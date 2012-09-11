@@ -28,4 +28,7 @@ Or to run the whole lot:
 
     foreman start
 
-	
+
+## Acknowledgements
+
+This app was produced as a result of an [ANDS-funded](http://www.ands.org.au/) project.

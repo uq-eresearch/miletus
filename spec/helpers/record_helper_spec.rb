@@ -12,6 +12,13 @@ describe RecordHelper do
     File.open(fixture_file) { |f| f.read() }
   end
 
+  describe "annotated_xml" do
+    it "produces an annotated version of a RIF-CS document" do
+      doc = Nokogiri::XML(get_fixture('party', 1))
+      subject.annotated_xml(xml).should match(/<a href=/)
+    end
+  end
+
   describe "title" do
 
     it "produces a list of titles for a RIF-CS document" do

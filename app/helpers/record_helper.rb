@@ -1,5 +1,19 @@
 module RecordHelper
 
+  def annotated_xml(rifcs_doc)
+    # HTML escape, then convert SafeBuffer to String so `gsub` works OK
+    xml = html_escape(rifcs_doc.to_xml).to_str
+    xml = xml.gsub(/&lt;key&gt;(\S+)&lt;\/key&gt;/) do |s|
+      begin
+        (html_escape("<key>%s</key>").to_str) %
+          ('<strong><a href="%s">%s</a></strong>' % [concept_path($1), $1])
+      rescue
+        (html_escape("<key>%s</key>").to_str) % $1
+      end
+    end
+    xml.html_safe
+  end
+
   def description(rifcs_doc)
     extend Miletus::NamespaceHelper
     node = rifcs_doc.at_xpath(

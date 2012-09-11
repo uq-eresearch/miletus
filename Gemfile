@@ -77,5 +77,5 @@ group :development do
   gem 'guard-rspec'
   gem 'debugger'
   gem 'pry-rails'
-  gem 'libnotify', :require => false unless RUBY_PLATFORM =~ /linux/i
+  gem 'rb-inotify','~> 0.8.8',:require => false unless RUBY_PLATFORM =~ /linux/i
 end
