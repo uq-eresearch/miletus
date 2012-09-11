@@ -4,7 +4,7 @@ require 'cgi'
 
 describe RecordHelper do
 
-  subject { Object.new.extend(RecordHelper) }
+  subject { Object.new.extend(ERB::Util).extend(RecordHelper) }
 
   def get_fixture(type, number = 1)
     fixture_file = File.join(File.dirname(__FILE__),
@@ -13,9 +13,9 @@ describe RecordHelper do
   end
 
   describe "annotated_xml" do
-    it "produces an annotated version of a RIF-CS document" do
+    it "should not throw exceptions when used on a simple RIF-CS document" do
       doc = Nokogiri::XML(get_fixture('party', 1))
-      subject.annotated_xml(xml).should match(/<a href=/)
+      lambda { subject.annotated_xml(doc) }.should_not raise_error
     end
   end
 
