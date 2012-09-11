@@ -14,18 +14,35 @@
         <namePart type="family">Dettrick</namePart>
         <namePart type="given">Timothy</namePart>
         <namePart type="given">John</namePart>
+        <namePart type="title">Mr</namePart>
       </name>
       <name type="alternative">
         <namePart type="given">Tim</namePart>
         <namePart type="family">Dettrick</namePart>
       </name>
+      <name type="primary">
+        <namePart type="family">Dettrick</namePart>
+        <namePart type="given">Timothy John</namePart>
+        <namePart type="title">Mr</namePart>
+      </name>
 			<location>
+        <address>
+          <electronic type="email">
+            <value>td@foo.com</value>
+          </electronic>
+        </address>
+        <address>
+          <electronic type="email">
+            <value>td@bar.net</value>
+          </electronic>
+        </address>
 				<address>
 					<electronic type="url">
 						<value>http://nla.gov.au/nla.party-1486629</value>
 					</electronic>
 				</address>
 			</location>
+			<description type="brief">A software engineer working at the UQ ITEE e-Research Group.</description>
 		</party>
 	</registryObject>
 </registryObjects>

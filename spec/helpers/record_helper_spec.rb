@@ -1,15 +1,63 @@
 require 'spec_helper'
 
-# Specs in this file have access to a helper object that includes
-# the RecordHelper. For example:
-#
-# describe RecordHelper do
-#   describe "string concat" do
-#     it "concats two strings with spaces" do
-#       helper.concat_strings("this","that").should == "this that"
-#     end
-#   end
-# end
+require 'cgi'
+
 describe RecordHelper do
-  pending "add some examples to (or delete) #{__FILE__}"
+
+  subject { Object.new.extend(RecordHelper) }
+
+  def get_fixture(type, number = 1)
+    fixture_file = File.join(File.dirname(__FILE__),
+        '..', 'fixtures',"rifcs-#{type}-#{number}.xml")
+    File.open(fixture_file) { |f| f.read() }
+  end
+
+  describe "title" do
+
+    it "produces a list of titles for a RIF-CS document" do
+      doc = Nokogiri::XML(get_fixture('party', 1))
+      subject.titles(doc).should == ["Timothy John Dettrick", "Tim Dettrick"]
+    end
+
+    it "ignores duplicate items" do
+      doc = Nokogiri::XML(get_fixture('party', '1d'))
+      subject.titles(doc).should == ["Mr Timothy John Dettrick", "Tim Dettrick"]
+    end
+
+  end
+
+  describe "email_addresses" do
+    it "produces a list of email addresses for a RIF-CS document" do
+      doc = Nokogiri::XML(get_fixture('party', '1d'))
+      subject.email_addresses(doc).should == ["td@foo.com", "td@bar.net"]
+    end
+  end
+
+  describe "email_uris" do
+    it "produces a list of obfuscated email URIs for a RIF-CS document" do
+      doc = Nokogiri::XML(get_fixture('party', '1d'))
+      subject.email_uris(doc).each do |uri|
+        uri.should match(/^mailto:/)
+      end
+      addrs = subject.email_uris(doc).map {|addr| addr.gsub(/^mailto:/, '')}
+      addrs.map{|addr| CGI.unescapeHTML(addr)}.should == \
+        subject.email_addresses(doc)
+    end
+  end
+
+  describe "description" do
+    it "provides the first description for a RIF-CS document" do
+      doc = Nokogiri::XML(get_fixture('party', '1d'))
+      subject.description(doc).should == \
+        'A software engineer working at the UQ ITEE e-Research Group.'
+    end
+  end
+
+  describe "urls" do
+    it "produces a list of URLs for a RIF-CS document" do
+      doc = Nokogiri::XML(get_fixture('party', '1d'))
+      subject.urls(doc).should == ["http://nla.gov.au/nla.party-1486629"]
+    end
+  end
+
 end

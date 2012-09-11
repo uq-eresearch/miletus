@@ -20,7 +20,7 @@ describe Miletus::Merge::Concept do
   it "should merge facet metadata when identifiers match" do
     # Create multi-faceted concept
     concept = Miletus::Merge::Concept.create()
-    [1, '1b'].map {|n| get_fixture('party', n) }.each do |fixture_xml|
+    [1, '1b'].map{|n| get_fixture('party', n)}.each do |fixture_xml|
       concept.facets.create(:metadata => fixture_xml)
     end
     concept.should have(2).facets
