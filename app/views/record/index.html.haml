@@ -3,7 +3,7 @@
 
 
 %div.row-fluid
-  %div.span6
+  %div.span4
     %h2 Stats
 
     %ul.unstyled
@@ -13,12 +13,13 @@
             = v
           %span= k
 
+  %div.span8
     %h2 Concepts
 
     %table.table
       %thead
         %tr
-          %th Key
+          %th.span4 Title
           %th Facets
           %th Size
           %th Last Modified
@@ -26,14 +27,8 @@
         - @concepts.each do |c|
           %tr
             %td
-              %a{:href => concept_path(c.key)}= c.key
+              %a{:href => concept_path(c.key)}
+                = titles(Nokogiri::XML(c.to_rif)).first
             %td= c.facets.count
             %td= "#{("%s" % c.to_rif).length} bytes"
             %td= c.updated_at
-
-  %div.span6
-
-    %h2 OAI-PMH Feed
-
-    %pre
-      %code#oaipmh-feed.prettyprint.linenums
