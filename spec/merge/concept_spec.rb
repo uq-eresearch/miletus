@@ -175,4 +175,50 @@ describe Miletus::Merge::Concept do
     end
   end
 
+  describe "GEXF generation" do
+
+    describe "global GEXF graph" do
+
+      before(:each) do
+        # Create some data
+        %w[party collection].map{|t| get_fixture(t, 1)}.each do |fixture_xml|
+          concept = Miletus::Merge::Concept.create()
+          concept.facets.create(:metadata => fixture_xml)
+        end
+      end
+
+      let(:doc) { Nokogiri::XML(subject.class.to_gexf) }
+
+      it "should generate a valid global GEXF graph" do
+        ns_by_prefix('gexf').schema.validate(doc).should == []
+      end
+
+      it "should have a node for each concepts" do
+        doc.xpath('//gexf:node', ns_decl).count.should == subject.class.count
+      end
+
+      it "should have a label for each node" do
+        doc.xpath('//gexf:node/@label',
+          ns_decl).count.should == subject.class.count
+      end
+
+      it "should have an edge for each relationship for each concept" do
+        relationship_count = Miletus::Merge::IndexedAttribute.where(
+          :key => 'relatedKey'
+        ).count
+        edges = doc.xpath('//gexf:edge', ns_decl)
+        edges.count.should == relationship_count
+        edges.each do |e|
+          ['source', 'target'].each do |a|
+            lambda do
+              Miletus::Merge::Concept.find_by_key!(e[a])
+            end.should_not raise_error
+          end
+        end
+      end
+
+    end
+
+  end
+
 end

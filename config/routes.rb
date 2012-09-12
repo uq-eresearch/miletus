@@ -8,6 +8,8 @@ Miletus::Application.routes.draw do
   get '/records/:key' => 'record#view',
     :constraints => {:key => /[^\/]+/}, :as => :concept
 
+  get '/records.gexf' => 'record#gexf'
+
   # Sample of named route:
   #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
   # This route can be invoked with purchase_url(:id => product.id)

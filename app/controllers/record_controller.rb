@@ -22,5 +22,10 @@ class RecordController < ApplicationController
     @doc = Nokogiri::XML(concept.to_rif)
   end
 
+  def gexf
+    xml = Miletus::Merge::Concept.to_gexf
+    render :text => xml, :content_type => 'text/xml'
+  end
+
 
 end

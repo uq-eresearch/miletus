@@ -16,4 +16,13 @@ describe RecordController do
 
   end
 
+  describe "GET 'gexf'" do
+    it "returns valid GEXF graph" do
+      get 'gexf'
+      response.should be_success
+      doc = Nokogiri::XML(response.body)
+      ns_by_prefix('gexf').schema.validate(doc).should == []
+    end
+  end
+
 end

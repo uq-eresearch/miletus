@@ -72,11 +72,53 @@ module Miletus::Merge
     end
 
     def related_concepts
-      inbound_related_concepts.to_set | outbound_related_concepts.to_set
+      inbound_related_concepts | outbound_related_concepts
     end
 
     def to_s
       "%s incorporating %s" % [key, facets.pluck(:key).inspect]
+    end
+
+    def self.to_gexf
+      Nokogiri::XML::Builder.new do |xml|
+        xml.gexf(:xmlns => ns_by_prefix('gexf').uri, :version => '1.2') {
+          xml.graph(:mode => 'static', :defaultedgetype => 'directed') {
+            xml.nodes {
+              Concept.all.each do |concept|
+                xml.node(:id => concept.key, :label => concept.key)
+              end
+            }
+            xml.edges {
+              Concept.all.each do |concept|
+                concept.outbound_related_concepts.to_set.each do |oc|
+                  xml.edge(
+                    :id => "%s|%s" % [concept.key, oc.key],
+                    :source => concept.key,
+                    :target => oc.key)
+                end
+              end
+            }
+          }
+        }
+      end.to_xml
+    end
+
+    def inbound_related_concepts
+      in_keys = facets.pluck(:key)
+      return [] if in_keys.compact.empty?
+      self.class.joins(:indexed_attributes).where(
+          ["#{tn(:indexed_attributes)}.key = 'relatedKey'",
+           "#{tn(:indexed_attributes)}.value IN (?)"].join(' AND '),
+          in_keys
+        ).to_set
+    end
+
+    def outbound_related_concepts
+      out_keys = indexed_attributes.where(:key => 'relatedKey').pluck(:value)
+      return [] if out_keys.compact.empty?
+      self.class.joins(:facets).where(
+          "#{tn(:facets)}.key in (?)", out_keys
+        ).to_set
     end
 
     private
@@ -98,24 +140,6 @@ module Miletus::Merge
         require 'socket'
         'urn:%s:' % Socket.gethostname
       end
-    end
-
-    def inbound_related_concepts
-      in_keys = facets.pluck(:key)
-      return [] if in_keys.compact.empty?
-      self.class.joins(:indexed_attributes).where(
-          ["#{tn(:indexed_attributes)}.key = 'relatedKey'",
-           "#{tn(:indexed_attributes)}.value IN (?)"].join(' AND '),
-          in_keys
-        )
-    end
-
-    def outbound_related_concepts
-      out_keys = indexed_attributes.where(:key => 'relatedKey').pluck(:value)
-      return [] if out_keys.compact.empty?
-      self.class.joins(:facets).where(
-          "#{tn(:facets)}.key in (?)", out_keys
-        )
     end
 
     def tn(relation)

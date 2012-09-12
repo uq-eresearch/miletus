@@ -20,7 +20,9 @@ module Miletus
             'oai_dc', 'http://www.openarchives.org/OAI/2.0/oai_dc.xsd'),
           Namespace.new('http://ands.org.au/standards/rif-cs/registryObjects',
             'rif','http://services.ands.org.au' +
-              '/documentation/rifcs/schema/registryObjects.xsd')
+              '/documentation/rifcs/schema/registryObjects.xsd'),
+          Namespace.new('http://www.gexf.net/1.2draft',
+            'gexf', 'http://gexf.net/1.2draft/gexf.xsd')
         ]
       end
 

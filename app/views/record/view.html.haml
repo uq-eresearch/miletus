@@ -1,6 +1,6 @@
 %h1
   = titles(@doc).first
-  - titles(@doc)[1..-1].each do |t|
+  - _, *ot = titles(@doc) && !ot.nil? && ot.each do |t|
     %small= "aka %s" % t
 
 %ul.unstyled
