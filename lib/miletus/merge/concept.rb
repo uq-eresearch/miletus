@@ -179,7 +179,8 @@ module Miletus::Merge
         patterns = [
           "//rif:registryObject/rif:*/rif:identifier",
           "//rif:name",
-          "//rif:location"]
+          "//rif:location",
+          "//rif:registryObject/rif:*/rif:relatedObject"]
         alt_parent = at_xpath("//rif:registryObject/rif:*[last()]", ns_decl)
         patterns.each do |pattern|
           # Get all identifier elements, unique in content
