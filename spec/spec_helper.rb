@@ -7,6 +7,11 @@ def start_simplecov
   require 'simplecov'
   SimpleCov.start :rails
   require 'miletus'
+
+  RSpec.configure do |config|
+    # Mixin namespace helpers
+    config.include Miletus::NamespaceHelper
+  end
 end
 
 Spork.prefork do
@@ -60,9 +65,6 @@ Spork.prefork do
         raise ActiveRecord::Rollback
       end
     end
-
-    # Mixin namespace helpers
-    config.include Miletus::NamespaceHelper
 
   end
 end
