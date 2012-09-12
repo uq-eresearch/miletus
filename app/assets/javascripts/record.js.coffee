@@ -6,11 +6,11 @@ init_graph = (selector) ->
   $(selector).each (index, targetElement) ->
     sigInst = sigma.init(targetElement).drawingProperties(
       defaultLabelColor: '#fff'
-      edgeColor: 'default'
+      edgeColor: 'source'
       defaultEdgeColor: '#aaa'
-      nodeHoverColor: 'default',
+      nodeHoverColor: 'node',
       defaultNodeHoverColor: '#fff',
-      nodeActiveColor: 'default',
+      nodeActiveColor: 'node',
       defaultNodeActiveColor: '#fff',
       defaultLabelSize: 14
       defaultLabelBGColor: '#fff'
@@ -32,7 +32,22 @@ init_graph = (selector) ->
 
     # Add colour and transform square plotting to rectangle
     sigInst.iterNodes((node) ->
-      node.color = '#bfb'
+      type = node['attr']['attributes'][0].val
+      subtype = node['attr']['attributes'][1].val
+      node.color =
+        switch type
+          when 'party'
+            switch subtype
+              when 'group'
+                '#f60'
+              else
+                '#f00'
+          when 'collection'
+            '#0f0'
+          when 'activity'
+            '#00f'
+          else
+            '#f0f'
       node.x = node.x * $(targetElement).width() / $(targetElement).height()
     , null)
 
@@ -44,7 +59,7 @@ init_graph = (selector) ->
     _.delay(() ->
       sigInst.stopForceAtlas2()
       sigInst.position(0,0,1).draw();
-    , 5000)
+    , 6000)
 
 
     sigInst.bind('upnodes', (event) ->

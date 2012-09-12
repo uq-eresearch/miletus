@@ -26,6 +26,20 @@ module Miletus::Merge
       "%s%d" % [key_prefix, id]
     end
 
+    def title
+      @title ||= determine_title
+    end
+
+    def type
+      @type, @subtype = determine_types unless @type
+      @type
+    end
+
+    def subtype
+      @type, @subtype = determine_types unless @subtype
+      @subtype
+    end
+
     def self.find_by_key!(key)
       _, _, id = key.partition(key_prefix)
       raise ActiveRecord::RecordNotFound("Invalid prefix") unless id =~ /^\d+$/
@@ -83,9 +97,20 @@ module Miletus::Merge
       Nokogiri::XML::Builder.new do |xml|
         xml.gexf(:xmlns => ns_by_prefix('gexf').uri, :version => '1.2') {
           xml.graph(:mode => 'static', :defaultedgetype => 'directed') {
+            xml.attributes(:class => 'node') {
+              xml.attribute(:id => 0, :title => 'type', :type => 'string')
+              xml.attribute(:id => 1, :title => 'subtype', :type => 'string')
+            }
             xml.nodes {
               Concept.all.each do |concept|
-                xml.node(:id => concept.key, :label => concept.key)
+                unless concept.title.nil?
+                  xml.node(:id => concept.key, :label => concept.title) {
+                    xml.attvalues {
+                      xml.attvalue(:for => 0, :value => concept.type)
+                      xml.attvalue(:for => 1, :value => concept.subtype)
+                    }
+                  }
+                end
               end
             }
             xml.edges {
@@ -165,6 +190,31 @@ module Miletus::Merge
         end
         indexed_attributes.where(:id => current_values - new_values).delete_all
       end
+    end
+
+    def determine_title
+      rifcs_doc = Nokogiri::XML(to_rif)
+      name_order = ['primary', 'abbreviated', 'alternative']
+      names = rifcs_doc.xpath("//rif:name", ns_decl).to_ary.sort_by! do |n|
+        name_order.index(n['type'])
+      end
+      names.map do |name|
+        part_order = ['title', 'given', 'family', 'suffix', nil]
+        parts = name.xpath("rif:namePart", ns_decl).to_ary
+        parts.delete_if { |part| not part_order.include?(part['type']) }
+        parts.sort_by! do |part|
+          # In part order, but use original index to sort equal elements
+          part_order.index(part['type']) * parts.length + parts.index(part)
+        end
+        parts.map{|e| e.content}.join(" ")
+      end.uniq.first
+    end
+
+    def determine_types
+      extend Miletus::NamespaceHelper
+      rifcs_doc = Nokogiri::XML(to_rif)
+      n = rifcs_doc.at_xpath("//rif:registryObject/rif:*[last()]", ns_decl)
+      [n.name, n['type']]
     end
 
     class RifCsDoc < Nokogiri::XML::Document

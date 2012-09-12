@@ -9,6 +9,7 @@ Miletus::Application.routes.draw do
     :constraints => {:key => /[^\/]+/}, :as => :concept
 
   get '/records.gexf' => 'record#gexf'
+  get '/graph' => 'record#graph', :as => :concept_graph
 
   # Sample of named route:
   #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
