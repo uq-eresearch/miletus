@@ -190,6 +190,12 @@ module Miletus::Merge
             Nokogiri::XML::NodeSet.new(self, merged_nodes),
             alt_parent)
         end
+        # Ensure there is only one primary name
+        _, *other_primary_names = \
+          xpath('//rif:name[@type="primary"]', ns_decl).to_ary
+        other_primary_names.each do |node|
+          node['type'] = 'alternative'
+        end
         self
       end
 

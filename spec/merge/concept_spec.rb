@@ -32,7 +32,27 @@ describe Miletus::Merge::Concept do
     merged_doc = Nokogiri::XML(concept.to_rif)
     merged_doc.xpath('//rif:location', ns_decl).count.should == 2
     merged_doc.xpath('//rif:name', ns_decl).count.should == 2
+    merged_doc.xpath('//rif:name[@type="primary"]', ns_decl).count.should == 1
   end
+
+  it "should deduplicate primary names from facet metadata" do
+    # Create multi-faceted concept
+    concept = Miletus::Merge::Concept.create()
+    [1, '1d'].map{|n| get_fixture('party', n)}.each do |fixture_xml|
+      concept.facets.create(:metadata => fixture_xml)
+    end
+    concept.should have(2).facets
+    concept.to_rif.should_not be(nil)
+    merged_identifiers = get_identifiers(concept.to_rif).to_set
+    concept.facets.each do |f|
+      get_identifiers(f.to_rif).to_set.should be_subset(merged_identifiers)
+    end
+    merged_doc = Nokogiri::XML(concept.to_rif)
+    merged_doc.xpath('//rif:location', ns_decl).count.should == 2
+    merged_doc.xpath('//rif:name', ns_decl).count.should == 4
+    merged_doc.xpath('//rif:name[@type="primary"]', ns_decl).count.should == 1
+  end
+
 
   it "should merge facet metadata with some missing elements" do
     # Create multi-faceted concept
