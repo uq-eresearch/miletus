@@ -39,7 +39,10 @@ module RecordHelper
 
   def titles(rifcs_doc)
     extend Miletus::NamespaceHelper
-    names = rifcs_doc.xpath("//rif:name", ns_decl)
+    name_order = ['primary', 'abbreviated', 'alternative']
+    names = rifcs_doc.xpath("//rif:name", ns_decl).to_ary.sort_by! do |n|
+      name_order.index(n['type'])
+    end
     names.map do |name|
       part_order = ['title', 'given', 'family', 'suffix', nil]
       parts = name.xpath("rif:namePart", ns_decl).to_ary

@@ -12,8 +12,7 @@
 			<identifier type="AU-QU">mirage.cmm.uq.edu.au/user/1</identifier>
       <name type="primary">
         <namePart type="family">Dettrick</namePart>
-        <namePart type="given">Timothy</namePart>
-        <namePart type="given">John</namePart>
+        <namePart type="given">Timothy John</namePart>
         <namePart type="title">Mr</namePart>
       </name>
       <name type="alternative">
@@ -22,7 +21,8 @@
       </name>
       <name type="primary">
         <namePart type="family">Dettrick</namePart>
-        <namePart type="given">Timothy John</namePart>
+        <namePart type="given">Timothy</namePart>
+        <namePart type="given">John</namePart>
         <namePart type="title">Mr</namePart>
       </name>
 			<location>

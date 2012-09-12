@@ -191,9 +191,11 @@ module Miletus::Merge
             Nokogiri::XML::NodeSet.new(self, merged_nodes),
             alt_parent)
         end
-        # Ensure there is only one primary name
+        # Ensure there is only one primary name (and use the largest entry)
         _, *other_primary_names = \
-          xpath('//rif:name[@type="primary"]', ns_decl).to_ary
+          xpath('//rif:name[@type="primary"]', ns_decl).to_ary.sort_by! do |n|
+            -1 * n.to_xml.length # Reverse sort by length
+          end
         other_primary_names.each do |node|
           node['type'] = 'alternative'
         end
