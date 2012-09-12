@@ -30,6 +30,12 @@ init_graph = (selector) ->
     # (requires "sigma.parseGexf.js" to be included)
     sigInst.parseGexf '/records.gexf'
 
+    # Add colour and transform square plotting to rectangle
+    sigInst.iterNodes((node) ->
+      node.color = '#bfb'
+      node.x = node.x * $(targetElement).width() / $(targetElement).height()
+    , null)
+
     # Draw the graph
     sigInst.draw()
 
@@ -47,9 +53,6 @@ init_graph = (selector) ->
     )
 
     window.sigInst = sigInst
-    sigInst.iterNodes((node) ->
-      node.color = '#bfb'
-    , null)
 
 if (document.addEventListener)
   document.addEventListener(
