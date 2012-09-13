@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects">
+   <registryObject group="The University of Queensland">
+      <key>http://dataspace.uq.edu.au/collections/9</key>
+      <originatingSource>http://oztrack.org/</originatingSource>
+      <collection type="dataset">
+         <identifier type="url">http://oztrack.org/projectdescr?id=3</identifier>
+         <identifier type="url">http://dataspace.uq.edu.au/collections/9#</identifier>
+         <name type="primary">
+            <namePart>Tracking estuarine crocodiles on Cape York Peninsula using GPS-based telemetry </namePart>
+         </name>
+         <location>
+            <address>
+               <electronic type="url">
+                  <value>http://oztrack.org/projectdescr?id=3</value>
+               </electronic>
+            </address>
+         </location>
+         <coverage>
+            <temporal>
+               <date type="from" dateFormat="W3CDTF">2009-08</date>
+               <date type="to" dateFormat="W3CDTF">2011-04</date>
+            </temporal>
+         </coverage>
+         <coverage>
+            <spatial type="iso19139dcmiBox">
+                        northlimit=-11.952653;
+                        southlimit=-13.961349;
+                        eastlimit=141.466699;
+                        westlimit=142.50813;
+                        projection=WGS84
+                    </spatial>
+         </coverage>
+         <relatedObject>
+            <key>http://nla.gov.au/nla.party-1486629</key>
+            <relation type="isManagedBy"/>
+         </relatedObject>
+         <subject type="local">crocodylus porosus</subject>
+         <subject type="local">Cape York</subject>
+         <subject type="local">estaurine crocodile</subject>
+         <description type="brief">14 adult estuarine crocodiles were captured in the Wenlock River, Cape York, Queensland and were fitted with GPS based telemetric devices. The location of individuals was fixed twice daily over 6 to 8 months. </description>
+         <rights>
+          <rightsStatement>The data is the property of the University of Queensland. Permission is required to use this material.</rightsStatement>
+          <accessRights>The data in this project is only available to users on the OzTrack system whom have been granted access. Contact the Collection Manager regarding permission and procedures for accessing the data.</accessRights>
+         </rights>
+      </collection>
+   </registryObject>
+</registryObjects>

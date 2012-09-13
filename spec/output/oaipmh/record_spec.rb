@@ -66,7 +66,7 @@ describe Miletus::Output::OAIPMH::Record do
 
     it "should include rights when available" do
       include Miletus::NamespaceHelper
-      subject.metadata = get_fixture('collection')
+      subject.metadata = get_fixture('collection', '1b')
       subject.should be_valid
       subject.to_oai_dc.should_not be_nil
       # Validate the XML
@@ -112,20 +112,6 @@ describe Miletus::Output::OAIPMH::Record do
       rifcs_doc = Nokogiri::XML(subject.to_rif)
       rifcs_doc.at_xpath("//@dateModified", ns_decl).value.should\
         == subject.updated_at.iso8601
-    end
-
-    it "should translate RIF-CS 1.2 rights elements to 1.3" do
-      include Miletus::NamespaceHelper
-      subject.metadata = get_fixture('collection')
-      subject.to_rif.should_not be_nil
-      subject.save!
-      # Check the XML was converted
-      rifcs_doc = Nokogiri::XML(subject.to_rif)
-      rifcs_doc.at_xpath("//rif:rights", ns_decl).should_not be(nil)
-      rifcs_doc.at_xpath("//rif:rights/rif:accessRights",
-        ns_decl).content.should match(/^The data in this project/)
-      rifcs_doc.at_xpath("//rif:rights/rif:rightsStatement",
-        ns_decl).content.should match(/^The data is the property of/)
     end
 
   end
