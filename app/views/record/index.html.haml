@@ -15,21 +15,17 @@
 
   %div.span8
 
-    %h2 Concepts
+    %h2 Activity
 
-    %table.table
-      %thead
-        %tr
-          %th.span4 Title
-          %th Facets
-          %th Size
-          %th Last Modified
-      %tbody
-        - @concepts.each do |c|
-          %tr
-            %td
-              %a{:href => concept_path(c.key)}
-                = titles(Nokogiri::XML(c.to_rif)).first
-            %td= c.facets.count
-            %td= "#{("%s" % c.to_rif).length} bytes"
-            %td= c.updated_at
+    - @concepts.each do |c|
+      %p
+        - action = c.updated_at - c.created_at < 1 ? 'created' : 'updated'
+        %i{:class => action == 'created' ? 'icon-bolt' : 'icon-edit'}
+        %a{:href => concept_path(c.key)}
+          = c.title
+        %span= "was #{action}."
+      %p
+        ="It now contains #{c.facets.count} facets."
+        %small{:class => "muted"}
+          = "@ #{time_ago_in_words(c.updated_at)} ago"
+      %hr
