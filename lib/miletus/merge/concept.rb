@@ -202,16 +202,18 @@ module Miletus::Merge
       names = rifcs_doc.xpath("//rif:name", ns_decl).to_ary.sort_by! do |n|
         name_order.index(n['type'])
       end
-      names.map do |name|
-        part_order = ['title', 'given', 'family', 'suffix', nil]
-        parts = name.xpath("rif:namePart", ns_decl).to_ary
-        parts.delete_if { |part| not part_order.include?(part['type']) }
-        parts.sort_by! do |part|
-          # In part order, but use original index to sort equal elements
-          part_order.index(part['type']) * parts.length + parts.index(part)
-        end
-        parts.map{|e| e.content}.join(" ")
-      end.uniq
+      names.map{|n| title_from_name_element(n)}.uniq
+    end
+
+    def title_from_name_element(name)
+      part_order = ['title', 'given', 'family', 'suffix', nil]
+      parts = name.xpath("rif:namePart", ns_decl).to_ary
+      parts.delete_if { |part| not part_order.include?(part['type']) }
+      parts.sort_by! do |part|
+        # In part order, but use original index to sort equal elements
+        part_order.index(part['type']) * parts.length + parts.index(part)
+      end
+      parts.map{|e| e.content}.join(" ")
     end
 
     def determine_types
