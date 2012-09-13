@@ -20,9 +20,8 @@ module Miletus::Merge
     end
 
     def to_rif
-      doc = Nokogiri::XML(metadata)
-      ns_by_prefix('rif').schema.valid?(doc) ?
-        clean_rifcs_doc(doc).root.to_s : nil
+      doc = clean_rifcs_doc(Nokogiri::XML(metadata))
+      ns_by_prefix('rif').schema.valid?(doc) ? doc.root.to_s : nil
     end
 
     private
@@ -43,6 +42,7 @@ module Miletus::Merge
     def clean_rifcs_doc(doc)
       translate_old_elements(doc)
       update_datetime(doc)
+      strip_schema_location(doc)
       doc
     end
 
@@ -66,6 +66,11 @@ module Miletus::Merge
         rights << node
         e.remove
       end
+    end
+
+    def strip_schema_location(rifcs_doc)
+      n = rifcs_doc.root
+      n.remove_attribute('schemaLocation') unless n.nil?
     end
 
     def find_description_elements_with_types(rifcs_doc, types)
