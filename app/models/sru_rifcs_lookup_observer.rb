@@ -43,20 +43,10 @@ class SruRifcsLookupObserver < ActiveRecord::Observer
     def_delegator 'SruRifcsLookupObserver.instance', :prevent_loop
 
     def run
-      identifiers = \
-        concept.indexed_attributes.where(
-          :key => 'identifier').pluck(:value) +
-        concept.indexed_attributes.where(
-          :key => 'email').pluck(:value).map {|e| "mailto:%s" % e }
-
       related_keys = concept.indexed_attributes.where(
         :key => 'relatedKey').pluck(:value)
 
-      xml = nil
-
-      identifiers.detect do |identifier|
-        xml = interface.lookup_by_identifier(identifier)
-      end
+      xml = lookup_using_identifiers(concept)
       return nil if xml.nil?
 
       # Create or update facet
@@ -71,6 +61,17 @@ class SruRifcsLookupObserver < ActiveRecord::Observer
     end
 
     private
+
+    def lookup_using_identifiers(concept)
+      identifiers = \
+        concept.indexed_attributes.where(
+          :key => 'identifier').pluck(:value) +
+        concept.indexed_attributes.where(
+          :key => 'email').pluck(:value).map {|e| "mailto:%s" % e }
+      identifiers.detect do |identifier|
+        return interface.lookup_by_identifier(identifier)
+      end
+    end
 
     def save_facet(xml)
       facet = Miletus::Merge::Facet.find_existing(xml)
