@@ -12,6 +12,19 @@ module Miletus::Merge
       instance
     end
 
+    def titles
+      name_order = ['primary', 'abbreviated', 'alternative']
+      names = xpath("//rif:name", ns_decl).to_ary.sort_by! do |n|
+        name_order.index(n['type'])
+      end
+      names.map{|n| title_from_name_element(n)}.uniq
+    end
+
+    def types
+      n = at_xpath("//rif:registryObject/rif:*[last()]", ns_decl)
+      [n.name, n['type']]
+    end
+
     def group=(value)
       group_e = at_xpath("//rif:registryObject/@group", ns_decl)
       return false if group_e.nil?
@@ -69,6 +82,17 @@ module Miletus::Merge
 
     def deduplicate_by_content(nodes)
       nodes.uniq {|e| EquivalentWrapper.new(e) }
+    end
+
+    def title_from_name_element(name)
+      part_order = ['title', 'given', 'family', 'suffix', nil]
+      parts = name.xpath("rif:namePart", ns_decl).to_ary
+      parts.delete_if { |part| not part_order.include?(part['type']) }
+      parts.sort_by! do |part|
+        # In part order, but use original index to sort equal elements
+        part_order.index(part['type']) * parts.length + parts.index(part)
+      end
+      parts.map{|e| e.content}.join(" ")
     end
 
     def replace_all(orig_tags, tags, alt_parent)

@@ -31,16 +31,16 @@ module Miletus::Merge
     end
 
     def titles
-      @titles ||= determine_titles
+      @titles ||= RifcsDoc.create(to_rif).titles
     end
 
     def type
-      @type, @subtype = determine_types unless @type
+      @type, @subtype = RifcsDoc.create(to_rif).types unless @type
       @type
     end
 
     def subtype
-      @type, @subtype = determine_types unless @subtype
+      @type, @subtype = RifcsDoc.create(to_rif).types unless @subtype
       @subtype
     end
 
@@ -164,37 +164,6 @@ module Miletus::Merge
         indexed_attributes.where(:id => current_values - new_values).delete_all
       end
     end
-
-    def determine_titles
-      rifcs_doc = Nokogiri::XML(to_rif)
-      name_order = ['primary', 'abbreviated', 'alternative']
-      names = rifcs_doc.xpath("//rif:name", ns_decl).to_ary.sort_by! do |n|
-        name_order.index(n['type'])
-      end
-      names.map{|n| title_from_name_element(n)}.uniq
-    end
-
-    def title_from_name_element(name)
-      part_order = ['title', 'given', 'family', 'suffix', nil]
-      parts = name.xpath("rif:namePart", ns_decl).to_ary
-      parts.delete_if { |part| not part_order.include?(part['type']) }
-      parts.sort_by! do |part|
-        # In part order, but use original index to sort equal elements
-        part_order.index(part['type']) * parts.length + parts.index(part)
-      end
-      parts.map{|e| e.content}.join(" ")
-    end
-
-    def determine_types
-      extend Miletus::NamespaceHelper
-      rifcs_doc = Nokogiri::XML(to_rif)
-      n = rifcs_doc.at_xpath("//rif:registryObject/rif:*[last()]", ns_decl)
-      [n.name, n['type']]
-    end
-
-
-
-
   end
 
 end
