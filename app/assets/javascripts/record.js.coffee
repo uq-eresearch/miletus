@@ -34,6 +34,7 @@ init_graph = (selector) ->
     sigInst.iterNodes((node) ->
       type = node['attr']['attributes'][0].val
       subtype = node['attr']['attributes'][1].val
+      facets = node['attr']['attributes'][2].val
       node.color =
         switch type
           when 'party'
@@ -48,6 +49,7 @@ init_graph = (selector) ->
             '#00f'
           else
             '#f0f'
+      node.size = facets
       node.x = node.x * $(targetElement).width() / $(targetElement).height()
     , null)
 

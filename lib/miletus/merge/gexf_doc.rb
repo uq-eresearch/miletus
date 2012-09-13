@@ -11,6 +11,7 @@ module Miletus::Merge
         xml.attributes(:class => 'node') {
           xml.attribute(:id => 0, :title => 'type', :type => 'string')
           xml.attribute(:id => 1, :title => 'subtype', :type => 'string')
+          xml.attribute(:id => 2, :title => 'facets', :type => 'integer')
         }
         xml.nodes {
           @concepts.each { |c| node(xml, c) }
@@ -32,6 +33,7 @@ module Miletus::Merge
         xml.attvalues {
           xml.attvalue(:for => 0, :value => concept.type)
           xml.attvalue(:for => 1, :value => concept.subtype)
+          xml.attvalue(:for => 2, :value => concept.facets.count)
         }
       }
     end
