@@ -98,38 +98,7 @@ module Miletus::Merge
     end
 
     def self.to_gexf
-      Nokogiri::XML::Builder.new do |xml|
-        xml.gexf(:xmlns => ns_by_prefix('gexf').uri, :version => '1.2') {
-          xml.graph(:mode => 'static', :defaultedgetype => 'directed') {
-            xml.attributes(:class => 'node') {
-              xml.attribute(:id => 0, :title => 'type', :type => 'string')
-              xml.attribute(:id => 1, :title => 'subtype', :type => 'string')
-            }
-            xml.nodes {
-              Concept.all.each do |concept|
-                unless concept.title.nil?
-                  xml.node(:id => concept.key, :label => concept.title) {
-                    xml.attvalues {
-                      xml.attvalue(:for => 0, :value => concept.type)
-                      xml.attvalue(:for => 1, :value => concept.subtype)
-                    }
-                  }
-                end
-              end
-            }
-            xml.edges {
-              Concept.all.each do |concept|
-                concept.outbound_related_concepts.to_set.each do |oc|
-                  xml.edge(
-                    :id => "%s|%s" % [concept.key, oc.key],
-                    :source => concept.key,
-                    :target => oc.key)
-                end
-              end
-            }
-          }
-        }
-      end.to_xml
+      GexfDoc.new(all).to_xml
     end
 
     def inbound_related_concepts
