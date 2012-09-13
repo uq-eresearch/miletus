@@ -19,20 +19,6 @@ describe RecordHelper do
     end
   end
 
-  describe "title" do
-
-    it "produces a list of titles for a RIF-CS document" do
-      doc = Nokogiri::XML(get_fixture('party', 1))
-      subject.titles(doc).should == ["Timothy John Dettrick", "Tim Dettrick"]
-    end
-
-    it "ignores duplicate items" do
-      doc = Nokogiri::XML(get_fixture('party', '1d'))
-      subject.titles(doc).should == ["Mr Timothy John Dettrick", "Tim Dettrick"]
-    end
-
-  end
-
   describe "email_addresses" do
     it "produces a list of email addresses for a RIF-CS document" do
       doc = Nokogiri::XML(get_fixture('party', '1d'))

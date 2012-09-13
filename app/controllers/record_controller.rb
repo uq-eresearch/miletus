@@ -18,8 +18,8 @@ class RecordController < ApplicationController
   end
 
   def view
-    concept = Miletus::Merge::Concept.find_by_key! params[:key]
-    @doc = Nokogiri::XML(concept.to_rif)
+    @concept = Miletus::Merge::Concept.find_by_key! params[:key]
+    @doc = Nokogiri::XML(@concept.to_rif)
   end
 
   def graph

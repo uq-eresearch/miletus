@@ -27,7 +27,11 @@ module Miletus::Merge
     end
 
     def title
-      @title ||= determine_title
+      titles.first
+    end
+
+    def titles
+      @titles ||= determine_titles
     end
 
     def type
@@ -192,7 +196,7 @@ module Miletus::Merge
       end
     end
 
-    def determine_title
+    def determine_titles
       rifcs_doc = Nokogiri::XML(to_rif)
       name_order = ['primary', 'abbreviated', 'alternative']
       names = rifcs_doc.xpath("//rif:name", ns_decl).to_ary.sort_by! do |n|
@@ -207,7 +211,7 @@ module Miletus::Merge
           part_order.index(part['type']) * parts.length + parts.index(part)
         end
         parts.map{|e| e.content}.join(" ")
-      end.uniq.first
+      end.uniq
     end
 
     def determine_types

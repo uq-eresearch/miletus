@@ -218,6 +218,21 @@ describe Miletus::Merge::Concept do
       end
 
     end
+  end
+
+  describe "title" do
+
+    it "produces a list of titles for a RIF-CS document" do
+      concept = Miletus::Merge::Concept.create()
+      concept.facets.create(:metadata => get_fixture('party', 1))
+      concept.titles.should == ["Timothy John Dettrick", "Tim Dettrick"]
+    end
+
+    it "ignores duplicate items" do
+      concept = Miletus::Merge::Concept.create()
+      concept.facets.create(:metadata => get_fixture('party', '1d'))
+      concept.titles.should == ["Mr Timothy John Dettrick", "Tim Dettrick"]
+    end
 
   end
 
