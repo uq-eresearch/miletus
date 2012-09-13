@@ -28,7 +28,6 @@ module Miletus::Merge
     private
 
     def node(xml, concept)
-      return if concept.title.nil?
       xml.node(:id => concept.key, :label => concept.title) {
         xml.attvalues {
           xml.attvalue(:for => 0, :value => concept.type)
