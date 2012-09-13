@@ -22,7 +22,7 @@ module Miletus::Merge
 
     def types
       n = at_xpath("//rif:registryObject/rif:*[last()]", ns_decl)
-      [n.name, n['type']]
+      n.nil? ? [] : [n.name, n['type']]
     end
 
     def group=(value)
