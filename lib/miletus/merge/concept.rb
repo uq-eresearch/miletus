@@ -35,13 +35,11 @@ module Miletus::Merge
     end
 
     def type
-      @type, @subtype = RifcsDoc.create(to_rif).types unless @type
-      @type
+      types.first
     end
 
     def subtype
-      @type, @subtype = RifcsDoc.create(to_rif).types unless @subtype
-      @subtype
+      types[1]
     end
 
     def self.find_by_key!(key)
@@ -120,6 +118,10 @@ module Miletus::Merge
     end
 
     private
+
+    def types
+      @types ||= RifcsDoc.create(to_rif).types
+    end
 
     def related_key_dictionary
       Hash[*outbound_related_concepts.map do |c|
