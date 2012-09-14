@@ -6,6 +6,14 @@
 # no regular words or you'll be exposed to dictionary attacks.
 
 def get_random_bytes(n = 256)
+  begin
+    SecureRandom.random_bytes(n).bytes
+  rescue NotImplemented
+    get_random_bytes_online(n)
+  end
+end
+
+def get_random_bytes_online(n)
   # Get some random bytes from Random.org
   require 'random/online'
   generator = RealRand::RandomOrg.new
