@@ -31,8 +31,7 @@ module Miletus
 
           # Update collection with changed records
           def update
-            client.list_identifiers(:metadataPrefix => @collection.format)\
-              .select { |header|
+            list_identifiers.select { |header|
                 existing = @collection.get(header.identifier)
                 (existing.nil? or existing.header.datestamp < header.datestamp)
               }.each { |header|
@@ -50,6 +49,18 @@ module Miletus
           end
 
           private
+
+          def list_identifiers
+            entries = []
+            r = client.list_identifiers(:metadataPrefix => @collection.format)
+            while true
+              entries.concat(r.entries)
+              break unless r.resumption_token
+              response = client.list_identifiers(
+                :resumption_token => r.resumption_token)
+            end
+            entries
+          end
 
           def add_record(header)
             record = client.get_record(

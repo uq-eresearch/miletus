@@ -161,7 +161,10 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Consumer do
 
   def get_fixture_objects(filename)
     File.open(File.join(File.dirname(__FILE__), filename)) do |f|
-      YAML::load(f.read())
+      response = YAML::load(f.read())
+      response.should_receive(:resumption_token)\
+              .any_number_of_times.and_return(nil)
+      response
     end
   end
 
