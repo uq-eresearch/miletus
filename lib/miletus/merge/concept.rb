@@ -88,7 +88,7 @@ module Miletus::Merge
     end
 
     def related_concepts
-      inbound_related_concepts | outbound_related_concepts
+      inbound_related_concepts.to_set | outbound_related_concepts.to_set
     end
 
     def to_s
@@ -106,7 +106,7 @@ module Miletus::Merge
           ["#{tn(:indexed_attributes)}.key = 'relatedKey'",
            "#{tn(:indexed_attributes)}.value IN (?)"].join(' AND '),
           in_keys
-        ).to_set
+        )
     end
 
     def outbound_related_concepts
@@ -114,7 +114,7 @@ module Miletus::Merge
       return [] if out_keys.compact.empty?
       self.class.joins(:facets).where(
           "#{tn(:facets)}.key in (?)", out_keys
-        ).to_set
+        )
     end
 
     private

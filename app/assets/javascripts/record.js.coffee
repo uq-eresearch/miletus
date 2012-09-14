@@ -23,7 +23,7 @@ init_graph = (selector) ->
       minEdgeSize: 1
       maxEdgeSize: 1
     ).mouseProperties(
-      maxRatio: 16
+      maxRatio: 32
     )
 
     # Parse a GEXF encoded file to fill the graph
@@ -35,6 +35,8 @@ init_graph = (selector) ->
       type = node['attr']['attributes'][0].val
       subtype = node['attr']['attributes'][1].val
       facets = node['attr']['attributes'][2].val
+      rel_in = node['attr']['attributes'][2].val
+      rel_out = node['attr']['attributes'][2].val
       node.color =
         switch type
           when 'party'
@@ -46,10 +48,10 @@ init_graph = (selector) ->
           when 'collection'
             '#0f0'
           when 'activity'
-            '#00f'
+            '#44f'
           else
             '#f0f'
-      node.size = facets
+      node.size = rel_in
       node.x = node.x * $(targetElement).width() / $(targetElement).height()
     , null)
 
