@@ -5,8 +5,13 @@ Miletus::Application.routes.draw do
   # Sample of regular route:
   #   match 'products/:id' => 'catalog#view'
   # Keep in mind you can assign values other than :controller and :action
+
+  post '/recheck-sru-records' => 'record#recheck_sru'
+
   get '/records/:key' => 'record#view',
     :constraints => {:key => /[^\/]+/}, :as => :concept
+  post '/records/:key/recheck-sru' => 'record#recheck_sru',
+    :constraints => {:key => /[^\/]+/}
 
   get '/records.gexf' => 'record#gexf'
   get '/graph' => 'record#graph', :as => :concept_graph

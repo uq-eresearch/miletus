@@ -1,6 +1,9 @@
 %div.page-header
+  .pull-right
+    %form{ :action => '/recheck-sru-records', :method => 'POST' }
+      %button.btn{ :type => 'submit' }
+        Recheck SRU
   %h1 Metadata Records
-
 
 %div.row-fluid
   %div.span4

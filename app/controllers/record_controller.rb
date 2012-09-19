@@ -17,6 +17,19 @@ class RecordController < ApplicationController
     @concepts = Miletus::Merge::Concept.order('updated_at DESC').all
   end
 
+  def recheck_sru
+    if params.key?(:key)
+      concept = Miletus::Merge::Concept.find_by_key!(params[:key])
+      SruRifcsLookupObserver.instance.find_sru_records(concept)
+      redirect_to :action => :view, :key => concept.key
+    else
+      Miletus::Merge::Concept.all.each do |concept|
+        SruRifcsLookupObserver.instance.find_sru_records(concept)
+      end
+      redirect_to :action => :index
+    end
+  end
+
   def view
     @concept = Miletus::Merge::Concept.find_by_key! params[:key]
     @doc = Nokogiri::XML(@concept.to_rif)

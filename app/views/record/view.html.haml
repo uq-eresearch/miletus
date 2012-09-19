@@ -1,7 +1,13 @@
-%h1
-  = @concept.title
-  - _, *ot = @concept.titles && !ot.nil? && ot.each do |t|
-    %small= "aka %s" % t
+.page-header
+  .pull-right
+    %form{ :action => '/recheck-sru-records', :method => 'POST' }
+      %input{ :type => 'hidden', :name => 'key', :value => @concept.key }
+      %button.btn{ :type => 'submit' }
+        Recheck SRU
+  %h1
+    = @concept.title
+    - _, *ot = @concept.titles && !ot.nil? && ot.each do |t|
+      %small= "aka %s" % t
 
 %ul.unstyled
   - email_uris(@doc).each do |uri|
