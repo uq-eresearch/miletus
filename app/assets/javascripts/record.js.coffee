@@ -18,7 +18,7 @@ init_graph = (selector) ->
       labelThreshold: 6
       defaultEdgeType: 'curve'
     ).graphProperties(
-      minNodeSize: 0.5
+      minNodeSize: 1
       maxNodeSize: 5
       minEdgeSize: 1
       maxEdgeSize: 1
