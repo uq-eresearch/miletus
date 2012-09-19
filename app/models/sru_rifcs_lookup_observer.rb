@@ -68,9 +68,11 @@ class SruRifcsLookupObserver < ActiveRecord::Observer
           :key => 'identifier').pluck(:value) +
         concept.indexed_attributes.where(
           :key => 'email').pluck(:value).map {|e| "mailto:%s" % e }
-      identifiers.detect do |identifier|
-        return interface.lookup_by_identifier(identifier)
+      identifiers.each do |identifier|
+        xml = interface.lookup_by_identifier(identifier)
+        return xml unless xml.nil?
       end
+      nil
     end
 
     def save_facet(xml)
