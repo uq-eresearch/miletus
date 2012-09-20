@@ -28,50 +28,51 @@ init_graph = (selector) ->
 
     # Parse a GEXF encoded file to fill the graph
     # (requires "sigma.parseGexf.js" to be included)
-    sigInst.parseGexf '/records.gexf'
+    $.ajax(
+      url: '/records.gexf'
+      success: (data) ->
+        sigInst.parseGexfDocument data
 
-    # Add colour and transform square plotting to rectangle
-    sigInst.iterNodes((node) ->
-      type = node['attr']['attributes'][0].val
-      subtype = node['attr']['attributes'][1].val
-      facets = node['attr']['attributes'][2].val
-      rel_in = node['attr']['attributes'][2].val
-      rel_out = node['attr']['attributes'][2].val
-      node.color =
-        switch type
-          when 'party'
-            switch subtype
-              when 'group'
-                '#f60'
+        # Add colour and transform square plotting to rectangle
+        sigInst.iterNodes((node) ->
+          type = node['attr']['attributes'][0].val
+          subtype = node['attr']['attributes'][1].val
+          facets = node['attr']['attributes'][2].val
+          rel_in = node['attr']['attributes'][2].val
+          rel_out = node['attr']['attributes'][2].val
+          node.color =
+            switch type
+              when 'party'
+                switch subtype
+                  when 'group'
+                    '#f60'
+                  else
+                    '#f00'
+              when 'collection'
+                '#0f0'
+              when 'activity'
+                '#44f'
               else
-                '#f00'
-          when 'collection'
-            '#0f0'
-          when 'activity'
-            '#44f'
-          else
-            '#f0f'
-      node.size = rel_in
-      node.x = node.x * $(targetElement).width() / $(targetElement).height()
-    , null)
+                '#f0f'
+          node.size = rel_in
+          node.x = node.x * $(targetElement).width() / $(targetElement).height()
+        , null)
 
-    # Draw the graph
-    sigInst.draw()
+        # Draw the graph
+        sigInst.draw()
 
-    # Start ForceAtlas2
-    sigInst.startForceAtlas2()
-    _.delay(() ->
-      sigInst.stopForceAtlas2()
-      sigInst.position(0,0,1).draw();
-    , 6000)
+        # Start ForceAtlas2
+        sigInst.startForceAtlas2()
+        _.delay(() ->
+          sigInst.stopForceAtlas2()
+          sigInst.position(0,0,1).draw();
+        , 6000)
 
 
-    sigInst.bind('upnodes', (event) ->
-      console.log _(event.content).first
-      window.open('/records/' + _(event.content).first(), '_blank')
+        sigInst.bind('upnodes', (event) ->
+          window.open('/records/' + _(event.content).first(), '_blank')
+        )
     )
-
-    window.sigInst = sigInst
 
 if (document.addEventListener)
   document.addEventListener(
