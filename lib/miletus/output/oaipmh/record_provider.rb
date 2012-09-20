@@ -4,7 +4,7 @@ module Miletus::Output::OAIPMH
     repository_name 'Miletus OAI Provider'
 
     if ENV.has_key? 'ADMIN_EMAIL'
-      admin_email ENV['CONCEPT_KEY_PREFIX']
+      admin_email ENV['ADMIN_EMAIL']
     else
       require 'etc'
       require 'socket'
