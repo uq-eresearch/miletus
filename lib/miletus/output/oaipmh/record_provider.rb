@@ -2,7 +2,11 @@ module Miletus::Output::OAIPMH
 
   class RecordProvider < OAI::Provider::Base
     repository_name 'Miletus OAI Provider'
-    admin_email 'root@localhost'
+
+    require 'etc'
+    require 'socket'
+    admin_email '%s@%s' % [Etc.getlogin, Socket.gethostname]
+
     source_model OAI::Provider::ActiveRecordWrapper.new(
       Miletus::Output::OAIPMH::Record
     )
