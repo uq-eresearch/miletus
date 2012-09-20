@@ -28,6 +28,11 @@ Or to run the whole lot:
 
     foreman start
 
+Exporting to system script to run on port 8000:
+
+    foreman export upstart /tmp -a miletus -u <miletus_user> -p 8000 -t ./foreman
+    sudo cp /tmp/miletus* /etc/init/
+
 
 ## Acknowledgements
 
