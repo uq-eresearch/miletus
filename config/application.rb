@@ -41,7 +41,7 @@ class Rails::Application::Configuration
       uri = URI.parse(db_url)
 
       return {
-        'adapter' => adapter == "postgres" ? "postgresql" : uri.scheme,
+        'adapter' => uri.scheme == "postgres" ? "postgresql" : uri.scheme,
         'database' => (uri.path || "").split("/")[1],
         'username' => uri.user,
         'password' => uri.password,
