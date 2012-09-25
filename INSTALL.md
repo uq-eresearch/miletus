@@ -3,16 +3,20 @@ Miletus: Install notes
 
 # Installing Miletus
 
-## Install system dependencies
+## Install system packages
 
 These instructions are for installing Miletus on a _Red Hat Enterprise
-Linux_ (RHEL) based distibution of Linux.
+Linux_ (RHEL) based distibution of Linux. The instructions assume
+a "minimal" installation is used.
 
 Use `yum` to install these packages:
 
 - `make`
 - `patch`
-- `autoconf automake libtool bison`
+- `autoconf`
+- `automake`
+- `libtool`
+- `bison`
 - `gcc-c++`
 - `git`
 - `bzip2`
@@ -27,11 +31,15 @@ Use `yum` to install these packages:
 - `postgresql-devel`
 - `postgresql-server`
 
+Note: many of these development libraries must be installed **before**
+Ruby is installed, otherwise the features will not be detected when
+Ruby is built.
+
 ## Setup database
 
 ### PostgreSQL
 
-Initialize PostgreSQL and start PostgreSQL server:
+Initialize PostgreSQL and start the PostgreSQL server:
 
     sudo  postgresql-setup initdb
 
@@ -39,15 +47,15 @@ Initialize PostgreSQL and start PostgreSQL server:
 
 ### Create user and database in PostgreSQL
 
-    sudo -u postgres psql <<EOF
+    sudo -u postgres  psql <<EOF
     CREATE USER foobar;
     CREATE DATABASE miletus OWNER foobar;
     EOF
 
-Edit the `pg_hba.conf` file to configure the PostgreSQL database
+Edit the `pg_hba.conf` file to configure the PostgreSQL 
 access control rules.
 
-    # vi /var/lib/pgsql/data/pg_hba.conf
+    vi /var/lib/pgsql/data/pg_hba.conf
 
 Note: the `/var/lib/pgsql` directory is only readable by the
 `postgres` user. You will need to be `root` or `postgres` to access
@@ -62,7 +70,7 @@ Note: this should be done in the user account that will be running
 _Miletus_ (i.e. not as `root`).
 
     curl -L https://get.rvm.io | bash -s stable --ruby=ruby-1.9.3
-    source \$HOME/.rvm/scripts/rvm
+    source ~/.rvm/scripts/rvm
 	
 ## Installing Miletus
 
@@ -122,7 +130,7 @@ console_ from within the _Miletus_ source directory:
 At the prompt, enter the following Ruby code:
 
     require 'miletus'
-    Miletus::Harvest::OAIPMH::RIFCS::RecordCollection.new(:endpoint => 'http://dataspace.uq.edu.au/oai').save!
+    Miletus::Harvest::OAIPMH::RIFCS::RecordCollection.new(:endpoint => 'http://example.com/oai').save!
 
 To see how many records have been harvested, at the prompt enter the
 following Ruby code:
