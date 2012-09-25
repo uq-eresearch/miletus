@@ -39,9 +39,9 @@ Initialize PostgreSQL and start PostgreSQL server:
 
 ### Create user and database in PostgreSQL
 
-    sudo -u postgres psql \<\<EOF
-    CREATE USER hoylen;
-    CREATE DATABASE miletus OWNER hoylen;
+    sudo -u postgres psql <<EOF
+    CREATE USER foobar;
+    CREATE DATABASE miletus OWNER foobar;
     EOF
 
 Edit the `pg_hba.conf` file to configure the PostgreSQL database
@@ -49,9 +49,9 @@ access control rules.
 
     # vi /var/lib/pgsql/data/pg_hba.conf
 
-Note: the /var/lib/pgsql directory is only readable by the `postgres`
-user. You will need to be `root` or `postgres` to access it. For example,
-run the editor using `sudo`.
+Note: the `/var/lib/pgsql` directory is only readable by the
+`postgres` user. You will need to be `root` or `postgres` to access
+it. For example, run the editor using `sudo`.
 
 ### Install RVM
 
@@ -64,17 +64,11 @@ _Miletus_ (i.e. not as `root`).
     curl -L https://get.rvm.io | bash -s stable --ruby=ruby-1.9.3
     source \$HOME/.rvm/scripts/rvm
 	
-    curl -L https://get.rvm.io | bash -s stable
-    . \$HOME/.rvm/scripts/rvm
-    rvm install ruby-1.9.3
-    rvm use ruby-1.9.3
-
 ## Installing Miletus
 
 ### Obtain miletus from GitHub
 
-Use `git` to clone the Miletus source from GitHub into a local directory
-called `miletus`:
+Use `git` to obtain the Miletus source from GitHub:
 
     git clone https://github.com/uq-eresearch/miletus.git
 
@@ -137,8 +131,7 @@ following Ruby code:
 
 Wait a few minutes for the harvesting scheduler to run. Status
 messages will appear in the console running _Miletus_. If additional
-records are havested, the count should be different. **Can we manually
-trigger this to happen instead of waiting?**
+records are havested, the count should be different.
 
 To exit from the _Rails console_, at the prompt enter the following:
 
@@ -159,8 +152,6 @@ For example, use these URIs to access it:
 ## Stopping Miletus
 
 To stop the _Miletus server_, type Ctrl-C.
-
-**Is there a better way?**
 
 # Acknowledgements
 
