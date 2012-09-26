@@ -53,7 +53,7 @@ describe OaiController do
 
       describe "ListRecords" do
         it "should respond with \"noRecordsMatch\" " do
-          get 'index', { 'verb' => 'ListRecords' }
+          get 'index', { 'verb' => 'ListRecords', 'metadataPrefix' => 'oai_dc' }
           response.should be_success
           xml = Nokogiri::XML(response.body).root
           error_node = xml.at_xpath('//oai:error/@code', ns_decl)
@@ -87,7 +87,7 @@ describe OaiController do
       describe "ListRecords" do
         it "should respond with the records that currently exist" do
           Miletus::Output::OAIPMH::Record.count.should == 1
-          get 'index', { 'verb' => 'ListRecords' }
+          get 'index', { 'verb' => 'ListRecords', 'metadataPrefix' => 'oai_dc' }
           response.should be_success
           xml = Nokogiri::XML(response.body).root
           xml.at_xpath('//oai:error', ns_decl).should be_nil
@@ -100,6 +100,7 @@ describe OaiController do
           Miletus::Output::OAIPMH::Record.count.should == 1
           get 'index', {
             'verb' => 'ListRecords',
+            'metadataPrefix' => 'oai_dc',
             'set' => 'party:identifier:AU-QU' }
           response.should be_success
           xml = Nokogiri::XML(response.body).root
@@ -109,6 +110,7 @@ describe OaiController do
           xml.xpath('//oai:header/oai:setSpec', ns_decl).count.should > 1
           get 'index', {
             'verb' => 'ListRecords',
+            'metadataPrefix' => 'oai_dc',
             'set' => 'nosuchset' }
           xml = Nokogiri::XML(response.body).root
           response.should be_success
