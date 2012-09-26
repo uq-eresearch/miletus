@@ -66,9 +66,7 @@ module Miletus::Output::OAIPMH
         spec = "#{record_type}:identifier:#{type}"
         set = Miletus::Output::OAIPMH::Set.find_or_create_by_spec(
           :spec => spec,
-          :name => "#{type} identifier #{record_type}",
-          :description =>
-            "#{record_type} records with identifiers of type \"#{type}\".")
+          :name => "#{type} identifier #{record_type}")
         set.records << self
       end
     end
