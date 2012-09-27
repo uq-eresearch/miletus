@@ -13,7 +13,7 @@ module Miletus::Merge
     end
 
     def titles
-      name_order = ['primary', 'abbreviated', 'alternative']
+      name_order = ['primary', 'abbreviated', 'alternative', nil]
       names = xpath("//rif:name", ns_decl).to_ary.sort_by! do |n|
         name_order.index(n['type'])
       end
