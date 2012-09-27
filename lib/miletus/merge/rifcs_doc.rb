@@ -44,6 +44,25 @@ module Miletus::Merge
       end
     end
 
+    def ensure_single_primary_name
+      # Ensure there is only one primary name (and use the largest entry)
+      first_primary_name, *other_primary_names = \
+        xpath('//rif:name[@type="primary"]', ns_decl).to_ary.sort_by! do |n|
+          -1 * n.to_xml.length # Reverse sort by length
+        end
+      if first_primary_name.nil?
+        name_order = [nil, 'abbreviated', 'alternative']
+        other_names = xpath('//rif:name', ns_decl).to_ary.sort_by! do |n|
+          name_order.index(n['type'])
+        end
+        other_names.first['type'] = 'primary' unless other_names.empty?
+      else
+        other_primary_names.each do |node|
+          node['type'] = 'alternative'
+        end
+      end
+    end
+
     def merge_rifcs_elements(input_docs)
       patterns = [
         "//rif:registryObject/rif:*/rif:identifier",
@@ -60,14 +79,7 @@ module Miletus::Merge
           Nokogiri::XML::NodeSet.new(self, merged_nodes),
           alt_parent)
       end
-      # Ensure there is only one primary name (and use the largest entry)
-      _, *other_primary_names = \
-        xpath('//rif:name[@type="primary"]', ns_decl).to_ary.sort_by! do |n|
-          -1 * n.to_xml.length # Reverse sort by length
-        end
-      other_primary_names.each do |node|
-        node['type'] = 'alternative'
-      end
+      ensure_single_primary_name
       self
     end
 
