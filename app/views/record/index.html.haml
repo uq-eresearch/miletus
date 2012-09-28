@@ -30,5 +30,5 @@
       %p
         ="It now contains #{c.facets.count} facets."
         %small{:class => "muted"}
-          = "@ #{time_ago_in_words(c.updated_at)} ago"
+          = timeago_tag(c.updated_at, :nojs => true, :limit => 10.days.ago)
       %hr

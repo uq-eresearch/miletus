@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(:version => 5) do
     :name => "delayed_jobs_priority"
 
   create_table "merge_concepts", :force => true do |t|
+    t.text     "cache"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end

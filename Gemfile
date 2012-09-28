@@ -51,6 +51,7 @@ gem 'equivalent-xml'
 
 gem 'twitter-bootstrap-rails'
 gem 'haml-rails'
+gem 'rails-timeago'
 
 gem 'sru',
   :git => 'https://github.com/tjdett/sru-ruby.git', :branch => 'proxy-handling'
@@ -77,5 +78,5 @@ group :development do
   gem 'guard-rspec'
   gem 'debugger'
   gem 'pry-rails'
-  gem 'rb-inotify','~> 0.8.8',:require => false unless RUBY_PLATFORM =~ /linux/i
+  gem 'rb-inotify', :require => false unless RUBY_PLATFORM =~ /linux/i
 end

@@ -179,6 +179,9 @@ GEM
       activesupport (= 3.2.8)
       bundler (~> 1.0)
       railties (= 3.2.8)
+    rails-timeago (1.4.2)
+      actionpack (>= 3.1)
+      activesupport (>= 3.1)
     rails_best_practices (1.10.1)
       activesupport
       awesome_print
@@ -289,6 +292,7 @@ DEPENDENCIES
   pg
   pry-rails
   rails (>= 3.2.6)
+  rails-timeago
   rails_best_practices
   rake
   realrand

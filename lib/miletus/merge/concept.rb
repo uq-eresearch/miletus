@@ -9,6 +9,8 @@ module Miletus::Merge
 
     self.table_name = 'merge_concepts'
 
+    store :cache, :accessors => [:titles, :type, :subtype]
+
     has_many :facets, :dependent => :destroy, :order => 'updated_at DESC'
     has_many :indexed_attributes,
       :dependent => :destroy, :order => [:key, :value]
@@ -27,19 +29,7 @@ module Miletus::Merge
     end
 
     def title
-      titles.first
-    end
-
-    def titles
-      @titles ||= RifcsDoc.create(to_rif).titles
-    end
-
-    def type
-      types.first
-    end
-
-    def subtype
-      types[1]
+      (self.titles || []).first
     end
 
     def self.find_by_key!(key)
@@ -74,17 +64,9 @@ module Miletus::Merge
       rifcs_doc.root.to_xml(:indent => 2)
     end
 
-    def update_indexed_attributes_from_facet_rifcs
-      input_docs = rifcs_facets
-      update_indexed_attributes('identifier',
-        content_from_nodes(input_docs,
-          '//rif:registryObject/rif:*/rif:identifier'))
-      update_indexed_attributes('relatedKey',
-        content_from_nodes(input_docs, '//rif:relatedObject/rif:key'))
-      update_indexed_attributes('email',
-        content_from_nodes(input_docs,
-          '//rif:registryObject/rif:party/rif:location/rif:address'+
-          '/rif:electronic[@type="email"]/rif:value'))
+    def reindex
+      update_indexed_attributes_from_facet_rifcs
+      recache_attributes
     end
 
     def related_concepts
@@ -119,8 +101,24 @@ module Miletus::Merge
 
     private
 
-    def types
-      @types ||= RifcsDoc.create(to_rif).types
+    def update_indexed_attributes_from_facet_rifcs
+      input_docs = rifcs_facets
+      update_indexed_attributes('identifier',
+        content_from_nodes(input_docs,
+          '//rif:registryObject/rif:*/rif:identifier'))
+      update_indexed_attributes('relatedKey',
+        content_from_nodes(input_docs, '//rif:relatedObject/rif:key'))
+      update_indexed_attributes('email',
+        content_from_nodes(input_docs,
+          '//rif:registryObject/rif:party/rif:location/rif:address'+
+          '/rif:electronic[@type="email"]/rif:value'))
+    end
+
+    def recache_attributes
+      rifcs_doc = RifcsDoc.create(to_rif)
+      self.titles = rifcs_doc.titles
+      self.type, self.subtype = rifcs_doc.types
+      save!
     end
 
     def related_key_dictionary

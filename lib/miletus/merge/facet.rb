@@ -16,7 +16,7 @@ module Miletus::Merge
     end
 
     def reindex_concept
-      concept.update_indexed_attributes_from_facet_rifcs
+      concept.reindex
     end
 
     def to_rif

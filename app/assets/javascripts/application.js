@@ -14,6 +14,7 @@
 //= require jquery_ujs
 //= require underscore
 //= require underscore.string.min.js
+//= require rails-timeago
 //= require sigma.min.js
 //= require sigma.parseGexf.js
 //= require sigma.forceatlas2.js
