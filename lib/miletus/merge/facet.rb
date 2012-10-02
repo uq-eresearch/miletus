@@ -6,7 +6,10 @@ module Miletus::Merge
     self.table_name = 'merge_facets'
 
     attr_accessible :metadata
-    belongs_to :concept, :touch => true
+
+    belongs_to :concept,
+      :counter_cache => :facets_count,
+      :touch => true
 
     before_validation :update_key
     after_save :reindex_concept

@@ -11,7 +11,9 @@ module Miletus::Merge
 
     store :cache, :accessors => [:titles, :type, :subtype]
 
-    has_many :facets, :dependent => :destroy, :order => 'updated_at DESC'
+    has_many :facets,
+      :dependent => :destroy,
+      :order => 'updated_at DESC'
     has_many :indexed_attributes,
       :dependent => :destroy, :order => [:key, :value]
 
@@ -78,7 +80,7 @@ module Miletus::Merge
     end
 
     def self.to_gexf
-      GexfDoc.new(all).to_xml
+      GexfDoc.new(self.includes(:indexed_attributes).all).to_xml
     end
 
     def inbound_related_concepts

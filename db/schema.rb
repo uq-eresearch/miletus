@@ -13,7 +13,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 5) do
+ActiveRecord::Schema.define(:version => 20121002000606) do
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -34,8 +34,9 @@ ActiveRecord::Schema.define(:version => 5) do
 
   create_table "merge_concepts", :force => true do |t|
     t.text     "cache"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+    t.integer  "facets_count"
   end
 
   create_table "merge_facets", :force => true do |t|

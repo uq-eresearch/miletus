@@ -37,7 +37,7 @@ module Miletus::Merge
         xml.attvalues {
           xml.attvalue(:for => 0, :value => concept.type)
           xml.attvalue(:for => 1, :value => concept.subtype)
-          xml.attvalue(:for => 2, :value => concept.facets.count)
+          xml.attvalue(:for => 2, :value => concept.facets.size)
           xml.attvalue(:for => 3,
             :value => concept.inbound_related_concepts.count)
           xml.attvalue(:for => 4,
