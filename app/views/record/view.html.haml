@@ -9,21 +9,28 @@
     - _, *ot = @concept.titles && !ot.nil? && ot.each do |t|
       %small= "aka %s" % t
 
-%ul.unstyled
-  - email_uris(@doc).each do |uri|
-    %li
-      %i.icon-envelope
-      %a{:href => uri.html_safe}
-        =uri.gsub(/^mailto:/,'').html_safe
-  - urls(@doc).each do |url|
-    %li
-      %i.icon-globe
-      %a{:href => url}
-        =url
+.container-fluid
+  .row-fluid
+    .span8
+      %ul.unstyled
+        - email_uris(@doc).each do |uri|
+          %li
+            %i.icon-envelope
+            %a{:href => uri.html_safe}
+              =uri.gsub(/^mailto:/,'').html_safe
+        - urls(@doc).each do |url|
+          %li
+            %i.icon-globe
+            %a{:href => url}
+              =url
 
-%p.description
-  =description(@doc).gsub(/\n/,"<br/>\n").html_safe
+      %p.description
+        =description(@doc).gsub(/\n/,"<br/>\n").html_safe
+    .span4
+      %div.sigma-parent-small
+        .sigma-expand{:'data-href' => concept_gexf_path(@concept.key), :'data-delay' => 1000}
 
-%pre
-  %code#rifcs.prettyprint.linenums
-    =annotated_xml(@doc)
+  .row-fluid
+    %pre
+      %code#rifcs.prettyprint.linenums
+        =annotated_xml(@doc)

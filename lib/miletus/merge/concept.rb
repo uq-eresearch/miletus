@@ -84,6 +84,10 @@ module Miletus::Merge
       GexfDoc.new(self.all).to_xml
     end
 
+    def to_gexf
+      GexfDoc.new([self] | outbound_related_concepts).to_xml
+    end
+
     def inbound_related_concepts
       in_keys = facets.pluck(:key)
       return [] if in_keys.compact.empty?
@@ -140,7 +144,7 @@ module Miletus::Merge
     end
 
     def self.key_prefix
-      if ENV.has_key? 'CONCEPT_KEY_PREFIX'
+      @@key_prefix ||= if ENV.has_key? 'CONCEPT_KEY_PREFIX'
         ENV['CONCEPT_KEY_PREFIX']
       else
         require 'socket'

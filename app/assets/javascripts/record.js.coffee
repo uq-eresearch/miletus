@@ -23,13 +23,14 @@ init_graph = (selector) ->
       minEdgeSize: 1
       maxEdgeSize: 1
     ).mouseProperties(
+      minRatio: 0.5
       maxRatio: 32
     )
 
     # Parse a GEXF encoded file to fill the graph
     # (requires "sigma.parseGexf.js" to be included)
     $.ajax(
-      url: '/records.gexf'
+      url: $(targetElement).attr('data-href')
       success: (data) ->
         sigInst.parseGexfDocument data
 
@@ -62,20 +63,25 @@ init_graph = (selector) ->
         # Start ForceAtlas2
         sigInst.startForceAtlas2()
         _.delay(() ->
+          # Finish calculations
           sigInst.stopForceAtlas2()
-          sigInst.position(0,0,1).draw();
-        , 6000)
+          # Zoom out and space from the border
+          sigInst.position(
+            0.1*$(targetElement).width(),
+            0.1*$(targetElement).height(),
+            0.8).draw()
+        , $(targetElement).attr('data-delay') || 6000)
 
 
         sigInst.bind('upnodes', (event) ->
-          window.open('/records/' + _(event.content).first(), '_blank')
+          window.open('/records/' + _(event.content).first(), '_current')
         )
     )
 
 if (document.addEventListener)
   document.addEventListener(
-    "DOMContentLoaded", init_graph('#global-gexf-graph'), false)
+    "DOMContentLoaded", init_graph('.sigma-expand'), false)
 else
-  window.onload = init_graph('#global-gexf-graph')
+  window.onload = init_graph('.sigma-expand')
 
 prettyPrint()

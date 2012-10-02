@@ -43,11 +43,12 @@ module Miletus::Merge
     end
 
     def edge(xml, concept)
+      concept_keys = @concepts.map{|c| c.key}.to_set
       concept.outbound_related_concept_keys.each do |oc_key|
         xml.edge(
           :id => "%s|%s" % [concept.key, oc_key],
           :source => concept.key,
-          :target => oc_key)
+          :target => oc_key) if concept_keys.include?(oc_key)
       end
     end
 

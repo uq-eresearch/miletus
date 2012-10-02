@@ -40,7 +40,12 @@ class RecordController < ApplicationController
   end
 
   def gexf
-    xml = Miletus::Merge::Concept.to_gexf
+    if params.key?(:key)
+      concept = Miletus::Merge::Concept.find_by_key!(params[:key])
+      xml = concept.to_gexf
+    else
+      xml = Miletus::Merge::Concept.to_gexf
+    end
     render :text => xml, :content_type => 'text/xml'
   end
 
