@@ -48,6 +48,7 @@ gem 'activerecord-postgresql-adapter'
 gem 'pg'
 gem 'realrand' # For generating secret token
 gem 'equivalent-xml'
+gem 'psych', '>= 1.3.4' # Newer Psych YAML parser than bundled for MRI => Faster
 
 gem 'twitter-bootstrap-rails'
 gem 'haml-rails'
@@ -78,5 +79,6 @@ group :development do
   gem 'guard-rspec'
   gem 'debugger'
   gem 'pry-rails'
+  gem 'ruby-prof'
   gem 'rb-inotify', :require => false unless RUBY_PLATFORM =~ /linux/i
 end

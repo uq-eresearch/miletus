@@ -38,8 +38,6 @@ init_graph = (selector) ->
           type = node['attr']['attributes'][0].val
           subtype = node['attr']['attributes'][1].val
           facets = node['attr']['attributes'][2].val
-          rel_in = node['attr']['attributes'][2].val
-          rel_out = node['attr']['attributes'][2].val
           node.color =
             switch type
               when 'party'
@@ -54,7 +52,7 @@ init_graph = (selector) ->
                 '#44f'
               else
                 '#f0f'
-          node.size = rel_in
+          node.size = facets
           node.x = node.x * $(targetElement).width() / $(targetElement).height()
         , null)
 
