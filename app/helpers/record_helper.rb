@@ -1,12 +1,17 @@
 module RecordHelper
 
+  def href_from_key(key)
+    id = key.partition(Miletus::Merge::Concept.key_prefix).last
+    concept_path(id)
+  end
+
   def annotated_xml(rifcs_doc)
     # HTML escape, then convert SafeBuffer to String so `gsub` works OK
     xml = html_escape(rifcs_doc.to_xml).to_str
     xml = xml.gsub(/&lt;key&gt;(\S+)&lt;\/key&gt;/) do |s|
       begin
         (html_escape("<key>%s</key>").to_str) %
-          ('<strong><a href="%s">%s</a></strong>' % [concept_path($1), $1])
+          ('<strong><a href="%s">%s</a></strong>' % [href_from_key($1), $1])
       rescue
         (html_escape("<key>%s</key>").to_str) % $1
       end

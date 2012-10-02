@@ -8,13 +8,13 @@ Miletus::Application.routes.draw do
 
   post '/recheck-sru-records' => 'record#recheck_sru'
 
-  get '/records/:key/gexf' => 'record#gexf',
-    :constraints => {:key => /[^\/]+/}, :as => :concept_gexf
-  get '/records/:key' => 'record#view',
-    :constraints => {:key => /[^\/]+/}, :as => :concept
+  get '/records/:id.gexf' => 'record#gexf',
+    :constraints => {:id => /\d+/}, :as => :concept_gexf
+  get '/records/:id' => 'record#view',
+    :constraints => {:id => /\d+/}, :as => :concept
 
-  post '/records/:key/recheck-sru' => 'record#recheck_sru',
-    :constraints => {:key => /[^\/]+/}
+  post '/records/:id/recheck-sru' => 'record#recheck_sru',
+    :constraints => {:id => /\d+/}
 
   get '/records.gexf' => 'record#gexf'
   get '/graph' => 'record#graph', :as => :concept_graph

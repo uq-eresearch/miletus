@@ -24,7 +24,7 @@
       %p
         - action = c.updated_at - c.created_at < 1 ? 'created' : 'updated'
         %i{:class => action == 'created' ? 'icon-bolt' : 'icon-edit'}
-        %a{:href => concept_path(c.key)}
+        %a{:href => concept_path(c.id)}
           = c.title
         %span= "was #{action}."
       %p

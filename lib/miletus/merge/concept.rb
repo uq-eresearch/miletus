@@ -144,11 +144,10 @@ module Miletus::Merge
     end
 
     def self.key_prefix
-      @@key_prefix ||= if ENV.has_key? 'CONCEPT_KEY_PREFIX'
-        ENV['CONCEPT_KEY_PREFIX']
-      else
+      return ENV['CONCEPT_KEY_PREFIX'] if ENV.has_key? 'CONCEPT_KEY_PREFIX'
+      @@key_prefix ||= begin
         require 'socket'
-        'urn:%s:' % Socket.gethostname
+        'info:%s/' % Socket.gethostname
       end
     end
 

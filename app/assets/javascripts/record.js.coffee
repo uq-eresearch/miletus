@@ -74,7 +74,10 @@ init_graph = (selector) ->
 
 
         sigInst.bind('upnodes', (event) ->
-          window.open('/records/' + _(event.content).first(), '_current')
+          # Turn node ID (key) into record ID
+          id = /\d+$/i.exec(_(event.content).first())[0]
+          # Open record with given ID
+          window.open('/records/'+id, '_current')
         )
     )
 

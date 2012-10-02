@@ -18,10 +18,10 @@ class RecordController < ApplicationController
   end
 
   def recheck_sru
-    if params.key?(:key)
-      concept = Miletus::Merge::Concept.find_by_key!(params[:key])
+    if params.key?(:id)
+      concept = Miletus::Merge::Concept.find_by_id!(params[:id])
       SruRifcsLookupObserver.instance.find_sru_records(concept)
-      redirect_to :action => :view, :key => concept.key
+      redirect_to :action => :view, :id => concept.id
     else
       Miletus::Merge::Concept.all.each do |concept|
         SruRifcsLookupObserver.instance.find_sru_records(concept)
@@ -31,7 +31,7 @@ class RecordController < ApplicationController
   end
 
   def view
-    @concept = Miletus::Merge::Concept.find_by_key! params[:key]
+    @concept = Miletus::Merge::Concept.find_by_id!(params[:id])
     @doc = Nokogiri::XML(@concept.to_rif)
   end
 
@@ -40,8 +40,8 @@ class RecordController < ApplicationController
   end
 
   def gexf
-    if params.key?(:key)
-      concept = Miletus::Merge::Concept.find_by_key!(params[:key])
+    if params.key?(:id)
+      concept = Miletus::Merge::Concept.find_by_id!(params[:id])
       xml = concept.to_gexf
     else
       xml = Miletus::Merge::Concept.to_gexf

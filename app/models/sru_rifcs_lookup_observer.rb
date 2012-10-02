@@ -57,6 +57,8 @@ class SruRifcsLookupObserver < ActiveRecord::Observer
         new_related_keys = facet.concept.indexed_attributes.where(
           :key => 'relatedKey').pluck(:value) - related_keys
         new_related_keys.each { |k| import_related_object(k) }
+        # Reindex to refresh the cached keys
+        facet.reindex_concept
       end
     end
 

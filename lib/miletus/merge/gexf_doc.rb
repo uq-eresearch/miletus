@@ -18,9 +18,7 @@ module Miletus::Merge
         xml.nodes {
           @concepts.each { |c| node(xml, c) }
         }
-        xml.edges {
-          @concepts.each { |c| edge(xml, c) }
-        }
+        edges(xml, @concepts)
       end
     end
 
@@ -42,14 +40,18 @@ module Miletus::Merge
       }
     end
 
-    def edge(xml, concept)
-      concept_keys = @concepts.map{|c| c.key}.to_set
-      concept.outbound_related_concept_keys.each do |oc_key|
-        xml.edge(
-          :id => "%s|%s" % [concept.key, oc_key],
-          :source => concept.key,
-          :target => oc_key) if concept_keys.include?(oc_key)
-      end
+    def edges(xml, concepts)
+      xml.edges {
+        concept_keys = concepts.map{|c| c.key}.to_set
+        concepts.each do |c|
+          c.outbound_related_concept_keys.each do |oc_key|
+            xml.edge(
+              :id => "%s|%s" % [c.key, oc_key],
+              :source => c.key,
+              :target => oc_key) if concept_keys.include?(oc_key)
+          end
+        end
+      }
     end
 
     def gexf_graph_doc

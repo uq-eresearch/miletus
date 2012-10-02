@@ -1,7 +1,7 @@
 .page-header
   .pull-right
     %form{ :action => '/recheck-sru-records', :method => 'POST' }
-      %input{ :type => 'hidden', :name => 'key', :value => @concept.key }
+      %input{ :type => 'hidden', :name => 'id', :value => @concept.id }
       %button.btn{ :type => 'submit' }
         Recheck SRU
   %h1
@@ -28,7 +28,7 @@
         =description(@doc).gsub(/\n/,"<br/>\n").html_safe
     .span4
       %div.sigma-parent-small
-        .sigma-expand{:'data-href' => concept_gexf_path(@concept.key), :'data-delay' => 1000}
+        .sigma-expand{:'data-href' => concept_gexf_path(@concept.id), :'data-delay' => 1000}
 
   .row-fluid
     %pre
