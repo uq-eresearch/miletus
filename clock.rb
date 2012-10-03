@@ -15,4 +15,9 @@ module Clockwork
       puts "No harvest jobs to schedule."
     end
   end
+  every(1.day, 'recheck.sru') do
+    Miletus::Merge::Concept.all.each do |concept|
+      SruRifcsLookupObserver.instance.find_sru_records(concept)
+    end
+  end
 end

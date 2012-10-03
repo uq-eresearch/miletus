@@ -14,7 +14,9 @@ class SruRifcsLookupObserver < ActiveRecord::Observer
       concept = facet.concept
     end
     Miletus::Harvest::SRU::Interface.find(:all).each do |interface|
-      self.class.run_job(JobProcessor.new(concept, interface))
+      if interface.suitable_type?(concept.type)
+        self.class.run_job(JobProcessor.new(concept, interface))
+      end
     end
   end
 
@@ -43,9 +45,6 @@ class SruRifcsLookupObserver < ActiveRecord::Observer
     def_delegator 'SruRifcsLookupObserver.instance', :prevent_loop
 
     def run
-      related_keys = concept.indexed_attributes.where(
-        :key => 'relatedKey').pluck(:value)
-
       xml = lookup_using_identifiers(concept)
       return nil if xml.nil?
 
@@ -54,11 +53,11 @@ class SruRifcsLookupObserver < ActiveRecord::Observer
         facet = save_facet(xml)
         # Import related objects
         facet.reindex_concept
-        new_related_keys = facet.concept.indexed_attributes.where(
-          :key => 'relatedKey').pluck(:value) - related_keys
-        new_related_keys.each { |k| import_related_object(k) }
+        related_keys = facet.concept.indexed_attributes.where(
+          :key => 'relatedKey').pluck(:value)
+        related_keys.each { |k| import_related_object(k) }
         # Reindex to refresh the cached keys
-        facet.reindex_concept
+        concept.reindex
       end
     end
 
@@ -71,6 +70,8 @@ class SruRifcsLookupObserver < ActiveRecord::Observer
         concept.indexed_attributes.where(
           :key => 'email').pluck(:value).map {|e| "mailto:%s" % e }
       identifiers.each do |identifier|
+        Rails.logger.info \
+          "Using #{interface.endpoint} for identifier lookup (#{identifier})"
         xml = interface.lookup_by_identifier(identifier)
         return xml unless xml.nil?
       end
@@ -87,6 +88,8 @@ class SruRifcsLookupObserver < ActiveRecord::Observer
     end
 
     def import_related_object(key)
+      Rails.logger.info \
+        "Using #{interface.endpoint} for related key lookup (#{key})"
       xml = interface.lookup_by_identifier(key)
       return if xml.nil?
       prevent_loop(Miletus::Merge::Facet.global_key(xml)) do
@@ -94,10 +97,12 @@ class SruRifcsLookupObserver < ActiveRecord::Observer
         if facet.nil?
           related_concept = Miletus::Merge::Concept.find_existing(xml)
           related_concept ||= Miletus::Merge::Concept.create()
-          related_concept.facets.create(:metadata => xml)
+          facet = related_concept.facets.create(:metadata => xml)
         else
           facet.metadata = xml
         end
+        facet.save!
+        facet.reindex_concept
       end
     end
 

@@ -5,7 +5,7 @@ module Miletus::Harvest::SRU
 
     self.table_name = 'sru_interfaces'
 
-    store :details, :accessors => [:schema, :exclude_xpaths]
+    store :details, :accessors => [:schema, :exclude_xpaths, :limit_to_types]
     attr_accessible :endpoint, :schema, :exclude_xpaths
 
     validates :endpoint, :presence => true
@@ -26,6 +26,11 @@ module Miletus::Harvest::SRU
       escaped_value = value.gsub('"', '\"')
 
       lookup("rec.identifier=\"#{escaped_value}\"")
+    end
+
+    def suitable_type?(type)
+      return true if limit_to_types.nil?
+      limit_to_types.include?(type)
     end
 
     private

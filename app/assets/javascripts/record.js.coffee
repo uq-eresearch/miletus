@@ -15,7 +15,7 @@ init_graph = (selector) ->
       defaultLabelSize: 14
       defaultLabelBGColor: '#fff'
       defaultLabelHoverColor: '#000'
-      labelThreshold: 6
+      labelThreshold: 5
       defaultEdgeType: 'curve'
     ).graphProperties(
       minNodeSize: 1
