@@ -3,18 +3,12 @@ require 'miletus'
 class RecordController < ApplicationController
 
   def index
-    @stats = {
-      'OAI-PMH input records' => \
-        Miletus::Harvest::OAIPMH::RIFCS::Record.all.count,
-      'OAI-PMH endpoints' => \
-        Miletus::Harvest::OAIPMH::RIFCS::RecordCollection.all.count,
-      'SRU interfaces' => Miletus::Harvest::SRU::Interface.all.count,
-      'concepts' => Miletus::Merge::Concept.all.count,
-      'facets' => Miletus::Merge::Facet.all.count,
-      'OAI-PMH output records' => Miletus::Output::OAIPMH::Record.all.count,
-    }
-
-    @concepts = Miletus::Merge::Concept.order('updated_at DESC').all
+    concepts = Miletus::Merge::Concept.order('updated_at DESC').all
+    sorted_concepts = concepts.each_with_object({}) do |c, ch|
+      ch[c.type] ||= []
+      ch[c.type] << c
+    end
+    @concepts_by_type = Hash[sorted_concepts.sort]
   end
 
   def recheck_sru
@@ -47,6 +41,19 @@ class RecordController < ApplicationController
       xml = Miletus::Merge::Concept.to_gexf
     end
     render :text => xml, :content_type => 'text/xml'
+  end
+
+  def stats
+    @stats = {
+      'OAI-PMH input records' => \
+        Miletus::Harvest::OAIPMH::RIFCS::Record.all.count,
+      'OAI-PMH endpoints' => \
+        Miletus::Harvest::OAIPMH::RIFCS::RecordCollection.all.count,
+      'SRU interfaces' => Miletus::Harvest::SRU::Interface.all.count,
+      'concepts' => Miletus::Merge::Concept.all.count,
+      'facets' => Miletus::Merge::Facet.all.count,
+      'OAI-PMH output records' => Miletus::Output::OAIPMH::Record.all.count,
+    }
   end
 
 

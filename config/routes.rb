@@ -18,6 +18,7 @@ Miletus::Application.routes.draw do
 
   get '/records.gexf' => 'record#gexf'
   get '/graph' => 'record#graph', :as => :concept_graph
+  get '/stats' => 'record#stats'
 
   # Sample of named route:
   #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase

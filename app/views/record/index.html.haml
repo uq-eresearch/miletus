@@ -1,34 +1,17 @@
 %div.page-header
-  .pull-right
-    %form{ :action => '/recheck-sru-records', :method => 'POST' }
-      %button.btn{ :type => 'submit' }
-        Recheck SRU
   %h1 Metadata Records
 
 %div.row-fluid
-  %div.span4
-    %h2 Stats
+  - @concepts_by_type.each do |type, concepts|
 
-    %ul.unstyled
-      - @stats.each do |k,v|
-        %li
-          %span.lead{ :style => 'display: inline-block; width: 3em; text-align: right' }
-            = v
-          %span= k
+    %div.span3
 
-  %div.span8
+      %h2= type.pluralize.titleize
 
-    %h2 Activity
-
-    - @concepts.each do |c|
-      %p
-        - action = c.updated_at - c.created_at < 1 ? 'created' : 'updated'
-        %i{:class => action == 'created' ? 'icon-bolt' : 'icon-edit'}
-        %a{:href => concept_path(c.id)}
-          = c.title
-        %span= "was #{action}."
-      %p
-        ="It now contains #{c.facets.count} facets."
-        %small{:class => "muted"}
-          = timeago_tag(c.updated_at, :nojs => true, :limit => 10.days.ago)
-      %hr
+      - concepts.each do |c|
+        %p
+          - action = c.updated_at - c.created_at < 1 ? 'created' : 'updated'
+          %i{:class => action == 'created' ? 'icon-bolt' : 'icon-copy',
+             :title => "#{action} @ #{c.updated_at}"}
+          %a{:href => concept_path(c.id)}
+            = c.title
