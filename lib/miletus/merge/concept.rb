@@ -35,6 +35,10 @@ module Miletus::Merge
       (self.titles || []).first
     end
 
+    def alternate_titles
+      self.titles[1..-1] rescue []
+    end
+
     def self.find_by_key!(key)
       _, _, id = key.partition(key_prefix)
       raise ActiveRecord::RecordNotFound("Invalid prefix") unless id =~ /^\d+$/

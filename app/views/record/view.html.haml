@@ -1,36 +1,41 @@
-.page-header
-  .pull-right
-    %form{ :action => '/recheck-sru-records', :method => 'POST' }
-      %input{ :type => 'hidden', :name => 'id', :value => @concept.id }
-      %button.btn{ :type => 'submit' }
-        Recheck SRU
-  %h1
-    = @concept.title
-    - _, *ot = @concept.titles && !ot.nil? && ot.each do |t|
-      %small= "aka %s" % t
+.div
+  .page-header
+    .pull-right
+      %form{ :action => '/recheck-sru-records', :method => 'POST' }
+        %input{ :type => 'hidden', :name => 'id', :value => @concept.id }
+        %button.btn{ :type => 'submit' }
+          Recheck SRU
+    %h1
+      %span{ property: 'dc:title'}= @concept.title
+      - if @concept.alternate_titles.size > 0
+        %small
+          aka
+          - alt_title_tags = @concept.alternate_titles.map do |t|
+            - capture_haml do
+              %span{:property => 'dc:title'}
+                = t
+          = safe_join(alt_title_tags, ", ")
 
-.container-fluid
-  .row-fluid
-    .span8
-      %ul.unstyled
-        - email_uris(@doc).each do |uri|
-          %li
-            %i.icon-envelope
-            %a{:href => uri.html_safe}
-              =uri.gsub(/^mailto:/,'').html_safe
-        - urls(@doc).each do |url|
-          %li
-            %i.icon-globe
-            %a{:href => url}
-              =url
+  .container-fluid
+    .row-fluid
+      .span8
+        - case @concept.type
+        - when 'party'
+          - case @concept.subtype
+          - when 'person'
+            = render 'record/person'
+          - when 'group'
+            = render 'record/org'
+          - else
+            = render 'record/other'
+        - else
+          = render 'record/other'
 
-      %p.description
-        =description(@doc).gsub(/\n/,"<br/>\n").html_safe
-    .span4
-      %div.sigma-parent-small
-        .sigma-expand{:'data-href' => concept_gexf_path(@concept.id), :'data-delay' => 1000}
+      .span4
+        %div.sigma-parent-small
+          .sigma-expand{:'data-href' => concept_gexf_path(@concept.id), :'data-delay' => 1000}
 
-  .row-fluid
-    %pre
-      %code#rifcs.prettyprint.linenums
-        =annotated_xml(@doc)
+.row-fluid
+  %pre
+    %code#rifcs.prettyprint.linenums
+      =annotated_xml(@doc)

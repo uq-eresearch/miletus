@@ -42,6 +42,57 @@ module RecordHelper
     end
   end
 
+  def physical_addresses(rifcs_doc)
+    extend Miletus::NamespaceHelper
+    addrs = rifcs_doc.xpath("//rif:location/rif:address/rif:physical", ns_decl)
+    addrs.map do |address|
+      nodes = address.xpath("rif:addressPart", ns_decl)
+      nodes.each_with_object({}) do |e, memo|
+        t = e['type']
+        memo[t] ||= []
+        memo[t] << e.content
+      end
+    end
+  end
+
+  def role(rifcs_doc)
+    extend Miletus::NamespaceHelper
+    related_key = rifcs_doc.at_xpath(
+      "//rif:relatedObject[rif:relation/@type='isCollectorOf']/rif:key",
+      ns_decl)
+    return "Data Collection Creator" unless related_key.nil?
+    related_key = rifcs_doc.at_xpath(
+      "//rif:relatedObject[rif:relation/@type='isManagerOf']/rif:key",
+      ns_decl)
+    return "Data Collection Manager" unless related_key.nil?
+    nil
+  end
+
+  def organization_name(rifcs_doc)
+    extend Miletus::NamespaceHelper
+    related_key = rifcs_doc.at_xpath(
+      "//rif:relatedObject[rif:relation/@type='isMemberOf']/rif:key",
+      ns_decl)
+    return nil if related_key.nil?
+    begin
+      org_concept = Miletus::Merge::Concept.find_by_key!(related_key.content)
+      org_concept.title
+    rescue
+      nil
+    end
+  end
+
+  def name(rifcs_doc)
+    extend Miletus::NamespaceHelper
+    name = rifcs_doc.at_xpath("//rif:name[@type='primary']", ns_decl)
+    nodes = name.xpath("rif:namePart", ns_decl)
+    nodes.each_with_object({}) do |e, memo|
+      t = e['type']
+      memo[t] ||= []
+      memo[t] << e.content
+    end
+  end
+
   def urls(rifcs_doc)
     extend Miletus::NamespaceHelper
     nodes = rifcs_doc.xpath(
