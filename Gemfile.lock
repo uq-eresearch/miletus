@@ -203,6 +203,8 @@ GEM
       thor (>= 0.14.6, < 2.0)
     raindrops (0.10.0)
     rake (0.9.2.2)
+    ratom (0.7.2)
+      libxml-ruby (~> 2.3.2)
     rdoc (3.12)
       json (~> 1.4)
     realrand (2.0.0)
@@ -301,6 +303,7 @@ DEPENDENCIES
   rails-timeago
   rails_best_practices
   rake
+  ratom
   realrand
   rspec-rails
   ruby-prof
