@@ -19,9 +19,9 @@
     - if role = role(@doc)
       %li.lead
         %span{:property => 'v:role'}= role
-    - if org = organization_name(@doc)
+    - organization_names(@doc).each do |org|
       %li{:property => 'v:affiliation', :typeof => 'v:Organization'}
-        %i.icon-group
+        %i.icon-group{:title => 'is affiliated with'}
         %span{:property => 'v:name'}= org
     - email_uris(@doc).each do |uri|
       %li
