@@ -25,17 +25,17 @@
       .span8
         - case @concept.type
         - when 'collection'
-          = render 'record/collection'
+          = render 'record/collection', :concept => @concept, :doc => @doc
         - when 'party'
           - case @concept.subtype
           - when 'person'
-            = render 'record/person'
+            = render 'record/person', :concept => @concept, :doc => @doc
           - when 'group'
-            = render 'record/org'
+            = render 'record/org', :concept => @concept, :doc => @doc
           - else
-            = render 'record/other'
+            = render 'record/other', :concept => @concept, :doc => @doc
         - else
-          = render 'record/other'
+          = render 'record/other', :concept => @concept, :doc => @doc
 
         %ul.unstyled
           - related_info(@doc).each do |info|

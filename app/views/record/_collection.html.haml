@@ -1,19 +1,19 @@
 %div{:prefix => "v: http://rdf.data-vocabulary.org/#",
      :typeof => 'v:CreativeWork'}
   %div.hidden
-    %span{:property => 'v:name'}= @concept.title
+    %span{:property => 'v:name'}= concept.title
   %ul.unstyled
-    - email_uris(@doc).each do |uri|
+    - email_uris(doc).each do |uri|
       %li
         %i.icon-envelope
         %a{:href => uri.html_safe}
           =uri.gsub(/^mailto:/,'').html_safe
-    - urls(@doc).each do |url|
+    - urls(doc).each do |url|
       %li
         %i.icon-globe
         %a{:href => url, :property => "v:url"}
           =url
-    - physical_addresses(@doc).each do |address|
+    - physical_addresses(doc).each do |address|
       - if address.key?('telephoneNumber')
         %li
           - address['telephoneNumber'].each do |phone|
@@ -26,4 +26,4 @@
             %span{:property => 'v:faxNumber'}= fax
 
   %p.description{:property => 'v:description'}
-    =description(@doc).gsub(/\n/,"<br/>\n").html_safe
+    =description(doc).gsub(/\n/,"<br/>\n").html_safe

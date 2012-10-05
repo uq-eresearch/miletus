@@ -1,8 +1,8 @@
 %div{:prefix => "v: http://rdf.data-vocabulary.org/#",
      :typeof => 'v:Person'}
   %div.hidden
-    %span{:property => 'v:name'}= @concept.title
-    - name(@doc).each do |key, parts|
+    %span{:property => 'v:name'}= concept.title
+    - name(doc).each do |key, parts|
       - parts.each do |part|
         - case key
           - when 'family'
@@ -16,24 +16,24 @@
 
 
   %ul.unstyled
-    - if role = role(@doc)
+    - if role = role(doc)
       %li.lead
         %span{:property => 'v:role'}= role
-    - organization_names(@doc).each do |org|
+    - organization_names(doc).each do |org|
       %li{:property => 'v:affiliation', :typeof => 'v:Organization'}
         %i.icon-group{:title => 'is affiliated with'}
         %span{:property => 'v:name'}= org
-    - email_uris(@doc).each do |uri|
+    - email_uris(doc).each do |uri|
       %li
         %i.icon-envelope
         %a{:href => uri.html_safe, :property => "v:email"}
           =uri.gsub(/^mailto:/,'').html_safe
-    - urls(@doc).each do |url|
+    - urls(doc).each do |url|
       %li
         %i.icon-globe
         %a{:href => url, :property => "v:url"}
           =url
-    - physical_addresses(@doc).each do |address|
+    - physical_addresses(doc).each do |address|
       - if address.key?('telephoneNumber')
         %li
           - address['telephoneNumber'].each do |phone|
@@ -46,4 +46,4 @@
             %span{:property => 'v:faxNumber'}= fax
 
   %p.description{:property => 'v:description'}
-    =description(@doc).gsub(/\n/,"<br/>\n").html_safe
+    =description(doc).gsub(/\n/,"<br/>\n").html_safe

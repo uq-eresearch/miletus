@@ -1,9 +1,9 @@
 %div{:prefix => "v: http://rdf.data-vocabulary.org/#",
      :typeof => 'v:Organization'}
   %div.hidden
-    %span{:property => 'v:name'}= @concept.title
+    %span{:property => 'v:name'}= concept.title
 
-  - physical_addrs = physical_addresses(@doc)
+  - physical_addrs = physical_addresses(doc)
   %ul.unstyled
     - physical_addrs.each do |address|
       - if address.key?('addressLine')
@@ -11,12 +11,12 @@
           %address
             - address['addressLine'].each do |line|
               %span{:style => 'display: block'}= line
-    - email_uris(@doc).each do |uri|
+    - email_uris(doc).each do |uri|
       %li
         %i.icon-envelope
         %a{:href => uri.html_safe}
           =uri.gsub(/^mailto:/,'').html_safe
-    - urls(@doc).each do |url|
+    - urls(doc).each do |url|
       %li
         %i.icon-globe
         %a{:href => url, :property => "v:url"}
@@ -34,4 +34,4 @@
             %span{:property => 'v:faxNumber'}= fax
 
   %p.description{:property => 'v:description'}
-    =description(@doc).gsub(/\n/,"<br/>\n").html_safe
+    =description(doc).gsub(/\n/,"<br/>\n").html_safe
