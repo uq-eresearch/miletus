@@ -1,4 +1,7 @@
 - content_for :title, @concept.title
+- if desc = description(@doc)
+  - set_meta_tags :description => desc
+- set_meta_tags :keywords => keywords(@doc)
 .div
   .page-header
     .pull-right

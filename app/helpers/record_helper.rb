@@ -109,6 +109,10 @@ module RecordHelper
     end.compact
   end
 
+  def keywords(rifcs_doc)
+    subjects(rifcs_doc).map {|s| s.name}
+  end
+
   def subjects(rifcs_doc)
     extend Miletus::NamespaceHelper
     subjects = rifcs_doc.xpath("//rif:subject", ns_decl)
