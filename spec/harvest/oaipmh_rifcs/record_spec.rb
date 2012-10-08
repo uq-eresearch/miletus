@@ -5,7 +5,7 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Record do
   def get_xml_fixture(type, number = 1)
     fixture_file = File.join(File.dirname(__FILE__),
         '..', '..', 'fixtures',"rifcs-#{type}-#{number}.xml")
-    File.open(fixture_file) { |f| f.read() }
+    IO.read(fixture_file)
   end
 
   it "is creatable with no arguments" do

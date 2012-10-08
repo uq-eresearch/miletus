@@ -1,0 +1,70 @@
+<entry xmlns="http://www.w3.org/2005/Atom"
+       xmlns:app="http://www.w3.org/2007/app"
+       xmlns:rdfa="http://www.w3.org/ns/rdfa#">
+	<id>http://dimer.uq.edu.au/ref/3r</id>
+	<title>X-ray Diffraction Images of the TIR Domain from the Flax Disease
+		Resistance Protein L6.</title>
+	<updated>2012-09-05T16:13:41+10:00</updated>
+	<content type="text">This dataset contains diffraction images of a
+		crystal containing the native form of the Toll/interleukin-1 receptor
+		(TIR) domain from the L6 protein (UniProt: Q40253) of Linum
+		usitatissimum (Flax). The construct that was crystallised contained
+		residues 29-229 of the native protein. It was Collected at the
+		Australian Synchrotron (beamline MX2, ADSC Quantum 315r CDD detector)
+		on 2009-09-20, and the crystal diffracted to a resolution 2.3A.</content>
+	<rdfa:meta property="http://purl.org/dc/terms/accessRights"
+		content="This data is freely available via the DIMER website" />
+	<rights>This data is jointly owned by the University of Queensland and
+		current and/or former students of the University of Queensland</rights>
+	<link rel="related" href="http://dataspace.uq.edu.au/collections/1w"
+		type="text/html" title="Diffraction Image Experiment Repository" />
+	<link rel="http://xmlns.com/foaf/0.1/page"
+		href="http://dimer.uq.edu.au/projects/tir/experiments/september09/datasets/c4x1"
+		type="text/html" />
+	<link rel="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" href="http://purl.org/dc/dcmitype/Dataset"
+		type="text/html" title="Dataset" />
+	<link rel="license" href="http://creativecommons.org/licenses/by/3.0/rdf"
+		type="application/rdf+xml" title="Diffraction Image Experiment Repository" />
+	<link rel="alternate"
+		href="http://dimer.uq.edu.au/projects/tir/experiments/september09/datasets/c4x1.html"
+		type="text/html" />
+	<link rel="http://purl.org/dc/terms/isReferencedBy"
+		href="http://www.pdb.org/pdb/explore/explore.do?structureId=3OZI"
+		type="text/html" title="PDB entry for the model generated with this dataset." />
+	<link rel="http://purl.org/dc/terms/isReferencedBy" href="http://www.ncbi.nlm.nih.gov/pubmed/21402359"
+		type="text/html"
+		title="Structural and functional analysis of a plant resistance protein TIR domain reveals interfaces for self-association, signaling, and autoregulation." />
+	<author>
+		<name>Thomas Ve</name>
+		<uri>http://dataspace.uq.edu.au/agents/m</uri>
+	</author>
+	<author>
+		<name>Eugene Valkov</name>
+		<uri>http://dataspace.uq.edu.au/agents/n</uri>
+	</author>
+	<author>
+		<name>Bostjan Kobe</name>
+		<uri>http://dataspace.uq.edu.au/agents/p</uri>
+	</author>
+	<category term="Crystallography" />
+	<category term="X-Ray Diffraction" />
+	<category scheme="http://purl.org/asc/1297.0/2008/for/" term="http://purl.org/asc/1297.0/2008/for/060112"
+		label="060112" />
+	<category scheme="http://purl.org/asc/1297.0/2008/seo/" term="http://purl.org/asc/1297.0/2008/seo/970103"
+		label="970103" />
+	<category scheme="http://purl.org/asc/1297.0/2008/seo/" term="http://purl.org/asc/1297.0/2008/seo/970111"
+		label="970111" />
+	<category scheme="http://purl.org/asc/1297.0/2008/seo/" term="http://purl.org/asc/1297.0/2008/seo/970106"
+		label="970106" />
+	<app:control>
+		<app:draft>no</app:draft>
+	</app:control>
+	<source>
+		<id>http://dimer.uq.edu.au/</id>
+		<title type="text">dimer.uq.edu.au</title>
+		<author>
+			<name>DIMER</name>
+			<email>xr-diffraction.datamanager@imb.uq.edu.au</email>
+		</author>
+	</source>
+</entry>

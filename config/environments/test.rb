@@ -35,6 +35,8 @@ Miletus::Application.configure do
 
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
+
+  #config.active_record.schema_format = :sql
 end
 
 # Handle missing DATABASE_URL

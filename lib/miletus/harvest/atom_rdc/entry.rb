@@ -7,10 +7,13 @@ module Miletus::Harvest::Atom::RDC
 
     self.table_name = :harvest_atom_rdc_entries
 
+    before_validation do
+      self.atom_id = atom_entry.id
+    end
+
     attr_accessible :xml
 
     def_delegators :atom_entry,
-      :id,
       :updated,
       :published,
       :title,
@@ -21,7 +24,8 @@ module Miletus::Harvest::Atom::RDC
       :links,
       :source,
       :categories,
-      :content
+      :content,
+      :metas
 
     belongs_to :feed,
       :class_name => 'Miletus::Harvest::Atom::RDC::Feed',
@@ -34,3 +38,4 @@ module Miletus::Harvest::Atom::RDC
   end
 
 end
+
