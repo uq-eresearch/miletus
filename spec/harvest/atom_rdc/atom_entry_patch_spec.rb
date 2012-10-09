@@ -4,7 +4,7 @@ require 'miletus/harvest/atom_rdc/atom_entry_patch'
 
 describe Atom::Entry do
 
-  it { should respond_to(:metas) }
+  it { should respond_to(:metas, :rights) }
 
   subject do
     fixture_file = File.join(File.dirname(__FILE__),
@@ -13,7 +13,6 @@ describe Atom::Entry do
   end
 
   describe "RdfaMeta" do
-
     it "should parse RDFA meta tags" do
       xml = <<-EOH
         <meta xmlns=\"http://www.w3.org/ns/rdfa#\"
@@ -48,17 +47,13 @@ describe Atom::Entry do
       mockEntry.metas.first.property.should_not be_nil
       mockEntry.metas.first.content.should_not be_nil
     end
-
-
   end
-
 
   describe ":rdfa_metas" do
     it "should provide property and content info" do
       subject.should respond_to(:metas)
       subject.should have(1).metas
     end
-
   end
 
 end

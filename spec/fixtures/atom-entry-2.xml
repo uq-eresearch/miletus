@@ -1,0 +1,36 @@
+<entry xmlns="http://www.w3.org/2005/Atom"
+       xmlns:app="http://www.w3.org/2007/app"
+       xmlns:rdfa="http://www.w3.org/ns/rdfa#">
+  <id>http://dimer.uq.edu.au/ref/c2</id>
+  <title>Bostjan Kobe</title>
+  <updated>2012-06-19T17:46:11+10:00</updated>
+  <content type="text">Bostjan Kobe</content>
+  <rdfa:meta property="http://xmlns.com/foaf/0.1/givenName"
+    content="Bostjan" />
+  <rdfa:meta property="http://xmlns.com/foaf/0.1/familyName"
+    content="Kobe" />
+  <link rel="alternate" href="http://dimer.uq.edu.au/ref/c2" type="text/html" />
+  <link rel="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+      href="http://xmlns.com/foaf/0.1/Agent"
+      type="text/html" title="Person" />
+  <link rel="http://xmlns.com/foaf/0.1/mbox"
+    href="mailto:b.kobe@uq.edu.au"
+    type="text/html" />
+  <link rel="http://xmlns.com/foaf/0.1/made"
+    href="http://dataspace.uq.edu.au/collections/w"
+    type="text/html"
+    title="X-ray Diffraction Images of the TIR Domain from the Flax Disease Resistance Protein L6." />
+  <category term="X-Ray Diffraction" />
+  <category term="Crystallography" />
+  <app:control>
+    <app:draft>no</app:draft>
+  </app:control>
+  <source>
+    <id>http://dimer.uq.edu.au/</id>
+    <title type="text">dimer.uq.edu.au</title>
+    <author>
+      <name>DIMER</name>
+      <email>xr-diffraction.datamanager@imb.uq.edu.au</email>
+    </author>
+  </source>
+</entry>

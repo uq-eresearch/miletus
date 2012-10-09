@@ -36,4 +36,6 @@ Atom::Entry.class_eval do
   known_namespaces << 'http://www.w3.org/ns/rdfa#'
   elements 'metas', :class => Atom::Entry::RdfaMeta
 
+  element 'rights'
+
 end
