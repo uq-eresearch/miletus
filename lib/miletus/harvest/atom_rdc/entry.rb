@@ -101,54 +101,72 @@ module Miletus::Harvest::Atom::RDC
             xml.originatingSource(source.id)
             xml.send(type, :type => subtype) {
               xml.identifier(atom_entry.id, :type => 'uri')
-              xml.name(:type => 'primary') {
-                case subtype
-                when 'person'
-                  xml.namePart family_name, :type => 'family'
-                  xml.namePart given_name,  :type => 'given'
-                else
-                  xml.namePart title
-                end
-              }
+              rifcs_name(xml)
               xml.description(content, :type => 'full')
-              categories.each do |category|
-                if category.label.nil?
-                  xml.subject(category.term, :type => 'local')
-                else
-                  xml.subject(category.label,
-                    :type => category_scheme_to_subject_type(category.scheme),
-                    :termIdentifier => category.term)
-                end
-              end
-              xml.rights {
-                xml.accessRights(access_rights) unless access_rights.nil?
-                unless license.nil?
-                  xml.licence(license.title, :rightsUri => license.href)
-                end
-                xml.rightsStatement(rights) unless rights.nil?
-              }
+              rifcs_categories(xml)
+              rifcs_rights(xml)
             }
           }
-          authors.each do |author|
-            xml.registryObject(:group => source.title) {
-              xml.key(author.uri || "mailto:%s" % author.email)
-              xml.originatingSource(source.id)
-              xml.party(:type => 'group') {
-                xml.name(:type => 'primary') {
-                  xml.namePart(author.name)
-                } unless author.name.nil?
-                xml.location {
-                  xml.address {
-                    xml.electronic(:type => 'email') {
-                      xml.value(author.email)
-                    }
-                  }
-                } unless author.email.nil?
-              }
-            }
-          end
+          rifcs_authors(xml)
         }
       end.to_xml
+    end
+
+    private
+
+    def rifcs_name(xml)
+      xml.name(:type => 'primary') {
+        case subtype
+        when 'person'
+          xml.namePart family_name, :type => 'family'
+          xml.namePart given_name,  :type => 'given'
+        else
+          xml.namePart title
+        end
+      }
+    end
+
+    def rifcs_categories(xml)
+      categories.each do |category|
+        if category.label.nil?
+          xml.subject(category.term, :type => 'local')
+        else
+          xml.subject(category.label,
+            :type => category_scheme_to_subject_type(category.scheme),
+            :termIdentifier => category.term)
+        end
+      end
+    end
+
+    def rifcs_authors(xml)
+      authors.each do |author|
+        xml.registryObject(:group => source.title) {
+          xml.key(author.uri || "mailto:%s" % author.email)
+          xml.originatingSource(source.id)
+          xml.party(:type => 'group') {
+            xml.name(:type => 'primary') {
+              xml.namePart(author.name)
+            } unless author.name.nil?
+            xml.location {
+              xml.address {
+                xml.electronic(:type => 'email') {
+                  xml.value(author.email)
+                }
+              }
+            } unless author.email.nil?
+          }
+        }
+      end
+    end
+
+    def rifcs_rights(xml)
+      xml.rights {
+        xml.accessRights(access_rights) unless access_rights.nil?
+        unless license.nil?
+          xml.licence(license.title, :rightsUri => license.href)
+        end
+        xml.rightsStatement(rights) unless rights.nil?
+      }
     end
 
   end
