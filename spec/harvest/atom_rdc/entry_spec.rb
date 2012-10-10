@@ -8,7 +8,7 @@ describe Miletus::Harvest::Atom::RDC::Entry do
     Miletus::Harvest::Atom::RDC::Entry.new(:xml => IO.read(fixture_file))
   end
 
-  it { should respond_to(:xml, :to_rif) }
+  it { should respond_to(:xml, :to_rif, :deleted?) }
 
   it "should convert a dataset to RIF-CS" do
     subject = get_fixture(1)

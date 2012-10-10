@@ -13,7 +13,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121002000606) do
+ActiveRecord::Schema.define(:version => 20121005032727) do
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -29,8 +29,18 @@ ActiveRecord::Schema.define(:version => 20121002000606) do
     t.datetime "updated_at",                :null => false
   end
 
-  add_index "delayed_jobs", ["priority", "run_at"],
-    :name => "delayed_jobs_priority"
+  add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
+
+  create_table "harvest_atom_rdc_entries", :force => true do |t|
+    t.integer "feed_id"
+    t.text    "xml"
+    t.string  "atom_id"
+  end
+
+  create_table "harvest_atom_rdc_feeds", :force => true do |t|
+    t.string  "url",         :null => false
+    t.integer "entry_count"
+  end
 
   create_table "merge_concepts", :force => true do |t|
     t.text     "cache"

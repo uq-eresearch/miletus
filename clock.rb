@@ -5,7 +5,8 @@ require 'delayed_job_active_record'
 module Clockwork
   every(5.minutes, 'check.upstreams') do
     require 'miletus'
-    jobs = Miletus::Harvest::OAIPMH::RIFCS.jobs
+    jobs = Miletus::Harvest::OAIPMH::RIFCS.jobs +
+           Miletus::Harvest::Atom::RDC.jobs
     if jobs.length > 0
       jobs.each do |job|
         puts "Scheduling harvest job for #{job}"

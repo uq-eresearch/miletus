@@ -49,6 +49,10 @@ module Miletus::Harvest::Atom::RDC
       Atom::Entry.new(XML::Reader.string(xml))
     end
 
+    def deleted?
+      false
+    end
+
     def given_name
       meta = metas.detect {|m| m.property == REL_GIVEN_NAME}
       meta.nil? ? nil : meta.content
