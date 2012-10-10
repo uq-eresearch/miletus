@@ -1,4 +1,6 @@
 require 'atom'
+require 'digest'
+require 'uri'
 
 module Miletus::Harvest::Atom::RDC
 
@@ -10,6 +12,7 @@ module Miletus::Harvest::Atom::RDC
     REL_ACCESS_RIGHTS = 'http://purl.org/dc/terms/accessRights'
     REL_FAMILY_NAME = 'http://xmlns.com/foaf/0.1/familyName'
     REL_GIVEN_NAME = 'http://xmlns.com/foaf/0.1/givenName'
+    REL_REFERENCED_BY = 'http://purl.org/dc/terms/isReferencedBy'
 
     self.table_name = :harvest_atom_rdc_entries
 
@@ -105,9 +108,14 @@ module Miletus::Harvest::Atom::RDC
               xml.description(content, :type => 'full')
               rifcs_categories(xml)
               rifcs_rights(xml)
+              rifcs_alternate_related_info(xml)
+              rifcs_referenced_by_related_info(xml)
+              rifcs_author_related_objects(xml)
+              rifcs_collection_related_objects(xml)
             }
           }
           rifcs_authors(xml)
+          rifcs_related_collections(xml)
         }
       end.to_xml
     end
@@ -138,12 +146,76 @@ module Miletus::Harvest::Atom::RDC
       end
     end
 
+    def rifcs_author_key(author)
+      uri_hash = Digest::SHA2.new
+      uri_hash << (author.uri || 'mailto:%s' % author.email)
+      author_fragment = 'author-%s' % uri_hash.hexdigest
+      uri = URI.parse(atom_entry.id)
+      if uri.fragment.nil? || uri.fragment.length == 0
+        uri.fragment = author_fragment
+      else
+        uri.fragment += '-%s' % author_fragment
+      end
+      uri.to_s
+    end
+
+    def rifcs_related_key(prefix, href)
+      uri_hash = Digest::SHA2.new
+      uri_hash << href
+      related_fragment = '%s-%s' % [prefix, uri_hash.hexdigest]
+      uri = URI.parse(atom_entry.id)
+      if uri.fragment.nil? || uri.fragment.length == 0
+        uri.fragment = related_fragment
+      else
+        uri.fragment += '-%s' % related_fragment
+      end
+      uri.to_s
+    end
+
+    def rifcs_author_related_objects(xml)
+      authors.each do |author|
+        xml.relatedObject {
+          xml.key(rifcs_author_key(author))
+          xml.relation(:type => 'hasCollector')
+        }
+      end
+    end
+
+    def rifcs_collection_related_objects(xml)
+      related_links = links.select {|l| l.rel == 'related'}
+      related_links.each do |link|
+        xml.relatedObject {
+          xml.key(rifcs_related_key('collection', link.href))
+          xml.relation(:type => 'hasAssociationWith')
+        }
+      end
+    end
+
+    def rifcs_alternate_related_info(xml)
+      links.alternates.each do |link|
+        xml.relatedInfo(:type => 'website') {
+          xml.identifier(link.href, :type => 'uri')
+        }
+      end
+    end
+
+    def rifcs_referenced_by_related_info(xml)
+      reference_links = links.select {|l| l.rel == REL_REFERENCED_BY}
+      reference_links.each do |link|
+        xml.relatedInfo(:type => 'publication') {
+          xml.identifier(link.href, :type => 'uri')
+          xml.title(link.title) unless link.title.nil?
+        }
+      end
+    end
+
     def rifcs_authors(xml)
       authors.each do |author|
         xml.registryObject(:group => source.title) {
-          xml.key(author.uri || "mailto:%s" % author.email)
+          xml.key(rifcs_author_key(author))
           xml.originatingSource(source.id)
           xml.party(:type => 'group') {
+            xml.identifier(author.uri, :type => 'uri')
             xml.name(:type => 'primary') {
               xml.namePart(author.name)
             } unless author.name.nil?
@@ -154,6 +226,30 @@ module Miletus::Harvest::Atom::RDC
                 }
               }
             } unless author.email.nil?
+            xml.relatedObject {
+              xml.key(atom_entry.id)
+              xml.relation(:type => 'isCollectorOf')
+            }
+          }
+        }
+      end
+    end
+
+    def rifcs_related_collections(xml)
+      related_links = links.select {|l| l.rel == 'related'}
+      related_links.each do |link|
+        xml.registryObject(:group => source.title) {
+          xml.key(rifcs_related_key('collection', link.href))
+          xml.originatingSource(source.id)
+          xml.collection(:type => 'group') {
+            xml.identifier(link.href, :type => 'uri')
+            xml.name(:type => 'primary') {
+              xml.namePart(link.title)
+            } unless link.title.nil?
+            xml.relatedObject {
+              xml.key(atom_entry.id)
+              xml.relation(:type => 'hasAssociationWith')
+            }
           }
         }
       end

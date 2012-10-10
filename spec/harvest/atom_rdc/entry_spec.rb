@@ -17,20 +17,53 @@ describe Miletus::Harvest::Atom::RDC::Entry do
     rifcs_schema.validate(@doc).should == []
     objects = @doc.xpath('//rif:registryObject', ns_decl)
     objects.count.should > 1
-    objects.each do |obj|
-      obj.at_xpath('rif:*/rif:name', ns_decl).should_not be_nil
-    end
-    primary_object = objects.first
-    primary_object.xpath('rif:collection/rif:identifier',
+    collection, *related_objects = objects
+    collection.xpath('rif:collection/rif:identifier',
       ns_decl).should_not be_nil
-    primary_object.xpath('rif:collection/rif:subject', ns_decl).count.should \
+    collection.at_xpath('rif:collection/rif:name',
+      ns_decl).should_not be_nil
+    collection.xpath('rif:collection/rif:subject', ns_decl).count.should \
       == 6
-    primary_object.at_xpath('rif:collection/rif:rights/rif:accessRights',
+    collection.at_xpath('rif:collection/rif:rights/rif:accessRights',
       ns_decl).should_not be_nil
-    primary_object.at_xpath('rif:collection/rif:rights/rif:licence',
+    collection.at_xpath('rif:collection/rif:rights/rif:licence',
       ns_decl).should_not be_nil
-    primary_object.at_xpath('rif:collection/rif:rights/rif:rightsStatement',
+    collection.at_xpath('rif:collection/rif:rights/rif:rightsStatement',
       ns_decl).should_not be_nil
+    collection.at_xpath('rif:collection/rif:relatedInfo',
+      ns_decl).should_not be_nil
+    collection.at_xpath('rif:collection/rif:relatedInfo',
+      ns_decl).should_not be_nil
+    related_objects.select do |ro|
+      ro.at_xpath('rif:collection', ns_decl)
+    end.each do |author|
+      author.at_xpath('rif:collection/rif:identifier', ns_decl)\
+        .should_not be_nil
+      author.at_xpath('rif:collection/rif:name', ns_decl).should_not be_nil
+      # Author objects should have keys based on their parent
+      author.at_xpath('rif:key', ns_decl).content.start_with?(
+        collection.at_xpath('rif:key', ns_decl).content)
+      author.at_xpath('rif:collection/rif:relatedObject',
+        ns_decl).should_not be_nil
+      # Author objects should related back to their collection
+      author.at_xpath('rif:collection/rif:relatedObject/rif:key', ns_decl)\
+        .content.should == collection.at_xpath('rif:key', ns_decl).content
+    end
+    related_objects.select do |ro|
+      ro.at_xpath('rif:party', ns_decl)
+    end.each do |author|
+      author.at_xpath('rif:party/rif:identifier', ns_decl).should_not be_nil
+      author.at_xpath('rif:party/rif:name', ns_decl).should_not be_nil
+      # Author objects should have keys based on their parent
+      author.at_xpath('rif:key', ns_decl).content.start_with?(
+        collection.at_xpath('rif:key', ns_decl).content)
+      author.at_xpath('rif:party/rif:relatedObject',
+        ns_decl).should_not be_nil
+      # Author objects should related back to their collection
+      author.at_xpath('rif:party/rif:relatedObject/rif:key', ns_decl)\
+        .content.should == collection.at_xpath('rif:key', ns_decl).content
+    end
+    #puts @doc.to_xml
   end
 
   it "should convert an agent to RIF-CS" do
