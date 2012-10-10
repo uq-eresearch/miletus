@@ -12,7 +12,10 @@ module Miletus::Harvest::Atom::RDC
     REL_ACCESS_RIGHTS = 'http://purl.org/dc/terms/accessRights'
     REL_FAMILY_NAME = 'http://xmlns.com/foaf/0.1/familyName'
     REL_GIVEN_NAME = 'http://xmlns.com/foaf/0.1/givenName'
+    REL_OUTPUT_OF = \
+      'http://www.ands.org.au/ontologies/ns/0.1/VITRO-ANDS.owl#isOutputOf'
     REL_REFERENCED_BY = 'http://purl.org/dc/terms/isReferencedBy'
+    REL_RELATED_WEBSITE = 'http://xmlns.com/foaf/0.1/page'
 
     self.table_name = :harvest_atom_rdc_entries
 
@@ -112,8 +115,10 @@ module Miletus::Harvest::Atom::RDC
               rifcs_referenced_by_related_info(xml)
               rifcs_author_related_objects(xml)
               rifcs_collection_related_objects(xml)
+              rifcs_output_of_related_objects(xml)
             }
           }
+          rifcs_activities(xml)
           rifcs_authors(xml)
           rifcs_related_collections(xml)
         }
@@ -181,6 +186,16 @@ module Miletus::Harvest::Atom::RDC
       end
     end
 
+    def rifcs_output_of_related_objects(xml)
+      output_links = links.select {|l| l.rel == REL_OUTPUT_OF}
+      output_links.each do |link|
+        xml.relatedObject {
+          xml.key(rifcs_related_key('activity', link.href))
+          xml.relation(:type => 'isOutputOf')
+        }
+      end
+    end
+
     def rifcs_collection_related_objects(xml)
       related_links = links.select {|l| l.rel == 'related'}
       related_links.each do |link|
@@ -192,7 +207,9 @@ module Miletus::Harvest::Atom::RDC
     end
 
     def rifcs_alternate_related_info(xml)
-      links.alternates.each do |link|
+      related_links = \
+        links.select {|l| l.rel == REL_RELATED_WEBSITE} + links.alternates
+      related_links.each do |link|
         xml.relatedInfo(:type => 'website') {
           xml.identifier(link.href, :type => 'uri')
         }
@@ -229,6 +246,26 @@ module Miletus::Harvest::Atom::RDC
             xml.relatedObject {
               xml.key(atom_entry.id)
               xml.relation(:type => 'isCollectorOf')
+            }
+          }
+        }
+      end
+    end
+
+    def rifcs_activities(xml)
+      output_links = links.select {|l| l.rel == REL_OUTPUT_OF}
+      output_links.each do |link|
+        xml.registryObject(:group => source.title) {
+          xml.key(rifcs_related_key('activity', link.href))
+          xml.originatingSource(source.id)
+          xml.activity(:type => 'group') {
+            xml.identifier(link.href, :type => 'uri')
+            xml.name(:type => 'primary') {
+              xml.namePart(link.title)
+            } unless link.title.nil?
+            xml.relatedObject {
+              xml.key(atom_entry.id)
+              xml.relation(:type => 'hasOutput')
             }
           }
         }

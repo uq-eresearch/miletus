@@ -16,6 +16,8 @@
 		content="This data is freely available via the DIMER website" />
 	<rights>This data is jointly owned by the University of Queensland and
 		current and/or former students of the University of Queensland</rights>
+	<link rel="http://www.ands.org.au/ontologies/ns/0.1/VITRO-ANDS.owl#isOutputOf"
+	      href="http://example.test/activity/1" />
 	<link rel="related" href="http://dataspace.uq.edu.au/collections/1w"
 		type="text/html" title="Diffraction Image Experiment Repository" />
 	<link rel="http://xmlns.com/foaf/0.1/page"
