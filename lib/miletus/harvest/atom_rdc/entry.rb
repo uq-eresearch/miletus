@@ -12,6 +12,8 @@ module Miletus::Harvest::Atom::RDC
     REL_ACCESS_RIGHTS = 'http://purl.org/dc/terms/accessRights'
     REL_FAMILY_NAME = 'http://xmlns.com/foaf/0.1/familyName'
     REL_GIVEN_NAME = 'http://xmlns.com/foaf/0.1/givenName'
+    REL_MADE = 'http://xmlns.com/foaf/0.1/made'
+    REL_MBOX = 'http://xmlns.com/foaf/0.1/mbox'
     REL_OUTPUT_OF = \
       'http://www.ands.org.au/ontologies/ns/0.1/VITRO-ANDS.owl#isOutputOf'
     REL_REFERENCED_BY = 'http://purl.org/dc/terms/isReferencedBy'
@@ -111,15 +113,18 @@ module Miletus::Harvest::Atom::RDC
               xml.description(content, :type => 'full')
               rifcs_categories(xml)
               rifcs_rights(xml)
-              rifcs_alternate_related_info(xml)
+              rifcs_mbox_email(xml)
+              rifcs_location_url(xml)
               rifcs_referenced_by_related_info(xml)
               rifcs_author_related_objects(xml)
               rifcs_collection_related_objects(xml)
+              rifcs_made_related_objects(xml)
               rifcs_output_of_related_objects(xml)
             }
           }
           rifcs_activities(xml)
           rifcs_authors(xml)
+          rifcs_made_collection(xml)
           rifcs_related_collections(xml)
         }
       end.to_xml
@@ -186,6 +191,30 @@ module Miletus::Harvest::Atom::RDC
       end
     end
 
+    def rifcs_mbox_email(xml)
+      email_links = links.select {|l| l.rel == REL_MBOX}
+      email_links.each do |link|
+        email_address = link.href.partition('mailto:').last
+        xml.location {
+          xml.address {
+            xml.electronic(:type => 'email') {
+              xml.value email_address
+            }
+          }
+        }
+      end
+    end
+
+    def rifcs_made_related_objects(xml)
+      output_links = links.select {|l| l.rel == REL_OUTPUT_OF}
+      output_links.each do |link|
+        xml.relatedObject {
+          xml.key(rifcs_related_key('collection', link.href))
+          xml.relation(:type => 'isCollectorOf')
+        }
+      end
+    end
+
     def rifcs_output_of_related_objects(xml)
       output_links = links.select {|l| l.rel == REL_OUTPUT_OF}
       output_links.each do |link|
@@ -206,12 +235,16 @@ module Miletus::Harvest::Atom::RDC
       end
     end
 
-    def rifcs_alternate_related_info(xml)
+    def rifcs_location_url(xml)
       related_links = \
         links.select {|l| l.rel == REL_RELATED_WEBSITE} + links.alternates
       related_links.each do |link|
-        xml.relatedInfo(:type => 'website') {
-          xml.identifier(link.href, :type => 'uri')
+        xml.location {
+          xml.address {
+            xml.electronic(:type => 'url') {
+              xml.value link.href
+            }
+          }
         }
       end
     end
@@ -258,7 +291,7 @@ module Miletus::Harvest::Atom::RDC
         xml.registryObject(:group => source.title) {
           xml.key(rifcs_related_key('activity', link.href))
           xml.originatingSource(source.id)
-          xml.activity(:type => 'group') {
+          xml.activity(:type => 'project') {
             xml.identifier(link.href, :type => 'uri')
             xml.name(:type => 'primary') {
               xml.namePart(link.title)
@@ -266,6 +299,26 @@ module Miletus::Harvest::Atom::RDC
             xml.relatedObject {
               xml.key(atom_entry.id)
               xml.relation(:type => 'hasOutput')
+            }
+          }
+        }
+      end
+    end
+
+    def rifcs_made_collection(xml)
+      made_links = links.select {|l| l.rel == REL_MADE}
+      made_links.each do |link|
+        xml.registryObject(:group => source.title) {
+          xml.key(rifcs_related_key('collection', link.href))
+          xml.originatingSource(source.id)
+          xml.collection(:type => 'group') {
+            xml.identifier(link.href, :type => 'uri')
+            xml.name(:type => 'primary') {
+              xml.namePart(link.title)
+            } unless link.title.nil?
+            xml.relatedObject {
+              xml.key(atom_entry.id)
+              xml.relation(:type => 'hasCollector')
             }
           }
         }
@@ -299,7 +352,7 @@ module Miletus::Harvest::Atom::RDC
           xml.licence(license.title, :rightsUri => license.href)
         end
         xml.rightsStatement(rights) unless rights.nil?
-      }
+      } unless [access_rights, license, rights].all?(&:nil?)
     end
 
   end
