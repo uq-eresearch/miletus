@@ -56,7 +56,7 @@ gem 'twitter-bootstrap-rails'
 gem 'haml-rails'
 gem 'rails-timeago'
 
-gem 'deface'
+gem 'deface', '>= 1.0.0.rc1'
 
 gem 'sru',
   :git => 'https://github.com/tjdett/sru-ruby.git', :branch => 'proxy-handling'
