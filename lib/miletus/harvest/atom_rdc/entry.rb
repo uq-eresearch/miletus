@@ -113,6 +113,7 @@ module Miletus::Harvest::Atom::RDC
             xml.originatingSource(source.id)
             xml.send(type, :type => subtype) {
               xml.identifier(atom_entry.id, :type => 'uri')
+              rifcs_alternate_ids(xml)
               rifcs_name(xml)
               xml.description(content, :type => 'full')
               rifcs_categories(xml)
@@ -239,9 +240,14 @@ module Miletus::Harvest::Atom::RDC
       end
     end
 
+    def rifcs_alternate_ids(xml)
+      links.alternates.each do |link|
+        xml.identifier(link.href, :type => 'uri')
+      end
+    end
+
     def rifcs_location_url(xml)
-      related_links = \
-        links.select {|l| l.rel == REL_RELATED_WEBSITE} + links.alternates
+      related_links = links.select {|l| l.rel == REL_RELATED_WEBSITE}
       related_links.each do |link|
         xml.location {
           xml.address {

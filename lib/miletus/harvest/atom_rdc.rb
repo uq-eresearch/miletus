@@ -5,6 +5,10 @@ module Miletus::Harvest::Atom
       def perform
         feed.mirror
       end
+
+      def to_s
+        feed.url
+      end
     end
 
     def jobs
