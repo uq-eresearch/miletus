@@ -1,4 +1,7 @@
+require 'memoize'
+
 module RecordHelper
+  extend Memoize
 
   def href_from_key(key)
     id = key.partition(Miletus::Merge::Concept.key_prefix).last
@@ -75,10 +78,68 @@ module RecordHelper
     return nil if rights.nil?
     nodes = rights.xpath("rif:*", ns_decl)
     nodes.each_with_object({}) do |e, memo|
-      memo['rightsUri'] = e['rightsUri'] if e.key? 'rightsUri'
-      memo[e.name] = e.content
+      data = {}
+      data[:title] = e.content
+      if e.key? 'rightsUri'
+        data[:href] = e['rightsUri']
+        data &&= rights_data_from_url(data[:href])
+      end
+      memo[e.name] = data
     end
   end
+  memoize(:rights)
+
+  # Looks up licence info from the URL.
+  # It looks for the canonical licence name and a logo.
+  def rights_data_from_url(url)
+    require 'open-uri'
+    require 'locale'
+    require 'uri'
+    predicates = {
+      RDF::DC.title => :title,
+      RDF::DC11.title => :title,
+      RDF::FOAF.logo => :logo
+    }
+    fallback_data = {:href => url}
+    uri = URI.parse(url)
+    begin
+      doc = Nokogiri::HTML(uri.read)
+      begin
+        title_e = doc.at_css('html head title')
+        # Get fallback data
+        fallback_data[:title] = title_e.content unless title_e.nil?
+      end
+      # Look for RDF link
+      link = doc.at_css('link[rel=alternate][type="application/rdf+xml"]')
+      unless link.nil?
+        uri = uri + link['href']
+      end
+    end
+    reader = RDF::Reader.open(uri.to_s)
+    data = {}
+    candidate_locales = [nil] + Locale.candidates.map do |l|
+      l.to_s.dasherize.downcase.to_sym
+    end
+    reader.each_triple do |subject, predicate, object|
+      next unless predicates.keys.include?(predicate)
+      if object.respond_to?(:language)
+        next unless candidate_locales.include?(object.language)
+      end
+      data[subject.to_s] ||= {}
+      data[subject.to_s][predicates[predicate]] = object.to_s
+    end
+    if data.keys.empty?
+      # Use fallback data if possible
+      fallback_data.key?(:title) ? fallback_data : nil
+    else
+      # Not the best way to determine the primary subject, but it should be OK
+      primary_subject = data.keys.max_by(&:length)
+      # Use subject URI as HREF if not otherwise set
+      data[primary_subject][:href] ||= primary_subject.to_s
+      data[primary_subject]
+    end
+  end
+
 
   def role(rifcs_doc)
     extend Miletus::NamespaceHelper
@@ -91,7 +152,7 @@ module RecordHelper
       ns_decl)
     return "Data Collection Manager" unless related_key.nil?
     nil
-  end
+    end
 
   def organization_names(rifcs_doc)
     extend Miletus::NamespaceHelper

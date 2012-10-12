@@ -90,7 +90,7 @@ describe Miletus::Harvest::Atom::RDC::Entry do
   it "should convert an agent to RIF-CS" do
     subject = get_fixture(2)
     @doc = Nokogiri::XML(subject.to_rif)
-    #puts @doc.to_xml
+    # puts @doc.to_xml
     rifcs_schema = Miletus::NamespaceHelper::ns_by_prefix('rif').schema
     rifcs_schema.validate(@doc).should == []
     objects = @doc.xpath('//rif:registryObject', ns_decl)
@@ -105,9 +105,6 @@ describe Miletus::Harvest::Atom::RDC::Entry do
     primary_object.xpath('rif:party/rif:subject', ns_decl).count.should == 2
     primary_object.xpath(
       'rif:party/rif:location/rif:address/rif:electronic[@type="email"]',
-       ns_decl).count.should == 1
-    primary_object.xpath(
-      'rif:party/rif:location/rif:address/rif:electronic[@type="url"]',
        ns_decl).count.should == 1
     related_objects.select do |ro|
       ro.at_xpath('rif:collection', ns_decl)

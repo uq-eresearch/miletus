@@ -1,0 +1,12 @@
+%div
+  - if data.key? :href
+    This work is licensed under
+    %a{:property => property, :href => data[:href]}
+      = data[:title]
+    = '.'
+  - else
+    %span{:property => property}= data[:title]
+  - if data.key? :logo
+    %div
+      %a{:property => property, :href => data[:href]}
+        %img{:src => data[:logo]}

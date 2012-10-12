@@ -53,4 +53,40 @@ describe RecordHelper do
     end
   end
 
+  describe "rights_data_from_url" do
+    it "produces attributes from an RDF document" do
+      VCR.use_cassette('cc_by_rdf') do
+        data = rights_data_from_url(
+          'http://creativecommons.org/licenses/by/3.0/rdf'
+        )
+        data.should have_key(:href)
+        data.should have_key(:title)
+        data[:title].should == "Attribution 3.0 Unported"
+        data.should have_key(:logo)
+      end
+    end
+
+    it "produces attributes from HTML with an alternate RDF representation" do
+      VCR.use_cassette('gpl_v3_html') do
+        url = 'http://gnu.org/licenses/gpl-3.0.html'
+        data = rights_data_from_url(url)
+        data.should have_key(:href)
+        # Note: this isn't *always* the case, due to 30x redirects
+        data[:href].should == url
+        data.should have_key(:title)
+        data[:title].should == "GNU General Public License"
+        data.should have_key(:logo)
+      end
+    end
+
+    it "produces attributes from an HTML document" do
+      VCR.use_cassette('mpl_html') do
+        url = 'http://www.mozilla.org/MPL/'
+        data = rights_data_from_url('http://www.mozilla.org/MPL/')
+        data[:href].should == url
+        data[:title].should == 'Mozilla Public License'
+      end
+    end
+  end
+
 end

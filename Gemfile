@@ -56,6 +56,12 @@ gem 'twitter-bootstrap-rails'
 gem 'haml-rails'
 gem 'rails-timeago'
 
+gem 'locale'
+gem 'memoize'
+gem 'rdf'
+gem 'rdf-rdfa'
+gem 'rdf-rdfxml'
+
 gem 'deface', '>= 1.0.0.rc1'
 
 gem 'sru',

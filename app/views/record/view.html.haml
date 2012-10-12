@@ -50,20 +50,7 @@
           &nbsp;
 
         - if r = rights(@doc)
-          %p.rights
-            %small
-              %i
-                - if r.key? 'rightsStatement'
-                  %div{:property => 'dc:rights'}= r['rightsStatement']
-                - if r.key? 'accessRights'
-                  %div{:property => 'dc:accessRights'}= r['accessRights']
-                - if r.key? 'licence'
-                  - if r.key? 'rightsUri'
-                    %div
-                      %a{:property => 'dc:license', :href => r['rightsUri']}
-                        = r['licence']
-                  - else
-                    %div{:property => 'dc:license'}= r['licence']
+          = render 'record/rights', :rights => r
 
       .span4
         %div.sigma-parent-small

@@ -29,7 +29,8 @@ ActiveRecord::Schema.define(:version => 20121005032727) do
     t.datetime "updated_at",                :null => false
   end
 
-  add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
+  add_index "delayed_jobs", ["priority", "run_at"],
+    :name => "delayed_jobs_priority"
 
   create_table "harvest_atom_rdc_entries", :force => true do |t|
     t.integer "feed_id"

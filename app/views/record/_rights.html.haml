@@ -1,0 +1,9 @@
+%p.rights
+  %small
+    %i
+      - if rights.key? 'rightsStatement'
+        = render 'record/rights_block', property: 'dc:rights', data: rights['rightsStatement']
+      - if rights.key? 'accessRights'
+        = render 'record/rights_block', property: 'dc:accessRights', data: rights['accessRights']
+      - if rights.key? 'licence'
+        = render 'record/rights_block', property: 'dc:license', data: rights['licence']
