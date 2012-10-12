@@ -12,6 +12,9 @@ $VERBOSE = true
 
 $LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
 
+require 'bundler/setup';
+require 'sru'
+
 require 'optparse'
 require 'miletus/trove_sru'
 
