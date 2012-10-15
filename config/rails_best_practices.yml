@@ -2,7 +2,7 @@ AddModelVirtualAttributeCheck: { }
 AlwaysAddDbIndexCheck: { }
 DryBundlerInCapistranoCheck: { }
 #HashSyntaxCheck: { only_symbol: false, only_string: false,  }
-IsolateSeedDataCheck: { }
+#IsolateSeedDataCheck: { } # ActiveAdmin breaks this, but for good reasons
 KeepFindersOnTheirOwnModelCheck: { }
 LawOfDemeterCheck: { }
 LongLineCheck: { max_line_length: 80 }

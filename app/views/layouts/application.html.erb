@@ -44,6 +44,17 @@
     </div>
 
     <div class="container-fluid">
+      <% if flash[:notice] %>
+        <p class="alert alert-info"><%= flash[:notice] %></p>
+        <button type="button" class="close" data-dismiss="alert">×</button>
+      <% end %>
+      <% if flash[:error] %>
+        <p class="alert alert-error">
+        <button type="button" class="close" data-dismiss="alert">×</button>
+        <%= flash[:error] %>
+        </p>
+      <% end %>
+
 
       <%= yield %>
 

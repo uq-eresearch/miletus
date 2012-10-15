@@ -64,6 +64,8 @@ gem 'rdf-rdfxml'
 
 gem 'deface', '>= 1.0.0.rc1'
 
+gem 'activeadmin'
+
 gem 'sru',
   :git => 'https://github.com/tjdett/sru-ruby.git', :branch => 'proxy-handling'
 
@@ -81,7 +83,7 @@ group :test, :development do
 end
 
 group :development do
-  gem 'rails_best_practices'
+  gem 'rails_best_practices', '>= 1.11.0' # Has auto-ignore of schema.rb
   gem 'guard'
   gem 'guard-brakeman'
   gem 'guard-bundler'
@@ -90,5 +92,5 @@ group :development do
   gem 'debugger'
   gem 'pry-rails'
   gem 'ruby-prof'
-  gem 'rb-inotify', :require => false unless RUBY_PLATFORM =~ /linux/i
+  gem 'rb-inotify', '~> 0.8.8'
 end

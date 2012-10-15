@@ -11,7 +11,7 @@ guard 'brakeman' do
   watch('Gemfile')
 end
 
-guard 'rails_best_practices' do
+guard 'rails_best_practices', :exclude => 'db/schema.rb' do
   watch(%r{^app/(.+)\.rb$})
   watch(%r{^config/(.+)\.rb$})
   watch(%r{^lib/(.+)\.rb$})
