@@ -4,11 +4,6 @@
 - set_meta_tags :keywords => keywords(@doc)
 .div
   .page-header
-    .pull-right
-      %form{ :action => '/recheck-sru-records', :method => 'POST' }
-        %input{ :type => 'hidden', :name => 'id', :value => @concept.id }
-        %button.btn{ :type => 'submit' }
-          Recheck SRU
     %h1
       %span{ property: 'dc:title'}= @concept.title
       - if @concept.alternate_titles.size > 0
