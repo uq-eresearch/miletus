@@ -66,9 +66,11 @@ Miletus::Application.routes.draw do
 
   match '/oai' => 'oai#index'
 
+  match '/browse' => 'record#index'
+
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
-  root :to => 'record#index'
+  root :to => 'page#view', :name => 'index'
 
   # See how all your routes lay out with "rake routes"
 end

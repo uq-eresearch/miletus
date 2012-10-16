@@ -276,6 +276,7 @@ GEM
     rdoc (3.12)
       json (~> 1.4)
     realrand (2.0.0)
+    redcarpet (2.2.1)
     responders (0.9.3)
       railties (~> 3.1)
     rspec (2.11.0)
@@ -386,6 +387,7 @@ DEPENDENCIES
   rdf-rdfa
   rdf-rdfxml
   realrand
+  redcarpet
   rspec-rails
   ruby-prof
   sass-rails (~> 3.2.3)

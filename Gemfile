@@ -51,6 +51,7 @@ gem 'equivalent-xml'
 gem 'psych', '>= 1.3.4' # Newer Psych YAML parser than bundled for MRI => Faster
 gem 'ratom' # For Atom RDC feed parsing
 gem 'meta-tags', :require => 'meta_tags' # For UI SEO
+gem 'redcarpet' # For Markdown-based static pages
 
 gem 'twitter-bootstrap-rails'
 gem 'haml-rails'

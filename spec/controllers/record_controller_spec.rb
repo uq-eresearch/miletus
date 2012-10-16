@@ -4,6 +4,16 @@ describe RecordController do
 
   subject { RecordController.new }
 
+  describe "routing" do
+
+    it "should provide /browse with #index" do
+      {
+        :get => "/browse"
+      }.should route_to(:controller => 'record', :action => 'index')
+    end
+
+  end
+
   describe "GET 'index'" do
     it "returns http success" do
       get 'index'
