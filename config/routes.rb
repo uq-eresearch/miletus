@@ -68,6 +68,9 @@ Miletus::Application.routes.draw do
 
   match '/browse' => 'record#index'
 
+  match '/about' => 'page#view', :name => 'about'
+  match '/contact' => 'page#view', :name => 'contact'
+
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
   root :to => 'page#view', :name => 'index'
