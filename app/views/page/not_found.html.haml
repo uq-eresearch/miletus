@@ -1,5 +1,15 @@
-%p.muted
-  This page doesn't exist yet.
-  Perhaps an administrator should
-  = link_to "create the page", new_admin_page_path(:'page[name]' => @page_name)
-  first.
+.row-fluid
+  .span12
+    %div{:style => 'height: 150px'}
+
+.row-fluid
+  .span12
+    %p.muted{:style => 'text-align: center'}
+      This page doesn't exist yet.
+      Perhaps an administrator should
+      = link_to "create the page", new_admin_page_path('page[name]' => @name)
+      first.
+
+.row-fluid
+  .span12
+    %div{:style => 'height: 150px'}
