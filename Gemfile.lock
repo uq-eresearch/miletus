@@ -138,6 +138,7 @@ GEM
       thor (>= 0.13.6)
     formtastic (2.2.1)
       actionpack (>= 3.0)
+    google-analytics-rails (0.0.3)
     google-code-prettify-rails (1.1.0)
       railties (>= 3.2.0.beta, < 5.0)
       thor (~> 0.14)
@@ -359,6 +360,7 @@ DEPENDENCIES
   delayed_job_active_record
   equivalent-xml
   foreman
+  google-analytics-rails
   google-code-prettify-rails
   guard
   guard-brakeman

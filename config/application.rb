@@ -122,5 +122,8 @@ module Miletus
       :oaipmh_output_observer,
       :rifcs_record_observer,
       :sru_rifcs_lookup_observer
+
+    # Google Analytics Tracker
+    GA.tracker = ENV['GA_TRACKER'] if ENV.key? 'GA_TRACKER'
   end
 end
