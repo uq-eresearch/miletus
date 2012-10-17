@@ -56,4 +56,31 @@ describe PageController do
 
   end
 
+  describe "sitemap" do
+
+    it "should be provided by page#sitemap" do
+      { :get => "/pages.sitemap" }.should route_to(
+        :controller => 'page',
+        :action => 'sitemap')
+    end
+
+    it "should return a not found if no records exist XML sitemap" do
+      get 'sitemap'
+      response.should be_not_found
+    end
+
+    it "returns a valid XML sitemap for all existing pages" do
+      Page.create(:name => 'index', :content => "Hello World!")
+      Page.create(:name => 'test', :content => "Test Page.")
+      Page.count.should == 2
+
+      get 'sitemap'
+      response.should be_success
+      doc = Nokogiri::XML(response.body)
+      ns_by_prefix('sitemap').schema.validate(doc).should == []
+    end
+
+  end
+
+
 end

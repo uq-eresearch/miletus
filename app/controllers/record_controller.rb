@@ -38,7 +38,9 @@ class RecordController < ApplicationController
           Miletus::Merge::Concept.all.each do |concept|
             xml.url {
               url = URI::HTTP.build(
+                :scheme => request.scheme,
                 :host => request.host,
+                :port => request.port,
                 :path => concept_path(:id => concept.id)
               )
               xml.loc url

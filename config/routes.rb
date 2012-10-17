@@ -23,7 +23,6 @@ Miletus::Application.routes.draw do
   get '/records.gexf' => 'record#gexf'
   get '/records.sitemap' => 'record#sitemap'
   get '/graph' => 'record#graph', :as => :concept_graph
-  get '/stats' => 'record#stats'
 
   # Sample of named route:
   #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
@@ -71,6 +70,11 @@ Miletus::Application.routes.draw do
 
   match '/about' => 'page#view', :name => 'about'
   match '/contact' => 'page#view', :name => 'contact'
+
+  match '/robots.txt' => 'seo#robots'
+  match '/siteindex.xml' => 'seo#siteindex', :as => :siteindex
+  match '/main.sitemap' => 'seo#sitemap'
+  match '/pages.sitemap' => 'page#sitemap'
 
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.

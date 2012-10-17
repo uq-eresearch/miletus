@@ -25,7 +25,10 @@ module Miletus
             'gexf', 'http://gexf.net/1.2draft/gexf.xsd'),
           Namespace.new('http://www.sitemaps.org/schemas/sitemap/0.9',
             'sitemap',
-            'http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd')
+            'http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd'),
+          Namespace.new('http://www.sitemaps.org/schemas/sitemap/0.9',
+            'siteindex',
+            'http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd')
         ]
       end
 
