@@ -56,6 +56,7 @@ gem 'redcarpet' # For Markdown-based static pages
 gem 'twitter-bootstrap-rails'
 gem 'haml-rails'
 gem 'rails-timeago'
+gem 'google-analytics-rails'
 
 gem 'locale'
 gem 'memoize'
@@ -95,5 +96,3 @@ group :development do
   gem 'ruby-prof'
   gem 'rb-inotify', '~> 0.8.8'
 end
-
-gem 'google-analytics-rails'

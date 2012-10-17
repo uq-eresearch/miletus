@@ -22,7 +22,10 @@ module Miletus
             'rif','http://services.ands.org.au' +
               '/documentation/rifcs/schema/registryObjects.xsd'),
           Namespace.new('http://www.gexf.net/1.2draft',
-            'gexf', 'http://gexf.net/1.2draft/gexf.xsd')
+            'gexf', 'http://gexf.net/1.2draft/gexf.xsd'),
+          Namespace.new('http://www.sitemaps.org/schemas/sitemap/0.9',
+            'sitemap',
+            'http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd')
         ]
       end
 

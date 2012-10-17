@@ -21,6 +21,7 @@ Miletus::Application.routes.draw do
     :constraints => {:id => /\d+/}
 
   get '/records.gexf' => 'record#gexf'
+  get '/records.sitemap' => 'record#sitemap'
   get '/graph' => 'record#graph', :as => :concept_graph
   get '/stats' => 'record#stats'
 
