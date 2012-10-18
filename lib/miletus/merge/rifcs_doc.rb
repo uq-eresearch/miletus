@@ -64,11 +64,16 @@ module Miletus::Merge
     end
 
     def merge_rifcs_elements(input_docs)
-      patterns = [
-        "//rif:registryObject/rif:*/rif:identifier",
-        "//rif:name",
-        "//rif:location",
-        "//rif:registryObject/rif:*/rif:relatedObject"]
+      patterns = %w[
+        //rif:registryObject/rif:*/rif:identifier
+        //rif:name
+        //rif:description
+        //rif:location
+        //rif:coverage
+        //rif:registryObject/rif:*/rif:relatedObject
+        //rif:relatedInfo
+        //rif:rights
+      ]
       alt_parent = at_xpath("//rif:registryObject/rif:*[last()]", ns_decl)
       patterns.each do |pattern|
         # Get all identifier elements, unique in content
