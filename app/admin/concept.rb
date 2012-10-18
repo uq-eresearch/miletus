@@ -28,7 +28,9 @@ ActiveAdmin.register Miletus::Merge::Concept,
     selectable_column
     column :type
     column :subtype
-    column :title
+    column :title do |concept|
+      link_to concept.title, concept_path(concept.id)
+    end
     column :facets_count
     column '' do |resource|
       links = ''.html_safe

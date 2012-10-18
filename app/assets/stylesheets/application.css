@@ -15,5 +15,13 @@
  */
 
 #attribution-footer {
-	margin-top: 12em;
+  margin-top: 12em;
+}
+
+img.icon {
+  margin-top: 1px;
+  padding-left: 0.25em;
+  padding-right: 0.25em;
+  height: 0.75em;
+  vertical-align: baseline;
 }

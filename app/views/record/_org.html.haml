@@ -13,24 +13,24 @@
               %span{:style => 'display: block'}= line
     - email_uris(doc).each do |uri|
       %li
-        %i.icon-envelope
+        %i.icon-envelope{:title => 'Email'}
         %a{:href => uri.html_safe}
           =uri.gsub(/^mailto:/,'').html_safe
     - urls(doc).each do |url|
       %li
-        %i.icon-globe
+        %i.icon-globe{:title => 'URL'}
         %a{:href => url, :property => "v:url"}
           =url
     - physical_addrs.each do |address|
       - if address.key?('telephoneNumber')
         %li
           - address['telephoneNumber'].each do |phone|
-            <i class="icon-phone"></i>
+            %i.icon-phone{:title => 'Telephone'}
             %span{:property => 'v:telephone'}= phone
       - if address.key?('faxNumber')
         %li
           - address['faxNumber'].each do |fax|
-            Fax:
+            = image_tag('fax_machine.svg', :title=> 'Fax', :class => 'icon')
             %span{:property => 'v:faxNumber'}= fax
 
   %p.description{:property => 'v:description'}

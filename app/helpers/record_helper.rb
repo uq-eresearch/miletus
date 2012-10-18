@@ -71,7 +71,7 @@ module RecordHelper
       end.tap do |obj|
         obj[:type] = info['type'] if info.key? 'type'
       end
-    end.map{|h| OpenStruct.new(h)}
+    end.map{|h| OpenStruct.new(h)}.sort_by(&:title)
   end
 
   def rights(rifcs_doc)
@@ -217,7 +217,8 @@ module RecordHelper
     if type_images.key? type
       image_tag type_images[type],
         :alt => type.titleize,
-        :style => 'height: 0.75em; vertical-align: baseline'
+        :title => type.titleize,
+        :class => 'icon'
     else
       ''
     end

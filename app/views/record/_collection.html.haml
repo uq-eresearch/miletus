@@ -29,6 +29,8 @@
     =description(doc).gsub(/\n/,"<br/>\n").html_safe
 
   = render "record/related_objects", :doc => doc, :relationship => 'supports'
+  = render "record/related_objects", :doc => doc, :title => 'See Also',
+      :relationship => 'hasAssociationWith'
   = render "record/related_objects", :doc => doc, :relationship => 'isOutputOf'
   = render "record/related_objects", :doc => doc, :title => "Collectors",
       :relationship => 'hasCollector'
