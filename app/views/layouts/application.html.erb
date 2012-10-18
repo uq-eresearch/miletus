@@ -61,7 +61,18 @@
 
 
       <%= yield %>
-
+      <div class="row-fluid">
+        <div class="span12" style="text-align: center">
+          <footer id="attribution-footer">
+            <small>
+            <%= link_to \
+                  "This website makes use of content requiring attribution",
+                  :credits, :class => 'muted'
+            %>
+            </small>
+          </footer>
+        </div>
+      </div>
     </div> <!-- /container -->
 
     <!-- Javascripts

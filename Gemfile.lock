@@ -134,6 +134,8 @@ GEM
       faraday (>= 0.7.4, < 0.9)
     fastercsv (1.5.5)
     ffi (1.1.5)
+    font-awesome-rails (0.4.1)
+      railties (~> 3.1)
     foreman (0.60.2)
       thor (>= 0.13.6)
     formtastic (2.2.1)
@@ -359,6 +361,7 @@ DEPENDENCIES
   deface (>= 1.0.0.rc1)
   delayed_job_active_record
   equivalent-xml
+  font-awesome-rails
   foreman
   google-analytics-rails
   google-code-prettify-rails

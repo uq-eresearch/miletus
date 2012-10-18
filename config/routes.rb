@@ -75,6 +75,7 @@ Miletus::Application.routes.draw do
   match '/siteindex.xml' => 'seo#siteindex', :as => :siteindex
   match '/main.sitemap' => 'seo#sitemap'
   match '/pages.sitemap' => 'page#sitemap'
+  match '/credits' => 'page#credits'
 
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.

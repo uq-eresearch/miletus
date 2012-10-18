@@ -6,7 +6,9 @@
 
     %div.span3
 
-      %h2= type.pluralize.titleize
+      %h2
+        = type_image(type)
+        = type.pluralize.titleize
 
       - concepts.each do |c|
         %p

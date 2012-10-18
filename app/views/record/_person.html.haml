@@ -19,10 +19,11 @@
     - if role = role(doc)
       %li.lead
         %span{:property => 'v:role'}= role
-    - organization_names(doc).each do |org|
+    - related_objects(doc, 'isMemberOf').each do |org|
       %li{:property => 'v:affiliation', :typeof => 'v:Organization'}
         %i.icon-group{:title => 'is affiliated with'}
-        %span{:property => 'v:name'}= org
+        %a{:href => org.href}
+          %span{:property => 'v:name'}= org.title
     - email_uris(doc).each do |uri|
       %li
         %i.icon-envelope
@@ -47,3 +48,8 @@
 
   %p.description{:property => 'v:description'}
     =description(doc).gsub(/\n/,"<br/>\n").html_safe
+
+  = render "record/related_objects", :doc => doc, :title => "Collected",
+      :relationship => 'isCollectorOf'
+  = render "record/related_objects", :doc => doc, :title => "Manages",
+      :relationship => 'isManagerOf'

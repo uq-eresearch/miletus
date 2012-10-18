@@ -68,6 +68,8 @@ module RecordHelper
       nodes = info.xpath("rif:*", ns_decl)
       nodes.each_with_object({}) do |e, memo|
         memo[e.name] = e.content
+      end.tap do |obj|
+        obj[:type] = info['type'] if info.key? 'type'
       end
     end.map{|h| OpenStruct.new(h)}
   end
@@ -152,18 +154,22 @@ module RecordHelper
       ns_decl)
     return "Data Collection Manager" unless related_key.nil?
     nil
-    end
+  end
 
-  def organization_names(rifcs_doc)
+  def related_objects(rifcs_doc, relationship)
     extend Miletus::NamespaceHelper
     related_keys = rifcs_doc.xpath(
-      "//rif:relatedObject[rif:relation/@type='isMemberOf']/rif:key",
+      "//rif:relatedObject[rif:relation/@type='#{relationship}']/rif:key",
       ns_decl)
     return [] if related_keys.nil?
     related_keys.map do |related_key|
       begin
-        org_concept = Miletus::Merge::Concept.find_by_key!(related_key.content)
-        org_concept.title
+        concept = Miletus::Merge::Concept.find_by_key!(related_key.content)
+        OpenStruct.new({
+          :title => concept.title,
+          :type => concept.type,
+          :href => concept_path(concept.id)
+        })
       rescue
         nil
       end
@@ -201,5 +207,19 @@ module RecordHelper
     nodes.map {|e| e.content}
   end
 
-
+  def type_image(type)
+    type_images = {
+      'activity' => 'gantt_chart.svg',
+      'collection' => 'data.svg',
+      'party' => 'people.svg',
+      'service' => 'information_technology.svg'
+    }
+    if type_images.key? type
+      image_tag type_images[type],
+        :alt => type.titleize,
+        :style => 'height: 0.75em; vertical-align: baseline'
+    else
+      ''
+    end
+  end
 end

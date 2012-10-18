@@ -35,3 +35,8 @@
 
   %p.description{:property => 'v:description'}
     =description(doc).gsub(/\n/,"<br/>\n").html_safe
+
+  = render "record/related_objects", :doc => doc, :title => "Collected",
+      :relationship => 'isCollectorOf'
+  = render "record/related_objects", :doc => doc, :title => "Manages",
+      :relationship => 'isManagerOf'

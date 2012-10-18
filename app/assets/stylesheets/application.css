@@ -9,6 +9,11 @@
  * compiled file, but it's generally better to create a new file per style scope.
  *
  *= require google-code-prettify-rails/prettify
+ *= require 'font-awesome'
  *= require_self
  *= require_tree .
  */
+
+#attribution-footer {
+	margin-top: 12em;
+}

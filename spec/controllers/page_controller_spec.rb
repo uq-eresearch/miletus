@@ -82,5 +82,20 @@ describe PageController do
 
   end
 
+  describe "credits" do
+
+    it "should be provided by page#credits" do
+      { :get => "/credits" }.should route_to(
+        :controller => 'page',
+        :action => 'credits')
+    end
+
+    it "should return the credits page" do
+      get 'credits'
+      response.should be_success
+    end
+
+  end
+
 
 end

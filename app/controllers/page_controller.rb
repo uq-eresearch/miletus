@@ -38,4 +38,8 @@ class PageController < ApplicationController
     end
   end
 
+  def credits
+    # No logic required
+  end
+
 end

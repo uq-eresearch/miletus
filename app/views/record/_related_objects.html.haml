@@ -1,0 +1,6 @@
+- related_object_list = related_objects(doc, relationship)
+- unless related_object_list.empty?
+  %dl
+    %dt=title || relationship.titleize
+    - related_object_list.each do |ro|
+      %dd= link_to type_image(ro.type)+" "+ro.title, ro.href

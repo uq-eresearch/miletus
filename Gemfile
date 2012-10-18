@@ -54,6 +54,7 @@ gem 'meta-tags', :require => 'meta_tags' # For UI SEO
 gem 'redcarpet' # For Markdown-based static pages
 
 gem 'twitter-bootstrap-rails'
+gem 'font-awesome-rails'
 gem 'haml-rails'
 gem 'rails-timeago'
 gem 'google-analytics-rails'

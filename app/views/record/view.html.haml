@@ -5,6 +5,7 @@
 .div
   .page-header
     %h1
+      = type_image(@concept.type)
       %span{ property: 'dc:title'}= @concept.title
       - if @concept.alternate_titles.size > 0
         %small
@@ -35,7 +36,11 @@
         %ul.unstyled
           - related_info(@doc).each do |info|
             %li{:typeof => 'v:WebPage'}
-              %i.icon-link
+              - case info.type
+              - when 'publication'
+                %i.icon-book
+              - else
+                %i.icon-link
               %a{:href => info.identifier, :property => "v:url"}
                 %span{:property => "v:title"}= info.title
 
@@ -53,7 +58,11 @@
                         :'data-delay' => 1000}
 
 .row-fluid
-  %hr
-  %pre
-    %code#rifcs.prettyprint.linenums
-      =annotated_xml(@doc)
+  %p{:style => 'text-align: right'}
+    %a.muted{'data-toggle' => 'collapse', :href => '#xml-container',
+       :onclick => '$(this).addClass("hidden")'}
+      View Source XML
+  #xml-container.collapse
+    %pre
+      %code#rifcs.prettyprint.linenums
+        =annotated_xml(@doc)
