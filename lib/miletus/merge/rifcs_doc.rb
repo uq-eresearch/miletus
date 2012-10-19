@@ -42,6 +42,8 @@ module Miletus::Merge
         k = e.content.strip
         e.content = dictionary[k] if dictionary.key? k
       end
+      # Ensure all related object elements are unique in content
+      deduplicate_with_xpath("//rif:relatedObject")
     end
 
     def ensure_single_primary_name
@@ -99,6 +101,16 @@ module Miletus::Merge
 
     def deduplicate_by_content(nodes)
       nodes.uniq {|e| EquivalentWrapper.new(e) }
+    end
+
+    def deduplicate_with_xpath(pattern)
+      original_nodes = xpath(pattern, ns_decl)
+      alt_parent = at_xpath("//rif:registryObject/rif:*[last()]", ns_decl)
+      merged_nodes = \
+        deduplicate_by_content(copy_nodes(original_nodes).to_ary)
+      replace_all(original_nodes,
+        Nokogiri::XML::NodeSet.new(self, merged_nodes),
+        alt_parent)
     end
 
     def title_from_name_element(name)

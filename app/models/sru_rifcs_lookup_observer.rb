@@ -84,6 +84,11 @@ class SruRifcsLookupObserver < ActiveRecord::Observer
       facet.metadata = xml
       facet.save!
       facet.reindex_concept
+      # If this facet has highlighted duplicate concepts, merge them
+      if facet.concept.id != concept.id
+        merge_concepts = [concept.reload, facet.concept]
+        concept = Miletus::Merge::Concept.merge(merge_concepts)
+      end
       facet
     end
 

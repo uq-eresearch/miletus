@@ -35,6 +35,42 @@ describe Miletus::Merge::Concept do
     merged_doc.xpath('//rif:name[@type="primary"]', ns_decl).count.should == 1
   end
 
+  it "should be able to merge duplicate concepts when they arise" do
+    # Create multi-faceted concept
+    concepts = [1, '1b'].map{|n| get_fixture('party', n)}.map do |fixture_xml|
+      concept = Miletus::Merge::Concept.create()
+      concept.facets.create(:metadata => fixture_xml)
+      concept
+    end
+    Miletus::Merge::Concept.count.should == 2
+    concepts.each do |concept|
+      concept.should have(1).facets
+      concept.to_rif.should_not be(nil)
+    end
+    Miletus::Merge::Concept.should respond_to(:deduplicate)
+    Miletus::Merge::Concept.deduplicate
+    Miletus::Merge::Concept.count.should == 1
+    Miletus::Merge::Concept.where(:facets_count => 2).count.should == 1
+  end
+
+  it "should be able to merge adhoc concepts" do
+    # Create multi-faceted concept
+    concepts = [1, '1b'].map{|n| get_fixture('party', n)}.map do |fixture_xml|
+      concept = Miletus::Merge::Concept.create()
+      concept.facets.create(:metadata => fixture_xml)
+      concept
+    end
+    Miletus::Merge::Concept.count.should == 2
+    concepts.each do |concept|
+      concept.should have(1).facets
+      concept.to_rif.should_not be(nil)
+    end
+    Miletus::Merge::Concept.should respond_to(:merge)
+    Miletus::Merge::Concept.merge(concepts)
+    Miletus::Merge::Concept.count.should == 1
+    Miletus::Merge::Concept.where(:facets_count => 2).count.should == 1
+  end
+
   it "should deduplicate primary names from facet metadata" do
     # Create multi-faceted concept
     concept = Miletus::Merge::Concept.create()

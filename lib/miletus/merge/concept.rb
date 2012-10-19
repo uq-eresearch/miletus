@@ -36,7 +36,7 @@ module Miletus::Merge
     end
 
     def alternate_titles
-      self.titles[1..-1] rescue []
+      self.titles[1..-1] || [] rescue []
     end
 
     def self.find_by_key!(key)
@@ -48,16 +48,36 @@ module Miletus::Merge
     def self.find_existing(xml)
       id_nodes = Nokogiri::XML(xml).xpath(
         '//rif:identifier', ns_decl)
-      existing = id_nodes.map do |e|
-        joins(:indexed_attributes).where(
-          IndexedAttribute.table_name.to_sym => {
-            :key => 'identifier',
-            :value => e.content.strip
-          }
-        ).pluck(:concept_id)
-      end.flatten
-      return nil if existing.empty?
-      find_by_id(existing.first)
+      identifiers = id_nodes.map { |e| e.content.strip }
+      having_identifier(*identifiers).first
+    end
+
+    def self.merge(concepts)
+      primary_concept, *dup_concepts = *concepts
+      dup_concepts.each do |concept|
+        Rails.logger.info("Merging %d facets from concept #%d into #%d" % [
+          concept.facets.count,
+          concept.id,
+          primary_concept.id])
+        concept.facets.each do |facet|
+          facet.concept = primary_concept
+          facet.save!
+        end
+        Rails.logger.info("Removing empty concept #%d" % concept.id)
+        concept.reload.destroy
+      end
+      primary_concept.reload.reindex
+    end
+
+    def self.deduplicate
+      duplicate_identifiers = Miletus::Merge::IndexedAttribute \
+        .where(:key => 'identifier') \
+        .group('value')\
+        .having('count(DISTINCT id) > 1')\
+        .pluck('value')
+      duplicate_identifiers.each do |identifier|
+        self.merge(having_identifier(identifier))
+      end
     end
 
     def to_rif
@@ -111,6 +131,19 @@ module Miletus::Merge
     end
 
     private
+
+    def self.having_identifier(*identifiers)
+      existing = identifiers.map do |identifier|
+        joins(:indexed_attributes).where(
+          IndexedAttribute.table_name.to_sym => {
+            :key => 'identifier',
+            :value => identifier
+          }
+        ).pluck(:concept_id)
+      end.flatten
+      return [] if existing.empty?
+      where(:id => existing)
+    end
 
     def update_indexed_attributes_from_facet_rifcs
       input_docs = rifcs_facets

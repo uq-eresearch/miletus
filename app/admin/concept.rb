@@ -32,6 +32,7 @@ ActiveAdmin.register Miletus::Merge::Concept,
       link_to concept.title, concept_path(concept.id)
     end
     column :facets_count
+    column :updated_at
     column '' do |resource|
       links = ''.html_safe
       links << link_to(I18n.t('active_admin.view'), resource_path(resource),
