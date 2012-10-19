@@ -15,7 +15,7 @@ describe SeoController do
     it "should contain a link to the sitemap" do
       get 'robots'
       response.should be_success
-      response.body.should start_with("Sitemap: http://test.host/siteindex.xml")
+      response.body.should include("Sitemap: http://test.host/siteindex.xml")
     end
 
   end
