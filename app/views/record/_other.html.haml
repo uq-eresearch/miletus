@@ -13,9 +13,9 @@
 %p.description{:property => 'dc:description'}
   =description(doc).gsub(/\n/,"<br/>\n").html_safe
 
-  = render "record/related_objects", :doc => doc, :relationship => 'presents'
-  = render "record/related_objects", :doc => doc, :title => 'Outputs',
-     :relationship => 'hasOutput'
-  = render "record/related_objects", :doc => doc, :title => 'Participants',
-     :relationship => 'hasParticipant'
-  = render "record/related_objects", :doc => doc, :relationship => 'isManagedBy'
+= render "record/related_objects", :doc => doc, :relationship => 'presents'
+= render "record/related_objects", :doc => doc, :title => 'Outputs',
+   :relationship => 'hasOutput'
+= render "record/related_objects", :doc => doc, :title => 'Participants',
+   :relationship => 'hasParticipant'
+= render "record/related_objects", :doc => doc, :relationship => 'isManagedBy'
