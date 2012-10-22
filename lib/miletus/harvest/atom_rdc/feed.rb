@@ -13,8 +13,16 @@ module Miletus::Harvest::Atom::RDC
 
     def mirror
       remote_entries.each do |entry|
+        # Find existing entry
         e = entries.find_by_atom_id(entry.id)
-        e ||= entries.new()
+        if e.nil?
+          # No matching entry, so create new
+          e = entries.new()
+        else
+          # Stop unless this entry was updated we don't reparse old entries
+          break unless entry.updated.utc.iso8601 > e.updated.utc.iso8601
+        end
+        # Update content
         e.xml = entry.to_xml
         e.save!
       end

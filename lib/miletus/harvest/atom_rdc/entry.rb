@@ -46,7 +46,11 @@ module Miletus::Harvest::Atom::RDC
       :counter_cache => :entry_count
 
     def atom_entry
-      Atom::Entry.new(XML::Reader.string(xml))
+      begin
+        Atom::Entry.new(XML::Reader.string(xml))
+      rescue TypeError # Handle nil string
+        Atom::Entry.new()
+      end
     end
 
     def deleted?

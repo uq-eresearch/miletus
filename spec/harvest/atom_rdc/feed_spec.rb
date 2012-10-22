@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'webmock/rspec'
 
 describe Miletus::Harvest::Atom::RDC::Feed do
 
@@ -13,21 +14,45 @@ describe Miletus::Harvest::Atom::RDC::Feed do
     end
   end
 
-  it "should be able to mirror remote entries" do
-    subject.should respond_to(:mirror)
-    subject.url = 'http://dataspace.uq.edu.au/collections.atom'
-    # Save, or we won't be able to have dependent entries
-    subject.save!
-    VCR.use_cassette('dataspace_remote_atom_rdc_feed_mirror') do
-      subject.mirror
-      subject.entries.count == 42
-      subject.remote_entries.each do |remote_entry|
-        local_entry = subject.entries.find_by_atom_id(remote_entry.id)
-        local_entry.should_not be_nil
-        local_entry.title.should == remote_entry.title
-        local_entry.updated.iso8601.should == remote_entry.updated.iso8601
+  describe "mirroring" do
+
+    it "should be able to mirror remote entries" do
+      subject.should respond_to(:mirror)
+      subject.url = 'http://dataspace.uq.edu.au/collections.atom'
+      # Save, or we won't be able to have dependent entries
+      subject.save!
+      VCR.use_cassette('dataspace_remote_atom_rdc_feed_mirror') do
+        subject.mirror
+        subject.entries.count == 42
+        subject.remote_entries.each do |remote_entry|
+          local_entry = subject.entries.find_by_atom_id(remote_entry.id)
+          local_entry.should_not be_nil
+          local_entry.title.should == remote_entry.title
+          local_entry.updated.iso8601.should == remote_entry.updated.iso8601
+        end
       end
     end
+
+    it "should avoid paging when entries already exist" do
+      page_1_url = 'http://dataspace.uq.edu.au/collections.atom'
+      page_2_url = 'http://dataspace.uq.edu.au/collections.atom?page=2'
+      page_3_url = 'http://dataspace.uq.edu.au/collections.atom?page=3'
+      subject.should respond_to(:mirror)
+      VCR.use_cassette('dataspace_remote_atom_rdc_feed_mirror') do
+        subject.url = page_2_url
+        # Save, or we won't be able to have dependent entries
+        subject.save!
+        subject.mirror
+        subject.entries.count == 22
+        subject.url = page_1_url
+        subject.mirror
+        subject.entries.count == 42
+        WebMock.should have_requested(:get, page_1_url).once
+        WebMock.should have_requested(:get, page_2_url).twice
+        WebMock.should have_requested(:get, page_3_url).once
+      end
+    end
+
   end
 
   it "should mirror rdfa:meta elements" do
