@@ -25,3 +25,8 @@ img.icon {
   height: 0.75em;
   vertical-align: baseline;
 }
+
+/* Used to avoid using <br/> tags all the time. */
+span.block {
+	display: block;
+}

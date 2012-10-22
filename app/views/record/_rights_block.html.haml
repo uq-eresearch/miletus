@@ -1,4 +1,4 @@
-%div
+%span.block
   - if data.key? :href
     This work is licensed under
     %a{:property => property, :href => data[:href]}
@@ -7,6 +7,6 @@
   - else
     %span{:property => property}= data[:title]
   - if data.key? :logo
-    %div
+    %span.block
       %a{:property => property, :href => data[:href]}
-        %img{:src => data[:logo]}
+        %img{:alt => data[:title], :src => data[:logo]}

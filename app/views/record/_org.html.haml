@@ -10,7 +10,7 @@
         %li
           %address
             - address['addressLine'].each do |line|
-              %span{:style => 'display: block'}= line
+              %span.block= line
     - email_uris(doc).each do |uri|
       %li
         %i.icon-envelope{:title => 'Email'}
