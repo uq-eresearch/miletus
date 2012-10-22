@@ -32,7 +32,7 @@ module Miletus::Output::OAIPMH
     end
 
     def deleted?
-      underlying_concept.nil? ? false : underlying_concept.facets.empty?
+      underlying_concept.nil? ? true : underlying_concept.facets.empty?
     end
 
     def metadata=(xml)
