@@ -49,7 +49,8 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Consumer do
     # OAI::Client and RecordCollection should be duck-typed
     client = double("OAI::Client")
     client.should_receive(:list_identifiers).with(:metadataPrefix => 'rif')\
-      .and_return(get_fixture_objects('fixtures/list_identifiers_1.yaml'))
+      .and_return(Struct.new(:full).new(
+        get_fixture_objects('fixtures/list_identifiers_1.yaml')))
     # This should be called for all records
     client.should_receive(:get_record).exactly(8).times.and_return(
       &get_record_by_identifier_lambda('fixtures/list_identifiers_1.yaml')
@@ -78,7 +79,8 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Consumer do
     # OAI::Client and RecordCollection should be duck-typed
     client = double("OAI::Client")
     client.should_receive(:list_identifiers).with(:metadataPrefix => 'rif')\
-      .and_return(get_fixture_objects('fixtures/list_identifiers_2.yaml'))
+      .and_return(Struct.new(:full).new(
+        get_fixture_objects('fixtures/list_identifiers_2.yaml')))
     # One new record => one call
     client.should_receive(:get_record).exactly(1).times.and_return(
       &get_record_by_identifier_lambda('fixtures/list_identifiers_2.yaml')
@@ -109,7 +111,8 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Consumer do
     # OAI::Client and RecordCollection should be duck-typed
     client = double("OAI::Client")
     client.should_receive(:list_identifiers).with(:metadataPrefix => 'rif')\
-      .and_return(get_fixture_objects('fixtures/list_identifiers_3.yaml'))
+      .and_return(Struct.new(:full).new(
+        get_fixture_objects('fixtures/list_identifiers_3.yaml')))
     # One new record => one call
     client.should_receive(:get_record).exactly(3).times.and_return(
       &get_record_by_identifier_lambda('fixtures/list_identifiers_3.yaml')

@@ -51,15 +51,7 @@ module Miletus
           private
 
           def list_identifiers
-            entries = []
-            r = client.list_identifiers(:metadataPrefix => @collection.format)
-            while true
-              entries.concat(r.entries)
-              break unless r.resumption_token
-              response = client.list_identifiers(
-                :resumption_token => r.resumption_token)
-            end
-            entries
+            client.list_identifiers(:metadataPrefix => @collection.format).full
           end
 
           def add_record(header)
