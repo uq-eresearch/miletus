@@ -11,7 +11,9 @@ describe Miletus::Harvest::OAIPMH::RIFCS::RecordCollection do
     end
   }
 
-  it { should respond_to(:add, :get, :remove, :format, :endpoint) }
+  it { should respond_to(:format, :endpoint) }
+  it { should respond_to(:add, :get, :remove) }
+  it { should respond_to(:restrict_to) }
 
   it "returns nil if record is absent" do
     subject.get("http://example.test/1").should be(nil)
@@ -85,5 +87,36 @@ describe Miletus::Harvest::OAIPMH::RIFCS::RecordCollection do
     r.should be_nil
   end
 
+  it "knows which records it has seen, and can delete unseen records" do
+    record1 = Struct.new(:header, :metadata).new(
+        Struct.new(:identifier, :datestamp, :status).new(
+          'http://example.test/1',
+          DateTime.now),
+        LibXML::XML::Node.new('metadata'))
+    subject.add(record1)
+
+    r = subject.get(record1.header.identifier)
+    r.header.identifier.should == record1.header.identifier
+    r.header.datestamp.to_i.should == record1.header.datestamp.to_i
+    r.metadata.should == record1.metadata
+
+    record2 = Struct.new(:header, :metadata).new(
+      Struct.new(:identifier, :datestamp, :status).new(
+        'http://example.test/2',
+        DateTime.now),
+      LibXML::XML::Node.new('metadata'))
+    subject.restrict_to do
+      subject.add(record2)
+    end
+
+    r = subject.get(record2.header.identifier)
+    r.should_not be_nil
+    r.header.identifier.should == record2.header.identifier
+    r.header.datestamp.to_i.should == record2.header.datestamp.to_i
+    r.metadata.should == record2.metadata
+
+    # Original (unseen) record should not be there
+    subject.get(record1.header.identifier).should be_nil
+  end
 
 end

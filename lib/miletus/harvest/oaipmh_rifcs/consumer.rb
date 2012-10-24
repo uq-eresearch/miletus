@@ -31,7 +31,8 @@ module Miletus
 
           # Update collection with changed records
           def update
-            list_identifiers.select { |header|
+            @collection.restrict_to do
+              list_identifiers.select { |header|
                 existing = @collection.get(header.identifier)
                 (existing.nil? or existing.header.datestamp < header.datestamp)
               }.each { |header|
@@ -41,6 +42,7 @@ module Miletus
                   add_record(header)
                 end
               }
+            end
           end
 
           def perform

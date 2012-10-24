@@ -18,6 +18,10 @@ class RifcsRecordObserver < ActiveRecord::Observer
     end
   end
 
+  def after_destroy(record)
+    self.class.run_job(RemoveFacetJob.new(record))
+  end
+
   def self.run_job(job)
     job.delay.run
   end

@@ -57,6 +57,7 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Consumer do
     )
 
     recordCollection = double("RecordCollection")
+    recordCollection.should_receive(:restrict_to).once.and_yield
     # Record collection should have its format checked
     recordCollection.should_receive(:format).at_least(:once).and_return('rif')
     # The collection should be checked for all records
@@ -87,6 +88,7 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Consumer do
     )
 
     recordCollection = double("RecordCollection")
+    recordCollection.should_receive(:restrict_to).once.and_yield
     # Record collection should have its format checked
     recordCollection.should_receive(:format).at_least(:once).and_return('rif')
     # The collection should be checked for all records
@@ -119,6 +121,7 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Consumer do
     )
 
     recordCollection = double("RecordCollection")
+    recordCollection.should_receive(:restrict_to).once.and_yield
     # Record collection should have its format checked
     recordCollection.should_receive(:format).at_least(:once).and_return('rif')
     # The collection should be checked for all records

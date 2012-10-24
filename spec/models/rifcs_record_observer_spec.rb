@@ -4,7 +4,7 @@ describe RifcsRecordObserver do
 
   subject { RifcsRecordObserver.instance }
 
-  it { should respond_to(:after_create, :after_update) }
+  it { should respond_to(:after_create, :after_update, :after_destroy) }
 
   def create_input_record(type = 'party', fixture_id = 1)
     # Load data from fixture
@@ -75,7 +75,7 @@ describe RifcsRecordObserver do
        .should be_empty
   end
 
-  it "should delete facets when the harvested record is deleted" do
+  it "should delete facets when the harvested record is marked deleted" do
     # Disable delayed run for hooks
     RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
     input_record = create_input_record
@@ -90,6 +90,29 @@ describe RifcsRecordObserver do
     input_record.reload
     input_record.deleted = true
     input_record.save!
+    # Run hook - which will happen as part of the environment
+    # subject.after_update(input_record)
+    # Check the record was updated
+    Miletus::Merge::Concept.all.count.should == 1
+    concept = Miletus::Merge::Concept.find(:first)
+    concept.should_not be_nil
+    concept.to_rif.should be_nil
+  end
+
+
+  it "should delete facets when the harvested record is destroyed" do
+    # Disable delayed run for hooks
+    RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
+    input_record = create_input_record
+    # Run hook - which will happen as part of the environment
+    # subject.after_create(input_record)
+    Miletus::Merge::Concept.all.count.should == 1
+    # A new record should exist as a result
+    concept = Miletus::Merge::Concept.find(:first)
+    concept.should_not be_nil
+    concept.to_rif.should_not be_nil
+    # Destroy input record
+    input_record.destroy
     # Run hook - which will happen as part of the environment
     # subject.after_update(input_record)
     # Check the record was updated
