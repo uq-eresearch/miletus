@@ -52,6 +52,7 @@ gem 'psych', '>= 1.3.4' # Newer Psych YAML parser than bundled for MRI => Faster
 gem 'ratom' # For Atom RDC feed parsing
 gem 'meta-tags', :require => 'meta_tags' # For UI SEO
 gem 'redcarpet' # For Markdown-based static pages
+gem 'paperclip', ">= 3.2" # For large file attachments
 
 gem 'twitter-bootstrap-rails'
 gem 'font-awesome-rails'
@@ -66,7 +67,6 @@ gem 'rdf-rdfa'
 gem 'rdf-rdfxml'
 
 gem 'deface', '>= 1.0.0.rc1'
-
 gem 'activeadmin'
 
 gem 'sru',

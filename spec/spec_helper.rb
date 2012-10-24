@@ -6,9 +6,9 @@ require 'spork'
 def start_simplecov
   require 'simplecov'
   SimpleCov.start :rails
-  require 'miletus'
 
   RSpec.configure do |config|
+    require 'miletus/namespace_helper'
     # Mixin namespace helpers
     config.include Miletus::NamespaceHelper
   end

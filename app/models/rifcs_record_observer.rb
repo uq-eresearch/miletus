@@ -4,7 +4,10 @@ require 'miletus'
 class RifcsRecordObserver < ActiveRecord::Observer
   include Miletus::NamespaceHelper
 
-  observe Miletus::Harvest::OAIPMH::RIFCS::Record
+  # Handles pretty much anything that provides :to_rif
+  observe(
+    Miletus::Harvest::Atom::RDC::Entry,
+    Miletus::Harvest::OAIPMH::RIFCS::Record)
 
   def after_create(record)
     self.class.run_job(CreateFacetJob.new(record))
@@ -26,27 +29,47 @@ class RifcsRecordObserver < ActiveRecord::Observer
     job.delay.run
   end
 
-  class CreateFacetJob < Struct.new(:record)
-    def run
-      concept = Miletus::Merge::Concept.find_existing(record.to_rif)
-      concept ||= Miletus::Merge::Concept.create()
-      concept.facets.create(:metadata => record.to_rif)
+  class AbstractJob < Struct.new(:record)
+    # Split RIF-CS document into multiple documents representing a single facet
+    def split_rifcs_document(xml)
+      combined_doc = Nokogiri::XML(xml)
+      combined_doc.root.children.select do |node|
+        node.element?
+      end.map do |element|
+        root = combined_doc.root.clone
+        root.children = element.clone
+        root.to_xml
+      end
     end
   end
 
-  class UpdateFacetJob < Struct.new(:record)
+  class CreateFacetJob < AbstractJob
     def run
-      facet = Miletus::Merge::Facet.find_existing(record.to_rif)
-      return CreateFacetJob.new(record).run if facet.nil?
-      facet.metadata = record.to_rif
-      facet.save!
+      split_rifcs_document(record.to_rif).each do |xml|
+        concept = Miletus::Merge::Concept.find_existing(xml)
+        concept ||= Miletus::Merge::Concept.create()
+        concept.facets.create(:metadata => xml)
+      end
     end
   end
 
-  class RemoveFacetJob < Struct.new(:record)
+  class UpdateFacetJob < AbstractJob
     def run
-      facet = Miletus::Merge::Facet.find_existing(record.to_rif)
-      facet.destroy unless facet.nil?
+      split_rifcs_document(record.to_rif).each do |xml|
+        facet = Miletus::Merge::Facet.find_existing(xml)
+        return CreateFacetJob.new(entry).run if facet.nil?
+        facet.metadata = xml
+        facet.save!
+      end
+    end
+  end
+
+  class RemoveFacetJob < AbstractJob
+    def run
+      split_rifcs_document(record.to_rif).each do |xml|
+        facet = Miletus::Merge::Facet.find_existing(xml)
+        facet.destroy unless facet.nil?
+      end
     end
   end
 

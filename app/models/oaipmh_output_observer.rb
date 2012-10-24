@@ -3,6 +3,7 @@ require 'miletus'
 class OaipmhOutputObserver < ActiveRecord::Observer
   include Miletus::NamespaceHelper
 
+  # TODO: Check if this is actually observing anything but the facet!
   observe Miletus::Merge::Concept
   observe Miletus::Merge::Facet
 
