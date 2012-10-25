@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121016045400) do
+ActiveRecord::Schema.define(:version => 20121024050847) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -71,6 +71,19 @@ ActiveRecord::Schema.define(:version => 20121016045400) do
   create_table "harvest_atom_rdc_feeds", :force => true do |t|
     t.string  "url",         :null => false
     t.integer "entry_count"
+  end
+
+  create_table "harvest_documents", :force => true do |t|
+    t.string   "type",                  :null => false
+    t.string   "url",                   :null => false
+    t.string   "etag"
+    t.string   "last_modified"
+    t.string   "document_file_name"
+    t.string   "document_content_type"
+    t.integer  "document_file_size"
+    t.datetime "document_updated_at"
+    t.datetime "created_at",            :null => false
+    t.datetime "updated_at",            :null => false
   end
 
   create_table "merge_concepts", :force => true do |t|
