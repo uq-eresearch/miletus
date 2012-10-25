@@ -32,22 +32,59 @@ class RifcsRecordObserver < ActiveRecord::Observer
 
   class AbstractJob < Struct.new(:record)
     # Split RIF-CS document into multiple documents representing a single facet
-    def split_rifcs_document(xml)
+    def split_rifcs_document
+      xml = record.to_rif_file rescue record.to_rif
       return [] if xml.nil?
-      combined_doc = Nokogiri::XML(xml)
-      combined_doc.root.children.select do |node|
-        node.element?
-      end.map do |element|
-        root = combined_doc.root.clone
-        root.children = element.clone
-        root.to_xml
-      end
+      SplitDocumentWrapper.new(Nokogiri::XML::Reader(xml))
     end
+
+    private
+
+    class SplitDocumentWrapper < Struct.new(:reader)
+      include Enumerable
+
+      def each
+        # Create a document to clone for the separate ones
+        templateDoc = Nokogiri::XML::Document.new()
+        reader.each do |node|
+          # Ignore nodes which aren't elements - they're not important here
+          next unless node.node_type == Nokogiri::XML::Reader::TYPE_ELEMENT
+          case node.name
+          when 'registryObjects'
+            populate_template_root(templateDoc, node)
+          when 'registryObject'
+            doc = templateDoc.clone
+            doc.root << doc.fragment(node.outer_xml).children.first
+            yield doc.to_xml
+          end
+        end
+      end
+
+      private
+
+      # Populate root for our template document
+      def populate_template_root(tmplDoc, node)
+        namespaces = node.namespaces
+        tmplDoc.root = tmplDoc.create_element(node.name, namespaces)
+        node.attributes.each do |k,v|
+          next if namespaces.key?(k)
+          # Kludge to handle schemaLocation namespace disappearing
+          case k
+          when 'schemaLocation'
+            tmplDoc.root.set_attribute('xsi:%s' % k, v)
+          else
+            tmplDoc.root.set_attribute(k, v)
+          end
+        end
+      end
+
+    end
+
   end
 
   class CreateFacetJob < AbstractJob
     def run
-      split_rifcs_document(record.to_rif).each do |xml|
+      split_rifcs_document.each do |xml|
         concept = Miletus::Merge::Concept.find_existing(xml)
         concept ||= Miletus::Merge::Concept.create()
         concept.facets.create(:metadata => xml)
@@ -57,7 +94,7 @@ class RifcsRecordObserver < ActiveRecord::Observer
 
   class UpdateFacetJob < AbstractJob
     def run
-      split_rifcs_document(record.to_rif).each do |xml|
+      split_rifcs_document.each do |xml|
         facet = Miletus::Merge::Facet.find_existing(xml)
         return CreateFacetJob.new(record).run if facet.nil?
         facet.metadata = xml
@@ -68,7 +105,7 @@ class RifcsRecordObserver < ActiveRecord::Observer
 
   class RemoveFacetJob < AbstractJob
     def run
-      split_rifcs_document(record.to_rif).each do |xml|
+      split_rifcs_document.each do |xml|
         facet = Miletus::Merge::Facet.find_existing(xml)
         facet.destroy unless facet.nil?
       end

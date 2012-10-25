@@ -5,12 +5,12 @@ module Miletus::Harvest::Document
     validates_attachment_content_type :document,
       :content_type => 'application/xml'
 
-    def to_io(&block)
+    def to_rif_file(&block)
       document.file? ? File.open(document.path, &block) : nil
     end
 
     def to_rif
-      to_io do |f|
+      to_rif_file do |f|
         f.read
       end
     end

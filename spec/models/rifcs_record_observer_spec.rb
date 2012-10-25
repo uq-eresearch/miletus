@@ -6,6 +6,63 @@ describe RifcsRecordObserver do
 
   it { should respond_to(:after_create, :after_update, :after_destroy) }
 
+  describe "RIF-CS splitting with Reader" do
+
+    def split_rifcs_document(record)
+      xml = record.to_rif
+      return [] if xml.nil?
+      combined_doc = Nokogiri::XML(xml)
+      combined_doc.root.children.select do |node|
+        node.element?
+      end.map do |element|
+        separate_doc = combined_doc.clone
+        separate_doc.root.children = element.clone
+        separate_doc.to_xml
+      end
+    end
+
+    class DummyJob < RifcsRecordObserver::AbstractJob; end
+
+    it "should split identically to a DOM-based parser" do
+      record = nil
+      VCR.use_cassette('ands_rifcs_example') do
+        require 'open-uri'
+        url = 'http://services.ands.org.au/documentation/rifcs/example/rif.xml'
+        xml = open(url).read
+        record = Struct.new(:to_rif).new(xml)
+      end
+      job = DummyJob.new(record)
+      # Check the number is at least correct
+      job.split_rifcs_document.count.should == 4
+      # Check that each doc is the same
+      expected_docs = split_rifcs_document(record)
+      actual_docs = job.split_rifcs_document
+      expected_docs.zip(actual_docs).each do |expected, actual|
+        actual.should == expected
+      end
+    end
+
+    it "should use :to_rif_file if available" do
+      record, f_rec = nil
+      VCR.use_cassette('ands_rifcs_example') do
+        require 'open-uri'
+        url = 'http://services.ands.org.au/documentation/rifcs/example/rif.xml'
+        xml = open(url).read
+        record = Struct.new(:to_rif).new(xml)
+        f_rec = Object.new
+        f_rec.should_receive(:to_rif_file).once.and_return(StringIO.new(xml))
+      end
+      job = DummyJob.new(f_rec)
+      # Check that each doc is the same
+      expected_docs = split_rifcs_document(record)
+      actual_docs = job.split_rifcs_document
+      expected_docs.zip(actual_docs).each do |expected, actual|
+        actual.should == expected
+      end
+    end
+
+  end
+
   describe "OAIPMH RIF-CS observation" do
 
     def create_input_record(type = 'party', fixture_id = 1)
@@ -191,24 +248,41 @@ describe RifcsRecordObserver do
 
   describe "RIF-CS Document Observation" do
 
-    def get_fixture(n)
+    let :fixture_url do
       fixture_file = File.expand_path(
         File.join(File.dirname(__FILE__),
           '..', 'fixtures', 'rifcs-activity-1.xml'))
-      Miletus::Harvest::Document::RIFCS.new(:url=>'file://%s' % fixture_file)
+      'file://%s' % fixture_file
     end
 
-    it "should create new concepts for a new harvested entry" do
+    it "should create a new concept for a single object document" do
       # Disable delayed run for hooks
       RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
       # Check the database has no existing concepts
       Miletus::Merge::Concept.count.should == 0
       # Create entry
-      document = get_fixture(1)
+      document = Miletus::Harvest::Document::RIFCS.new(:url => fixture_url)
       document.save!
       document.fetch
       # Check that associated concepts have been created
       Miletus::Merge::Concept.count.should == 1
+    end
+
+    it "should create a new concepts for a multiple object document" do
+      # Disable delayed run for hooks
+      RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
+      # Check the database has no existing concepts
+      Miletus::Merge::Concept.count.should == 0
+      # Create entry
+      VCR.use_cassette('ands_rifcs_example') do
+        document = Miletus::Harvest::Document::RIFCS.new(
+          :url => \
+            'http://services.ands.org.au/documentation/rifcs/example/rif.xml')
+        document.save!
+        document.fetch
+      end
+      # Check that associated concepts have been created
+      Miletus::Merge::Concept.count.should == 4
     end
 
   end

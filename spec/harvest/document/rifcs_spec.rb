@@ -4,7 +4,7 @@ require 'yaml'
 
 describe Miletus::Harvest::Document::RIFCS do
 
-  it { should respond_to(:url, :document, :fetch, :to_rif) }
+  it { should respond_to(:url, :document, :fetch, :to_rif, :to_rif_file) }
 
   it "should work for the file scheme" do
     fixture_file = File.expand_path(
@@ -25,8 +25,8 @@ describe Miletus::Harvest::Document::RIFCS do
       subject.save!
       subject.fetch
     end
+    subject.document.should be_present
     VCR.use_cassette('ands_rifcs_example') do
-      subject.document.should be_present
       subject.to_rif.should == open(subject.url).read
       subject.document.content_type.should == 'application/xml'
     end

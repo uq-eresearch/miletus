@@ -8,6 +8,8 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Record do
     IO.read(fixture_file)
   end
 
+  it { should respond_to(:to_rif) }
+
   it "is creatable with no arguments" do
     Miletus::Harvest::OAIPMH::RIFCS::Record.new()
   end
