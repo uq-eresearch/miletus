@@ -189,4 +189,29 @@ describe RifcsRecordObserver do
 
   end
 
+  describe "RIF-CS Document Observation" do
+
+    def get_fixture(n)
+      fixture_file = File.expand_path(
+        File.join(File.dirname(__FILE__),
+          '..', 'fixtures', 'rifcs-activity-1.xml'))
+      Miletus::Harvest::Document::RIFCS.new(:url=>'file://%s' % fixture_file)
+    end
+
+    it "should create new concepts for a new harvested entry" do
+      # Disable delayed run for hooks
+      RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
+      # Check the database has no existing concepts
+      Miletus::Merge::Concept.count.should == 0
+      # Create entry
+      document = get_fixture(1)
+      document.save!
+      document.fetch
+      # Check that associated concepts have been created
+      Miletus::Merge::Concept.count.should == 1
+    end
+
+  end
+
+
 end

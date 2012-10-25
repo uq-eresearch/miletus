@@ -7,6 +7,7 @@ class RifcsRecordObserver < ActiveRecord::Observer
   # Handles pretty much anything that provides :to_rif
   observe(
     Miletus::Harvest::Atom::RDC::Entry,
+    Miletus::Harvest::Document::RIFCS,
     Miletus::Harvest::OAIPMH::RIFCS::Record)
 
   def after_create(record)
@@ -32,6 +33,7 @@ class RifcsRecordObserver < ActiveRecord::Observer
   class AbstractJob < Struct.new(:record)
     # Split RIF-CS document into multiple documents representing a single facet
     def split_rifcs_document(xml)
+      return [] if xml.nil?
       combined_doc = Nokogiri::XML(xml)
       combined_doc.root.children.select do |node|
         node.element?
@@ -57,7 +59,7 @@ class RifcsRecordObserver < ActiveRecord::Observer
     def run
       split_rifcs_document(record.to_rif).each do |xml|
         facet = Miletus::Merge::Facet.find_existing(xml)
-        return CreateFacetJob.new(entry).run if facet.nil?
+        return CreateFacetJob.new(record).run if facet.nil?
         facet.metadata = xml
         facet.save!
       end
