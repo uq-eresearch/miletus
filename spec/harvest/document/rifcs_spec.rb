@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'open-uri'
 require 'yaml'
 
 describe Miletus::Harvest::Document::RIFCS do
@@ -15,6 +16,21 @@ describe Miletus::Harvest::Document::RIFCS do
     subject.document.should be_present
     subject.to_rif.should == File.read(fixture_file)
     subject.document.content_type.should == 'application/xml'
+  end
+
+  it "should work for HTTP" do
+    VCR.use_cassette('ands_rifcs_example') do
+      subject.url = \
+        'http://services.ands.org.au/documentation/rifcs/example/rif.xml'
+      subject.save!
+      subject.fetch
+    end
+    VCR.use_cassette('ands_rifcs_example') do
+      subject.document.should be_present
+      subject.to_rif.should == open(subject.url).read
+      subject.document.content_type.should == 'application/xml'
+    end
+
   end
 
 end

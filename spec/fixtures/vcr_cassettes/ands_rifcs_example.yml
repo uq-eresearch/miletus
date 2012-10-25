@@ -1,0 +1,125 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://services.ands.org.au/documentation/rifcs/example/rif.xml
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/0.8.55
+      Date:
+      - Thu, 25 Oct 2012 01:57:09 GMT
+      Content-Type:
+      - text/xml
+      Last-Modified:
+      - Tue, 15 Nov 2011 23:11:54 GMT
+      Etag:
+      - ! '"41b1ee-193b-4b1ce1cf46280"'
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '6459'
+      Age:
+      - '126'
+      X-Cache:
+      - HIT from proxy7.uq.edu.au
+      X-Cache-Lookup:
+      - HIT from proxy7.uq.edu.au:80
+      Via:
+      - 1.1 proxy7.uq.edu.au:80 (squid/2.7.STABLE9)
+      Connection:
+      - close
+    body:
+      encoding: US-ASCII
+      string: ! "<?xml version=\"1.0\"?>\r\n<registryObjects xmlns=\"http://ands.org.au/standards/rif-cs/registryObjects\"\r\n
+        \ xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://ands.org.au/standards/rif-cs/registryObjects
+        http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd\">\r\n
+        \ <registryObject group=\"The Australian Partnership for Sustainable Repositories\">\r\n
+        \    <key>au.edu.apsr.a1</key>\r\n     <originatingSource>http://devl.ands.org.au/deployment/cosi/orca/register_my_data</originatingSource>
+        \  \r\n\r\n    <activity type=\"program\">\r\n      <name type=\"abbreviated\">\r\n
+        \       <namePart>APSR</namePart>\r\n\r\n      </name>\r\n      <name type=\"primary\">\r\n
+        \       <namePart>The Australian Partnership for Sustainable Repositories</namePart>\r\n
+        \     </name>\r\n      <location>\r\n        <address>\r\n          <electronic
+        type=\"url\">\r\n            <value>http://www.apsr.edu.au</value>\r\n\r\n
+        \         </electronic>\r\n        </address>\r\n      </location>\r\n      <relatedObject>\r\n
+        \       <key>au.edu.apsr.a2</key>\r\n        <relation type=\"funds\"/>\r\n
+        \     </relatedObject>\r\n      <description type=\"brief\">The APSR Project
+        aims to establish a centre of excellence for the management of scholarly assets
+        in digital format. Online collections of scholarly materials are bringing
+        about a quiet revolution in the way researchers work. Researchers have faster
+        easier ways of finding and analyzing research materials. New modes of research
+        and new research methodologies are all now possible. APSR is a partnership
+        that aims to promote excellence in building and managing these collections
+        of digital research objects.</description>\r\n    </activity>\r\n  </registryObject>\r\n
+        \ <registryObject group=\"The Australian Partnership for Sustainable Repositories\">\r\n
+        \     <key>au.edu.apsr.a2</key>\r\n     <originatingSource>http://dspace.anu.edu.au</originatingSource>\r\n\r\n
+        \   <activity type=\"project\">\r\n      <name type=\"abbreviated\">\r\n        <namePart>ORCA</namePart>\r\n
+        \     </name>\r\n      <name type=\"primary\">\r\n        <namePart>Online
+        Research Collections Australia</namePart>\r\n      </name>\r\n      <location>\r\n
+        \       <address><electronic type=\"url\"><value>http://services.ands.org.au/home/orca</value></electronic><physical><addressPart
+        type=\"telephoneNumber\">123456789</addressPart></physical></address>\r\n
+        \     </location>\r\n      <relatedObject>\r\n        <key>au.edu.apsr.a1</key>\r\n
+        \       <relation type=\"isFundedBy\"/>\r\n      </relatedObject>\r\n      <description
+        type=\"brief\">The ORCA Registry project has been established to improve the
+        capacity of institutional repositories, archives and data centres to create
+        and share collection-level information and resources. Its aims are to develop
+        a discovery portal for collections information (that is, information about
+        research collections) and a services registry that can facilitate machine-to-machine
+        services related to managing collections within a network of federated repositories.\r\n\r\nThe
+        main priority addressed by the ORCA Registry is to provide a better discovery
+        environment for data collections produced by the wide range of individuals
+        and institutions involved in the Australian innovation system. This includes
+        all Australian higher education institutions; Government-funded research organisations
+        (such as CSIRO); and commercial and not-for-profit organisations in sectors
+        with research interests (such as archives, museums and libraries). It is planned
+        to collaborate with similar registry services overseas at a later stage.\r\n\r\nMembers
+        of the project reference group are participating in a pilot collection registry
+        evaluating the software in a pre-production mode.</description>\r\n      <existenceDates>\r\n
+        \       <startDate dateFormat=\"W3CDTF\">2007-06-01T00:00:00Z</startDate>\r\n
+        \     </existenceDates>\r\n      <relatedInfo type=\"website\">\r\n        <identifier
+        type=\"uri\">http://services.ands.org.au/home/orca/rda/index.php</identifier>\r\n
+        \     </relatedInfo>\r\n    </activity>\r\n  </registryObject>\r\n  <registryObject
+        group=\"The Australian National University\">\r\n      <key>au.edu.anu.dspace.1885/42756</key>\r\n
+        \   <originatingSource>http://dspace.anu.edu.au</originatingSource>\r\n\r\n
+        \   <collection type=\"collection\">\r\n      <identifier type=\"handle\">hdl:1885/42756</identifier>\r\n
+        \     <name type=\"primary\">\r\n        <namePart>Aboriginal Population Profiles
+        for Development Planning in the Northern East Kimberley</namePart>\r\n      </name>\r\n
+        \     <location>\r\n        <address>\r\n<electronic type=\"url\">\r\n<value>http://dspace.anu.edu.au/handle/1885/42756</value>\r\n\r\n</electronic>\r\n</address>\r\n
+        \     </location>\r\n      <relatedObject>\r\n        <key>au.edu.anu.dspace.RSS1.0</key>\r\n
+        \       <relation type=\"supports\">\r\n          <url>http://dspace.anu.edu.au/feed/rss_1.0/1885/42756</url>\r\n
+        \       </relation>\r\n      </relatedObject>\r\n      <relatedObject>\r\n
+        \       <key>au.edu.anu.dspace.RSS2.0</key>\r\n        <relation type=\"supports\">\r\n
+        \         <url>http://dspace.anu.edu.au/feed/rss_2.0/1885/42756</url>\r\n\r\n
+        \       </relation>\r\n      </relatedObject>\r\n      <relatedObject>\r\n
+        \       <key>au.edu.anu.dspace.browse</key>\r\n        <relation type=\"supports\">\r\n
+        \         <url>http://dspace.anu.edu.au/handle/1885/42756/browse-title</url>\r\n
+        \       </relation>\r\n      </relatedObject>\r\n      <relatedObject>\r\n
+        \       <key>au.edu.anu.dspace.e83</key>\r\n        <relation type=\"isManagedBy\">
+        </relation>\r\n      </relatedObject>\r\n    </collection>\r\n\r\n  </registryObject>\r\n
+        \ <registryObject group=\"The Australian National University\">\r\n      <key>au.edu.anu.dspace.e1</key>\r\n
+        \   <originatingSource>http://dspace.anu.edu.au</originatingSource>\r\n\r\n
+        \   <party type=\"person\">\r\n      <name type=\"primary\">\r\n        <namePart
+        type=\"family\">Yeadon</namePart>\r\n        <namePart type=\"given\">Scott</namePart>\r\n
+        \     </name>\r\n      <relatedObject>\r\n        <key>au.edu.anu.dspace.1885/43286</key>\r\n
+        \       <relation type=\"isManagerOf\"> </relation>\r\n      </relatedObject>\r\n
+        \     <relatedObject>\r\n        <key>au.edu.anu.dspace.1885/43285</key>\r\n
+        \       <relation type=\"isManagerOf\"> </relation>\r\n      </relatedObject>\r\n
+        \     <relatedObject>\r\n        <key>au.edu.anu.dspace.1885/43288</key>\r\n
+        \       <relation type=\"isManagerOf\"> </relation>\r\n      </relatedObject>\r\n
+        \     <existenceDates>\r\n        <startDate dateFormat=\"W3CDTF\">1954-06-01T00:00:00Z</startDate>\r\n
+        \       <endDate dateFormat=\"W3CDTF\">2007-05-01T00:00:00Z</endDate>\r\n
+        \     </existenceDates>\r\n    </party>\r\n  </registryObject>\r\n</registryObjects>\r\n"
+    http_version: 
+  recorded_at: Thu, 25 Oct 2012 01:59:15 GMT
+recorded_with: VCR 2.2.5
