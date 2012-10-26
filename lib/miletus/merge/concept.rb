@@ -32,7 +32,8 @@ module Miletus::Merge
     end
 
     def title
-      (self.titles || []).first
+      title = (self.titles || []).first
+      title.nil? || title == '' ? self.key : title
     end
 
     def alternate_titles

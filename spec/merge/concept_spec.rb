@@ -272,6 +272,14 @@ describe Miletus::Merge::Concept do
       concept.titles.should == ["Mr Timothy John Dettrick", "Tim Dettrick"]
     end
 
+    it "uses the key if there are no titles or the title is blank" do
+      concept = Miletus::Merge::Concept.create()
+      concept.titles = []
+      concept.title.should == concept.key
+      concept.titles = ['']
+      concept.title.should == concept.key
+    end
+
   end
 
 end
