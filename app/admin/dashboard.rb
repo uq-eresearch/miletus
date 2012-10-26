@@ -9,14 +9,15 @@ ActiveAdmin.register_page "Dashboard" do
           div do
             stats = {
               'OAI-PMH input records' => \
-                Miletus::Harvest::OAIPMH::RIFCS::Record.all.count,
+                Miletus::Harvest::OAIPMH::RIFCS::Record.count,
               'OAI-PMH endpoints' => \
-                Miletus::Harvest::OAIPMH::RIFCS::RecordCollection.all.count,
-              'SRU interfaces' => Miletus::Harvest::SRU::Interface.all.count,
-              'concepts' => Miletus::Merge::Concept.all.count,
-              'facets' => Miletus::Merge::Facet.all.count,
+                Miletus::Harvest::OAIPMH::RIFCS::RecordCollection.count,
+              'SRU interfaces' => Miletus::Harvest::SRU::Interface.count,
+              'RIF-CS documents' => Miletus::Harvest::Document::RIFCS.count,
+              'concepts' => Miletus::Merge::Concept.count,
+              'facets' => Miletus::Merge::Facet.count,
               'OAI-PMH output records' =>
-                Miletus::Output::OAIPMH::Record.all.count,
+                Miletus::Output::OAIPMH::Record.count,
             }
             render('/admin/stats', :stats => stats)
           end

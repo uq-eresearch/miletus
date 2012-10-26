@@ -42,7 +42,7 @@
               - else
                 %i.icon-link
               %a{:href => info.identifier, :property => "v:url"}
-                %span{:property => "v:title"}= info.title
+                %span{:property => "v:title"}= info.title or info.identifier
 
         - subjects(@doc).each do |subject|
           %span.badge{:property => 'v:keywords', :title => subject.type}

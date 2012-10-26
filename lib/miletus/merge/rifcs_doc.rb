@@ -114,14 +114,21 @@ module Miletus::Merge
     end
 
     def title_from_name_element(name)
-      part_order = ['title', 'given', 'family', 'suffix', nil]
-      parts = name.xpath("rif:namePart", ns_decl).to_ary
-      parts.delete_if { |part| not part_order.include?(part['type']) }
-      parts.sort_by! do |part|
-        # In part order, but use original index to sort equal elements
-        part_order.index(part['type']) * parts.length + parts.index(part)
+      part_order = ['title', 'given', 'family', 'suffix']
+      found_parts = name.xpath("rif:namePart", ns_decl).to_ary
+      parts = found_parts.select do |part|
+        part_order.include?(part['type'])
       end
-      parts.map{|e| e.content}.join(" ")
+      if parts.empty?
+        # No formal name parts, so just join them all in order
+        found_parts.map{|e| e.content}.join(" ")
+      else
+        parts.sort_by! do |part|
+          # In part order, but use original index to sort equal elements
+          part_order.index(part['type']) * parts.length + parts.index(part)
+        end
+        parts.map{|e| e.content}.join(" ")
+      end
     end
 
     def replace_all(orig_tags, tags, alt_parent)

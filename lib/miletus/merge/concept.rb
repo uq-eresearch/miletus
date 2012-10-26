@@ -204,6 +204,9 @@ module Miletus::Merge
     end
 
     def update_indexed_attributes(key, new_values)
+      # Handle empty values, which tends to unify completely unrelated facets
+      new_values.delete_if {|v| v.nil? or v == ''}
+      # Swap in the new values
       self.transaction do
         current_values = indexed_attributes.where(:key => key).select(:value)
         (new_values - current_values).each do |v|

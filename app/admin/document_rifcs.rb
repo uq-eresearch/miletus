@@ -3,6 +3,17 @@ require 'miletus'
 ActiveAdmin.register Miletus::Harvest::Document::RIFCS,
   :as => "Direct RIF-CS Documents" do
 
+  index do
+    selectable_column
+    column :url
+    column :etag
+    column :last_modified
+    column :document_file_size
+    column :created_at
+    column :updated_at
+    default_actions
+  end
+
   form do |f|
     f.inputs "RIF-CS Document" do
       f.input :url

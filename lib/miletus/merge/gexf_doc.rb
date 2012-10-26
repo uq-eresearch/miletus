@@ -34,8 +34,8 @@ module Miletus::Merge
           xml.attvalue(:for => 0, :value => concept.type)
           xml.attvalue(:for => 1, :value => concept.subtype)
           xml.attvalue(:for => 2, :value => concept.facets.size)
-          xml.attvalue(:for => 3,
-            :value => concept.outbound_related_concept_keys.count)
+          keys = concept.outbound_related_concept_keys
+          xml.attvalue(:for => 3, :value => (keys.nil? ? 0 : keys.count))
         }
       }
     end
@@ -44,6 +44,7 @@ module Miletus::Merge
       xml.edges {
         concept_keys = concepts.map{|c| c.key}.to_set
         concepts.each do |c|
+          next if c.outbound_related_concept_keys.nil?
           c.outbound_related_concept_keys.each do |oc_key|
             xml.edge(
               :id => "%s|%s" % [c.key, oc_key],

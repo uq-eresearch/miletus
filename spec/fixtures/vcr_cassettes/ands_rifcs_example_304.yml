@@ -1,0 +1,46 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://services.ands.org.au/documentation/rifcs/example/rif.xml
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      If-None-Match:
+      - ! '"41b1ee-193b-4b1ce1cf46280"'
+      If-Modified-Since:
+      - Tue, 15 Nov 2011 23:11:54 GMT
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 304
+      message: Not Modified
+    headers:
+      Date:
+      - Thu, 25 Oct 2012 01:57:09 GMT
+      Content-Type:
+      - text/xml
+      Last-Modified:
+      - Tue, 15 Nov 2011 23:11:54 GMT
+      Etag:
+      - ! '"41b1ee-193b-4b1ce1cf46280"'
+      Age:
+      - '21520'
+      X-Cache:
+      - HIT from proxy7.uq.edu.au
+      X-Cache-Lookup:
+      - HIT from proxy7.uq.edu.au:80
+      Via:
+      - 1.1 proxy7.uq.edu.au:80 (squid/2.7.STABLE9)
+      Connection:
+      - close
+    body:
+      encoding: US-ASCII
+      string: ''
+    http_version: 
+  recorded_at: Thu, 25 Oct 2012 07:55:49 GMT
+recorded_with: VCR 2.2.5

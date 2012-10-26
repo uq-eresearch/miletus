@@ -3,7 +3,7 @@ module Miletus::Harvest::Document
   class RIFCS < Base
 
     validates_attachment_content_type :document,
-      :content_type => 'application/xml'
+      :content_type => %w[application/xml text/xml]
 
     def to_rif_file(&block)
       document.file? ? File.open(document.path, &block) : nil

@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'open-uri'
+require 'webmock/rspec'
 require 'yaml'
 
 describe Miletus::Harvest::Document::RIFCS do
@@ -31,6 +32,35 @@ describe Miletus::Harvest::Document::RIFCS do
       subject.document.content_type.should == 'application/xml'
     end
 
+  end
+
+  it "should take advantage of Etag and Last-Modified headers" do
+    VCR.use_cassette('ands_rifcs_example') do
+      subject.url = \
+        'http://services.ands.org.au/documentation/rifcs/example/rif.xml'
+      subject.save!
+      subject.fetch
+      WebMock.should have_requested(:get, subject.url).with(:headers => {
+          'Accept' => '*/*',
+          'User-Agent' => 'Ruby'
+        })
+    end
+    subject.updated_at.iso8601.should == subject.created_at.iso8601
+    subject.document.should be_present
+    VCR.use_cassette('ands_rifcs_example_304') do
+      subject.url = \
+        'http://services.ands.org.au/documentation/rifcs/example/rif.xml'
+      subject.save!
+      subject.fetch
+      WebMock.should have_requested(:get, subject.url).with(:headers => {
+          'Accept' => '*/*',
+          'If-None-Match' => '"41b1ee-193b-4b1ce1cf46280"',
+          'If-Modified-Since' => 'Tue, 15 Nov 2011 23:11:54 GMT',
+          'User-Agent' => 'Ruby'
+        })
+    end
+    # There should not have been an update
+    subject.updated_at.iso8601.should == subject.created_at.iso8601
   end
 
 end

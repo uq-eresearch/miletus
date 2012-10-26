@@ -34,6 +34,8 @@ init_graph = (selector) ->
       success: (data) ->
         sigInst.parseGexfDocument data
 
+        nodeCount = sigInst.getNodesCount()
+        nodesToDelete = []
         # Add colour and transform square plotting to rectangle
         sigInst.iterNodes((node) ->
           type = node['attr']['attributes'][0].val
@@ -55,7 +57,17 @@ init_graph = (selector) ->
                 '#f0f'
           node.size = facets
           node.x = node.x * $(targetElement).width() / $(targetElement).height()
+          if nodeCount > 1 and node.degree == 0
+            # Drop unconnected
+            nodesToDelete.push node.id
         , null)
+
+        window.sigInst = sigInst
+        window.nodesToDelete = nodesToDelete
+
+        # Drop nodes which just clutter the display
+        sigInst.dropNode(nodesToDelete)
+        nodeCount = sigInst.getNodesCount()
 
         # Draw the graph
         sigInst.draw()
@@ -70,14 +82,14 @@ init_graph = (selector) ->
             0.1*$(targetElement).width(),
             0.1*$(targetElement).height(),
             0.8).draw()
-        , $(targetElement).attr('data-delay') || 6000)
+        , $(targetElement).attr('data-delay') || 30000)
 
 
         sigInst.bind('upnodes', (event) ->
           # Turn node ID (key) into record ID
           id = /\d+$/i.exec(_(event.content).first())[0]
           # Open record with given ID
-          window.open('/records/'+id, '_current')
+          window.open('/records/'+id, '_blank')
         )
     )
 

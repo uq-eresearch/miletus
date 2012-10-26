@@ -29,6 +29,11 @@ module Miletus::Harvest::Document
           ensure
             tempfile.unlink
           end
+          # Record headers for conditional request next time
+          if f.respond_to?(:meta)
+            self.etag = f.meta['etag']
+            self.last_modified = f.meta['last-modified']
+          end
         end
         document.flush_writes
         save!
@@ -44,6 +49,7 @@ module Miletus::Harvest::Document
 
     def fetch_options
       opts = {}
+      opts[:read_timeout] = 600 # Handle very large documents
       opts['If-None-Match'] = self.etag if self.etag
       opts['If-Modified-Since'] = self.last_modified if self.last_modified
       opts
