@@ -45,6 +45,12 @@ module Miletus::Harvest::Document
       end
     end
 
+    def url=(url)
+      self[:url] = url
+      # As the URL has changed, clear any existing document
+      document.clear
+    end
+
     private
 
     def fetch_options
