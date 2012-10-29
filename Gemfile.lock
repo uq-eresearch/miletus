@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/tjdett/ruby-oai.git
-  revision: 5cb81251cb5bb99a5cbd734b19f12830850736b1
+  revision: af7b6dc711af18d7ed0a767ee65f3bada01ff1e0
   branch: next
   specs:
     oai (0.2.1)
@@ -93,7 +93,7 @@ GEM
     coffee-script (2.2.0)
       coffee-script-source
       execjs
-    coffee-script-source (1.3.3)
+    coffee-script-source (1.4.0)
     colored (1.2)
     colorize (0.5.8)
     columnize (0.3.6)
@@ -128,7 +128,7 @@ GEM
       multi_json (~> 1.0)
     faraday (0.8.4)
       multipart-post (~> 1.1)
-    faraday_middleware (0.8.8)
+    faraday_middleware (0.9.0)
       faraday (>= 0.7.4, < 0.9)
     fastercsv (1.5.5)
     ffi (1.1.5)
@@ -142,7 +142,7 @@ GEM
     google-code-prettify-rails (1.1.0)
       railties (>= 3.2.0.beta, < 5.0)
       thor (~> 0.14)
-    guard (1.5.0)
+    guard (1.5.1)
       listen (>= 0.4.2)
       lumberjack (>= 1.0.2)
       pry (>= 0.9.10)
@@ -186,7 +186,7 @@ GEM
     kgio (2.7.4)
     less (2.2.2)
       commonjs (~> 0.2.6)
-    less-rails (2.2.4)
+    less-rails (2.2.5)
       actionpack (>= 3.1)
       less (~> 2.2.0)
     libv8 (3.3.10.4)
@@ -337,7 +337,7 @@ GEM
       less-rails (~> 2.2.3)
       railties (>= 3.1)
       therubyracer (>= 0.10.2)
-    tzinfo (0.3.33)
+    tzinfo (0.3.34)
     uglifier (1.3.0)
       execjs (>= 0.3.0)
       multi_json (~> 1.0, >= 1.0.2)
