@@ -65,6 +65,8 @@ gem 'memoize'
 gem 'rdf'
 gem 'rdf-rdfa'
 gem 'rdf-rdfxml'
+gem 'georuby', :require => 'geo_ruby',
+  :git => 'https://github.com/tjdett/georuby.git', :branch => 'test-fixes'
 
 gem 'deface', '>= 1.0.0.rc1'
 gem 'activeadmin'

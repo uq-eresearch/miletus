@@ -1,4 +1,11 @@
 GIT
+  remote: https://github.com/tjdett/georuby.git
+  revision: 71b9d6c2a4f361212754b86ce990cbbbf7d34962
+  branch: test-fixes
+  specs:
+    georuby (1.9.9)
+
+GIT
   remote: https://github.com/tjdett/ruby-oai.git
   revision: af7b6dc711af18d7ed0a767ee65f3bada01ff1e0
   branch: next
@@ -369,6 +376,7 @@ DEPENDENCIES
   equivalent-xml
   font-awesome-rails
   foreman
+  georuby!
   google-analytics-rails
   google-code-prettify-rails
   guard

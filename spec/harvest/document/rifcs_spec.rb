@@ -15,7 +15,7 @@ describe Miletus::Harvest::Document::RIFCS do
     subject.save!
     subject.fetch
     subject.document.should be_present
-    subject.to_rif.should == File.read(fixture_file)
+    subject.to_rif.should be == File.read(fixture_file)
     subject.document.content_type.should == 'application/xml'
   end
 
@@ -28,7 +28,7 @@ describe Miletus::Harvest::Document::RIFCS do
     end
     subject.document.should be_present
     VCR.use_cassette('ands_rifcs_example') do
-      subject.to_rif.should == open(subject.url).read
+      subject.to_rif.should be == open(subject.url).read
       subject.document.content_type.should == 'application/xml'
     end
 
@@ -45,7 +45,7 @@ describe Miletus::Harvest::Document::RIFCS do
           'User-Agent' => 'Ruby'
         })
     end
-    subject.updated_at.iso8601.should == subject.created_at.iso8601
+    first_update_timestamp = subject.updated_at.iso8601
     subject.document.should be_present
     VCR.use_cassette('ands_rifcs_example_304') do
       subject.url = \
@@ -60,7 +60,7 @@ describe Miletus::Harvest::Document::RIFCS do
         })
     end
     # There should not have been an update
-    subject.updated_at.iso8601.should == subject.created_at.iso8601
+    subject.updated_at.iso8601.should == first_update_timestamp
   end
 
   it "should clear the document when the URL changes" do
@@ -71,7 +71,7 @@ describe Miletus::Harvest::Document::RIFCS do
     subject.save!
     subject.fetch
     subject.document.should be_present
-    subject.to_rif.should == File.read(fixture_file)
+    subject.to_rif.should be == File.read(fixture_file)
     subject.url = fixture_file.gsub(/1\.xml$/, '2.xml')
     subject.document.should_not be_present
   end

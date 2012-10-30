@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:georss="http://www.georss.org/georss" xmlns:rdfa="http://www.w3.org/ns/rdfa#">
+  <id>http://e-research.geosp.uq.edu.au/aus_voting2007.html</id>
+  <title type="text">Variables derived from 2006 Census of Population &amp; Housing and voting results at polling booth catchment level for 2007 Australian Federal Election</title>
+  <content type="text">Dataset derived from the 2006 Australian Census of Population and Housing, voting results for the 2007 Australian Federal election, and location of polling booths from the Australian Electoral Commission. Voting results data includes total and proportion of votes cast for each political party for all electoral divisions and polling booths in Australia. Coalition two party preferred and Labor two party preferred are also included in voting data. Polling booths and Census collection districts have been geocoded and spatially allocated to form polling both catchments. Demographic and socio-economic characteristics of the populations living within the polling booth catchments are measured using variables derived from the 2006 Census that cover age &amp; sex, family &amp; household structure, housing tenure, ethnicity/race, religious affiliation, residential stability/mobility, digital divide,engagement in work, occupation, industry of work, human capital, and income.</content>
+  <link href="http://dataspace.uq.edu.au/collections/4" rel="self" title="4" />
+  <updated>2012-10-29T01:09:55.966Z</updated>
+  <published>2012-01-17T23:04:46.358Z</published>
+  <link href="http://dataspace.uq.edu.au/collections/4#" rel="http://www.openarchives.org/ore/terms/describes" />
+  <author>
+    <name>Dr Tung-Kai (Paul) Shyy</name>
+    <email>t.shyy@uq.edu.au</email>
+    <uri>http://dataspace.uq.edu.au/agents/4#</uri>
+  </author>
+  <link href="http://purl.org/dc/dcmitype/Collection" rel="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" title="Collection" />
+  <link href="http://e-research.geosp.uq.edu.au/aus_voting2007.html" rel="http://xmlns.com/foaf/0.1/page" />
+  <category term="http://purl.org/asc/1297.0/2008/for/1603" scheme="http://purl.org/asc/1297.0/2008/for/" label="160300 - Demography" />
+  <category term="http://purl.org/asc/1297.0/2008/for/1604" scheme="http://purl.org/asc/1297.0/2008/for/" label="160400 - Human Geography" />
+  <category term="http://purl.org/asc/1297.0/2008/seo/910102" scheme="http://purl.org/asc/1297.0/2008/seo/" label="910102 - Demography" />
+  <link href="http://dataspace.uq.edu.au/agents/5#" rel="http://purl.org/dc/terms/publisher" title="Professor Robert J (Bob) Stimson" />
+  <link href="http://dataspace.uq.edu.au/activities/4#" rel="http://www.ands.org.au/ontologies/ns/0.1/VITRO-ANDS.owl#isOutputOf" title="ARC Research Network in Spatially Integrated Social Science" />
+  <link href="http://dataspace.uq.edu.au/activities/5#" rel="http://www.ands.org.au/ontologies/ns/0.1/VITRO-ANDS.owl#isOutputOf" title="Infrastructure for a Spatially Integrated Social Science e-Research Facility" />
+  <link href="http://dataspace.uq.edu.au/services/1#" rel="http://purl.org/cld/terms/isAccessedVia" title="Voting Patterns at the 2007 Australia Federal Election On-line" />
+  <link href="http://espace.library.uq.edu.au/view/UQ:198635" rel="http://purl.org/dc/terms/isReferencedBy" title="Developing a Web-Based e-Research Facility for Socio-Spatial Analysis to Investigate Relationships between Voting Patterns and Local Population Characteristics" />
+  <rights type="text">Digital boundaries and variables: copyright University of Queensland. Census information: based on Australian Bureau of Statistics data. Electoral division, booth and voting information: incorporates data that is copyright Commonwealth of Australia (Australian Electoral Commission)</rights>
+  <rdfa:meta property="http://purl.org/dc/terms/accessRights" content="Conditions apply to the use of the data. Contact Paul Shyy or Bob Stimson for access to the data." />
+  <rdfa:meta property="http://purl.org/dc/terms/temporal" content="start=2006;end=2007;" />
+  <georss:polygon>-9.3985000000002 143.4947 -24.4123 154.9387 -30.5956 155.3876 -45.5735 149.4398 -45.5232 145.3856 -34.4765 130.4967 -37.3957 117.4523 -34.4645 113.5287 -21.3876 112.4745 -10.3825 129.4475 -9.3985000000002 143.4947</georss:polygon>
+  <link href="http://www.geonames.org/2077456/" rel="http://purl.org/dc/terms/spatial" title="Australia" />
+  <app:control xmlns:app="http://www.w3.org/2007/app">
+    <app:draft>no</app:draft>
+  </app:control>
+  <source>
+    <id>http://dataspace.uq.edu.au/</id>
+    <title type="text">UQ Data Collections Registry</title>
+    <author>
+      <name>Dr Nigel Ward</name>
+      <email>n.ward4@uq.edu.au</email>
+    </author>
+    <link href="http://www.uq.edu.au" rel="http://purl.org/dc/terms/publisher" title="The University of Queensland" />
+    <rights type="text">All Rights reserved to UQ Data Collections Registry</rights>
+    <link href="http://creativecommons.org/licenses/by-nc/2.5/rdf" rel="license" />
+  </source>
+  <link href="http://dataspace.uq.edu.au/collections/4/2" rel="working-copy" title="2" />
+  <link href="http://dataspace.uq.edu.au/collections/4/2" rel="latest-version" title="2" />
+  <link href="http://dataspace.uq.edu.au/collections/4" rel="edit" />
+  <link href="http://dataspace.uq.edu.au/collections/4/1" rel="predecessor-version" />
+  <link href="http://dataspace.uq.edu.au/collections/4?repr=application/xhtml+xml" type="application/xhtml+xml" rel="alternate" title="xhtml" />
+  <link href="http://dataspace.uq.edu.au/collections/4?repr=application/rdf+xml" type="application/rdf+xml" rel="alternate" title="rdf" />
+  <link href="http://dataspace.uq.edu.au/collections/4?repr=application/rifcs+xml" type="application/rifcs+xml" rel="alternate" title="rifcs" />
+</entry>
