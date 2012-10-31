@@ -87,27 +87,61 @@ class RifcsRecordObserver < ActiveRecord::Observer
       split_rifcs_document.each do |xml|
         concept = Miletus::Merge::Concept.find_existing(xml)
         concept ||= Miletus::Merge::Concept.create()
-        concept.facets.create(:metadata => xml)
+        facet = concept.facets.create(:metadata => xml)
+        if record.respond_to?(:facet_links)
+          record.facet_links.create(:facet => facet)
+        end
       end
     end
   end
 
   class UpdateFacetJob < AbstractJob
     def run
+      existing_links = nil
+      if record.respond_to?(:facet_links)
+        existing_links = record.facet_links.all
+      end
+      facets = []
       split_rifcs_document.each do |xml|
         facet = Miletus::Merge::Facet.find_existing(xml)
-        return CreateFacetJob.new(record).run if facet.nil?
-        facet.metadata = xml
-        facet.save!
+        if facet.nil?
+          concept = Miletus::Merge::Concept.find_existing(xml)
+          concept ||= Miletus::Merge::Concept.create()
+          facet = concept.facets.create(:metadata => xml)
+        else
+          facet.metadata = xml
+          facet.save!
+        end
+        facets << facet
+      end
+      unless existing_links.nil?
+        # Remove links (and facets) for no longer present facets
+        existing_links.reject{|l| facets.include?(l.facet)}.each do |l|
+          existing_links.delete(l)
+          l.destroy
+        end
+        # Refresh record to update the existing links
+        record.reload
+        # Create new links where necessary
+        facets.each do |facet|
+          unless existing_links.detect {|l| l.facet == facet}
+            record.facet_links.create(:facet => facet)
+          end
+        end
+        puts record.facet_links.inspect
       end
     end
   end
 
   class RemoveFacetJob < AbstractJob
     def run
-      split_rifcs_document.each do |xml|
-        facet = Miletus::Merge::Facet.find_existing(xml)
-        facet.destroy unless facet.nil?
+      if record.respond_to?(:facet_links)
+        record.facet_links.destroy_all
+      else
+        split_rifcs_document.each do |xml|
+          facet = Miletus::Merge::Facet.find_existing(xml)
+          facet.destroy unless facet.nil?
+        end
       end
     end
   end

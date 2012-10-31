@@ -1,0 +1,155 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/xml
+      Last-Modified:
+      - Wed, 26 Oct 2011 22:36:38 GMT
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '8762'
+      Server:
+      - nginx/0.8.55
+      Date:
+      - Wed, 31 Oct 2012 00:30:20 GMT
+      Etag:
+      - ! '"432a50-223a-4b03b4a014980"'
+      Age:
+      - '3103'
+      X-Cache:
+      - HIT from proxy7.uq.edu.au
+      X-Cache-Lookup:
+      - HIT from proxy7.uq.edu.au:80
+      Via:
+      - 1.1 proxy7.uq.edu.au:80 (squid/2.7.STABLE9)
+      Connection:
+      - close
+    body:
+      encoding: US-ASCII
+      string: ! "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<xsd:schema version=\"1.3\"
+        \n            xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"\n            xmlns=\"http://ands.org.au/standards/rif-cs/registryObjects\"\n
+        \           targetNamespace=\"http://ands.org.au/standards/rif-cs/registryObjects\"\n
+        \           elementFormDefault=\"qualified\"\n            attributeFormDefault=\"unqualified\">\n
+        \    \n    <xsd:annotation>\n        <xsd:documentation xml:lang=\"en\">\n
+        \           An early draft of an ISO2146 schema to promote discussion. This
+        is intended as an alternative to that currently published on the draft ISO2146
+        web site. It is based on experience from the pilot collection and services
+        registry developed under the APSR ORCA project (see http://www.apsr.edu.au/orca/index.htm).\n
+        \       </xsd:documentation>\n    </xsd:annotation>\n\n    <xsd:annotation>\n
+        \       <xsd:documentation xml:lang=\"en\">\n            The schema structure
+        has been based on the original PREMIS approach where the core objects are
+        provided their own schema. This may be useful in a maintenance context, a
+        usability context, in establishing focussed working groups, and even swapping
+        out alternative models should better representations of core entities become
+        available in the future. It may be useful in allowing more targetted processing
+        and data exchange.\n        </xsd:documentation>\n    </xsd:annotation>\n\n
+        \   <xsd:annotation>\n        <xsd:documentation xml:lang=\"en\">\n            Each
+        sub-schema represents one of the object sub-types. While there are commonalities
+        across the different entities, the content model of a property may in future
+        be better controlled/tailored if they are tied to their object type. In this
+        schema the common elements are replicated in each of the different registry
+        object classes. This will in future allow different rules (content models)
+        to be imposed on how they are expressed. While at a theoretical level this
+        is redundant (and theoreticians may shudder!) in practice this is likely to
+        be needed and will make an implementors job a little easier.\n        </xsd:documentation>\n
+        \   </xsd:annotation>\n    \n    <xsd:annotation>\n        <xsd:documentation
+        xml:lang=\"en\">\n            Change history\n            v1.3 - 12 September
+        2011\n                * add new rights element\n                * add new
+        existenceDate element\n                * add new termIdentifier attribute
+        to subject element\n                * add new publisher element to citationMetadata\n
+        \           v1.2.0 - 7 July 2010\n                * remove type attribute
+        from location\n                * add coverage element to collection, party,
+        service and activity\n                * change relatedInfoType content model
+        and add type attribute\n                * add citationInfoType and citation
+        element to collection\n            v1.0.1 - 4 June 2009\n                *
+        added type attribute to location\n            v1.0 - 13 March 2009\n                *
+        remove dateCreated attribute\n                * move dateModified attribute
+        to individual object classes and make optional\n                * add dateAccessioned
+        attribute to collection\n                * add originatingSource element under
+        registryObject with optional type attribute\n                * change simpleNameType
+        and complexType to a single nameType\n                * make the relation
+        element's description element optional\n                * move date range
+        attributes from physical and spatial up to the location element\n                *
+        import namespace in registryTypes.xsd updated to proper XML namespace and
+        schema location\n                * update default and target namespace to
+        reflect ANDS ownership\n                * remove xml:lang from namePart and
+        addressPart\n            v0.4 - 29 Feb 2008 (Review feedback during ORCA redevelopment)\n
+        \               * Removed dateRangeType and converted to attribute group\n
+        \               * Registry object wrapper element and relocation of key element
+        and common attributes\n                * Remove type attribute from common
+        attributes (in support of object wrapper element)\n                * Change
+        relation type element from NMTOKENS to xsd:string to support simpler processing
+        of relations\n                * Electronic address element type attribute
+        now optional\n                * Removed type attribute from relatedObjectType\n
+        \               * Removed uri element from relatedObjectType\n                *
+        Add type attribute to complexNameType\n                * Drop uri element
+        from electronicAddressType, add value element in its place\n                *
+        Remove args element from relatedObject\n                * Add description
+        element and type attribute to relation element\n            v0.3 - 20 Feb
+        2008\n                * Added group attribute to registry objects\n            v0.2
+        - 4 Feb 2008 (ORCA developer meeting)\n                * enumeration values
+        moved to external vocabularies\n                * dateCreated attribute added
+        to all repository objects\n                * type attribute added to description
+        element\n                * collection/service relation model applied to party,
+        activity\n                * profile element removed\n                * type
+        library created and imports added to object schemas\n                * type
+        attribute added to collection element\n            v0.1 - 7 Dec 2007\n                *
+        Initial Draft\n        </xsd:documentation>\n    </xsd:annotation>\n\n    <xsd:include
+        schemaLocation=\"activity.xsd\"/>\n    <xsd:include schemaLocation=\"collection.xsd\"/>\n
+        \   <xsd:include schemaLocation=\"party.xsd\"/>\n    <xsd:include schemaLocation=\"service.xsd\"/>\n\n
+        \   <xsd:element name=\"registryObjects\">\n        <xsd:annotation>\n            <xsd:documentation>\n
+        \               Wrapper element for registryObject elements.\n            </xsd:documentation>\n
+        \       </xsd:annotation>\n        <xsd:complexType>\n            <xsd:sequence>\n
+        \               <xsd:element name=\"registryObject\" minOccurs=\"0\" maxOccurs=\"unbounded\">\n
+        \                   <xsd:annotation>\n                        <xsd:documentation>\n
+        \                           This element is a wrapper element containing descriptive
+        and administrative metadata for a single registry object.\n                        </xsd:documentation>\n
+        \                   </xsd:annotation>\n                    <xsd:complexType>\n
+        \                       <xsd:sequence>\n                            <xsd:element
+        name=\"key\" type=\"xsd:string\" minOccurs=\"1\" maxOccurs=\"1\">\n                            <xsd:annotation>\n
+        \                               <xsd:documentation>\n        \t                        The
+        key (or primary identifier) of an object. It must unique within its context
+        of use.\n                                </xsd:documentation>\n                            </xsd:annotation>\n
+        \                           </xsd:element>\n                            <xsd:element
+        name=\"originatingSource\" minOccurs=\"1\" maxOccurs=\"1\">\n\t\t\t\t\t\t\t\t<xsd:annotation>\n\t
+        \                               <xsd:documentation>\n\t\t\t                            A
+        string or URI identifying the entity holding the managed version of the registry
+        object metadata. For example in a federated aggregation context this must
+        identify the original repository or owning institution from which the metadata
+        was harvested *not* the aggregator from which it was harvested.\n        \t
+        \                       </xsd:documentation>\n\t\t\t\t\t\t\t\t</xsd:annotation>\n\t\t\t\t\t\t\t\t<xsd:complexType>\n\t\t\t
+        \       \t            <xsd:simpleContent>\n\t\t\t            \t            <xsd:extension
+        base=\"xsd:string\">\n\t\t\t                \t            <xsd:attribute name=\"type\"
+        use=\"optional\" type=\"xsd:string\">\n\t\t\t\t                \t            <xsd:annotation>\n\t\t\t\t\t\t\t\t\t
+        \   \t        <xsd:documentation>A value taken from a controlled vocabulary
+        indicating the type of originating source.</xsd:documentation>\n\t\t\t\t\t\t\t\t\t\t\t\t</xsd:annotation>\n\t\t\t\t\t\t\t\t\t\t\t</xsd:attribute>\n\t\t\t
+        \                   \t    </xsd:extension>\n\t\t\t                    \t</xsd:simpleContent>\n\t\t\t\t
+        \               </xsd:complexType>\n\t\t\t\t\t\t\t</xsd:element>                    \n
+        \                           <xsd:choice>\n                                <xsd:element
+        ref=\"activity\" minOccurs=\"1\" maxOccurs=\"1\"/>\n                                <xsd:element
+        ref=\"collection\" minOccurs=\"1\" maxOccurs=\"1\"/>\n                                <xsd:element
+        ref=\"party\" minOccurs=\"1\" maxOccurs=\"1\"/>\n                                <xsd:element
+        ref=\"service\" minOccurs=\"1\" maxOccurs=\"1\"/>\n                            </xsd:choice>\n
+        \                       </xsd:sequence>\n                        \n                        <xsd:attributeGroup
+        ref=\"registryObjectAttributes\"/>\n                        \n                    </xsd:complexType>\n
+        \               </xsd:element>\n            </xsd:sequence>\n        </xsd:complexType>\n
+        \   </xsd:element>\n    \n</xsd:schema>"
+    http_version: 
+  recorded_at: Wed, 31 Oct 2012 01:22:03 GMT
+recorded_with: VCR 2.2.5

@@ -8,6 +8,8 @@ module Miletus::Harvest::Document
     self.table_name = 'harvest_documents'
     attr_accessible :url
     has_attached_file :document
+    has_many :facet_links, :as => :harvest_record,
+      :class_name => 'Miletus::Harvest::FacetLink'
 
     validates :url, :presence => true
     validates_format_of :url, :with => URI::regexp(%w(http https file))
