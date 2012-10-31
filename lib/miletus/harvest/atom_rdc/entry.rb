@@ -47,6 +47,9 @@ module Miletus::Harvest::Atom::RDC
       :class_name => 'Miletus::Harvest::Atom::RDC::Feed',
       :counter_cache => :entry_count
 
+    has_many :facet_links, :as => :harvest_record,
+      :class_name => 'Miletus::Harvest::FacetLink'
+
     def atom_entry
       begin
         Atom::Entry.new(XML::Reader.string(xml))
@@ -116,6 +119,7 @@ module Miletus::Harvest::Atom::RDC
     end
 
     def to_rif
+      return nil if xml.nil?
       Nokogiri::XML::Builder.new do |xml|
         xml.registryObjects(:xmlns => ns_by_prefix('rif').uri) {
           xml.registryObject(:group => source.title) {

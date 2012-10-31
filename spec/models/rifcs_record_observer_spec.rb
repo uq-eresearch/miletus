@@ -4,7 +4,8 @@ describe RifcsRecordObserver do
 
   subject { RifcsRecordObserver.instance }
 
-  it { should respond_to(:after_create, :after_update, :after_destroy) }
+  it { should respond_to(
+        :after_create, :after_update, :after_destroy, :after_touch) }
 
   describe "RIF-CS splitting with Reader" do
 
@@ -33,7 +34,7 @@ describe RifcsRecordObserver do
       end
       job = DummyJob.new(record)
       # Check the number is at least correct
-      job.split_rifcs_document.count.should == 4
+      job.split_rifcs_document.count.should be == 4
       # Check that each doc is the same
       expected_docs = split_rifcs_document(record)
       actual_docs = job.split_rifcs_document
@@ -108,7 +109,7 @@ describe RifcsRecordObserver do
       input_record = create_input_record
       # Run hook - which will happen as part of the environment
       # subject.after_create(input_record)
-      Miletus::Merge::Concept.all.count.should == 1
+      Miletus::Merge::Concept.all.count.should be == 1
       # A new concept should exist as a result
       concept = Miletus::Merge::Concept.find(:first)
       concept.should_not be_nil
@@ -126,7 +127,7 @@ describe RifcsRecordObserver do
       # Run hook - which will happen as part of the environment
       # subject.after_update(input_record)
       # Check the concept was updated
-      Miletus::Merge::Concept.all.count.should == 1
+      Miletus::Merge::Concept.all.count.should be == 1
       concept = Miletus::Merge::Concept.find(:first)
       rifcs_doc = Nokogiri::XML::Document.parse(concept.to_rif)
       rifcs_doc.xpath("//rif:namePart[@type='given'][text()='John']",
@@ -140,7 +141,7 @@ describe RifcsRecordObserver do
       input_record = create_input_record
       # Run hook - which will happen as part of the environment
       # subject.after_create(input_record)
-      Miletus::Merge::Concept.all.count.should == 1
+      Miletus::Merge::Concept.all.count.should be == 1
       # A new record should exist as a result
       concept = Miletus::Merge::Concept.find(:first)
       concept.should_not be_nil
@@ -152,7 +153,7 @@ describe RifcsRecordObserver do
       # Run hook - which will happen as part of the environment
       # subject.after_update(input_record)
       # Check the record was updated
-      Miletus::Merge::Concept.all.count.should == 1
+      Miletus::Merge::Concept.all.count.should be == 1
       concept = Miletus::Merge::Concept.find(:first)
       concept.should_not be_nil
       concept.to_rif.should be_nil
@@ -165,7 +166,7 @@ describe RifcsRecordObserver do
       input_record = create_input_record
       # Run hook - which will happen as part of the environment
       # subject.after_create(input_record)
-      Miletus::Merge::Concept.all.count.should == 1
+      Miletus::Merge::Concept.all.count.should be == 1
       # A new record should exist as a result
       concept = Miletus::Merge::Concept.find(:first)
       concept.should_not be_nil
@@ -175,7 +176,7 @@ describe RifcsRecordObserver do
       # Run hook - which will happen as part of the environment
       # subject.after_destroy(input_record)
       # Check the record was updated
-      Miletus::Merge::Concept.all.count.should == 1
+      Miletus::Merge::Concept.all.count.should be == 1
       concept = Miletus::Merge::Concept.find(:first)
       concept.should_not be_nil
       concept.to_rif.should be_nil
@@ -187,15 +188,25 @@ describe RifcsRecordObserver do
       input_record_1 = create_input_record('party', 1)
       # Run hook - which will happen as part of the environment
       # subject.after_create(input_record)
-      Miletus::Merge::Concept.all.count.should == 1
+      Miletus::Merge::Concept.all.count.should be == 1
       # Run hook - which will happen as part of the environment
       input_record_2 = create_input_record('party', '1b')
-      Miletus::Merge::Concept.all.count.should == 1
+      Miletus::Merge::Concept.all.count.should be == 1
       # A new record should exist as a result
       concept = Miletus::Merge::Concept.find(:first)
       concept.should_not be(nil)
       concept.to_rif.should_not be(nil)
       concept.should have(2).facets
+    end
+
+    it "should update on touch" do
+      # Disable delayed run for hooks, and expect two job runs
+      RifcsRecordObserver.should_receive(:run_job).twice \
+        .and_return { |j| j.run }
+      # Create record (run #1)
+      input_record = create_input_record('party', 1)
+      # Trigger update (run #2)
+      input_record.touch
     end
 
   end
@@ -212,7 +223,7 @@ describe RifcsRecordObserver do
       # Disable delayed run for hooks
       RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
       # Check the database has no existing concepts
-      Miletus::Merge::Concept.count.should == 0
+      Miletus::Merge::Concept.count.should be == 0
       # Create entry
       entry = get_fixture(1)
       entry.save!
@@ -225,12 +236,12 @@ describe RifcsRecordObserver do
       # Disable delayed run for hooks
       RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
       # Check the database has no existing concepts
-      Miletus::Merge::Concept.count.should == 0
+      Miletus::Merge::Concept.count.should be == 0
       # Create entry
       entry = get_fixture(1)
       entry.save!
       # Check that associated concepts have been created
-      Miletus::Merge::Concept.count.should == 6
+      Miletus::Merge::Concept.count.should be == 6
       updated_entry = entry.atom_entry
       updated_entry.content = "Test description"
       entry.xml = updated_entry.to_xml
@@ -239,7 +250,7 @@ describe RifcsRecordObserver do
         'identifier', 'http://dimer.uq.edu.au/ref/3r').concept
       doc = Miletus::Merge::RifcsDoc.parse(collection.to_rif)
       doc.at_xpath('//rif:description', ns_decl)\
-        .content.should == 'Test description'
+        .content.should be == 'Test description'
       # Check that associated concepts have been created
       Miletus::Merge::Concept.count.should == 6
     end
@@ -259,7 +270,7 @@ describe RifcsRecordObserver do
       # Disable delayed run for hooks
       RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
       # Check the database has no existing concepts
-      Miletus::Merge::Concept.count.should == 0
+      Miletus::Merge::Concept.count.should be == 0
       # Create entry
       document = Miletus::Harvest::Document::RIFCS.new(:url => fixture_url)
       document.save!
@@ -272,7 +283,7 @@ describe RifcsRecordObserver do
       # Disable delayed run for hooks
       RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
       # Check the database has no existing concepts
-      Miletus::Merge::Concept.count.should == 0
+      Miletus::Merge::Concept.count.should be == 0
       # Create entry
       VCR.use_cassette('ands_rifcs_example') do
         document = Miletus::Harvest::Document::RIFCS.new(

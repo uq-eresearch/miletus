@@ -21,6 +21,8 @@ module Miletus::Harvest::OAIPMH::RIFCS
     belongs_to :record_collection,
       :class_name => 'Miletus::Harvest::OAIPMH::RIFCS::RecordCollection',
       :foreign_key => 'record_collection_id'
+    has_many :facet_links, :as => :harvest_record,
+      :class_name => 'Miletus::Harvest::FacetLink'
 
     # These fields should exist
     validates :identifier, :datestamp, :metadata, :presence => true

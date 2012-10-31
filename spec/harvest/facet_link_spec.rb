@@ -42,4 +42,66 @@ describe Miletus::Harvest::FacetLink do
     end
   end
 
+  describe "integration with Miletus::Harvest::Atom::RDC::Entry" do
+    let :fixture do
+      fixture_file = File.join(File.dirname(__FILE__),
+          '..', 'fixtures', 'atom-entry-1.xml')
+      Miletus::Harvest::Atom::RDC::Entry.new(:xml => IO.read(fixture_file))
+    end
+
+    it "should use with add, update and delete" do
+      # Disable delayed run for hooks
+      RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
+      # Check the database has no existing concepts
+      Miletus::Merge::Concept.count.should be == 0
+      # Create entry
+      entry = fixture
+      entry.should respond_to(:facet_links)
+      entry.save!
+      # Check that facet links have been created
+      entry.should have(6).facet_links
+      entry.xml = nil
+      entry.save!
+      entry.should have(0).facet_links
+    end
+  end
+
+  describe "integration with Miletus::Harvest::OAIPMH::RIFCS::Record" do
+    let(:fixture) do
+      # Load data from fixture
+      fixture_file = File.join(File.dirname(__FILE__),
+        '..', 'fixtures',"rifcs-party-1.xml")
+      xml = File.open(fixture_file) { |f| f.read }
+      # Create collection
+      rc = Miletus::Harvest::OAIPMH::RIFCS::RecordCollection.create(
+        :endpoint => 'http://example.test/oai'
+      )
+      # Create record
+      Miletus::Harvest::OAIPMH::RIFCS::Record.new.tap do |r|
+        r.record_collection = rc
+        r.identifier = 'http://example.test/1'
+        r.datestamp = Time.now
+        r.metadata = Nokogiri::XML(xml).tap do |doc|
+          old_root = doc.root
+          doc.root = Nokogiri::XML::Node.new('metadata', doc)
+          doc.root << old_root
+        end.to_s
+      end
+    end
+
+    it "should create a new concept for a new harvested record" do
+      # Disable delayed run for hooks
+      RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
+      input_record = fixture
+      input_record.should respond_to(:facet_links)
+      input_record.save!
+      # Check that facet links have been created
+      input_record.should have(1).facet_links
+      input_record.deleted = true
+      input_record.save!
+      # Check that facet links have been created
+      input_record.should have(0).facet_links
+    end
+  end
+
 end
