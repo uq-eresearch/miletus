@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121024050847) do
+ActiveRecord::Schema.define(:version => 20121031002144) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -61,6 +61,14 @@ ActiveRecord::Schema.define(:version => 20121024050847) do
   end
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
+
+  create_table "facet_links", :force => true do |t|
+    t.integer  "facet_id"
+    t.integer  "harvest_record_id"
+    t.string   "harvest_record_type"
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
+  end
 
   create_table "harvest_atom_rdc_entries", :force => true do |t|
     t.integer "feed_id"
