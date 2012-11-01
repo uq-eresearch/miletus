@@ -26,8 +26,8 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Record do
         LibXML::XML::Node.new('metadata'))
     oaiRecord.header.should respond_to('deleted?'.to_sym)
     record = Miletus::Harvest::OAIPMH::RIFCS::Record.from_oai(oaiRecord)
-    record.identifier.should == oaiRecord.header.identifier
-    record.datestamp.should == oaiRecord.header.datestamp
+    record.identifier.should be == oaiRecord.header.identifier
+    record.datestamp.should be == oaiRecord.header.datestamp
     record.metadata.should == oaiRecord.metadata.to_s
   end
 
@@ -37,8 +37,8 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Record do
       :datestamp => DateTime.now,
       :metadata => '<metadata/>')
     oaiRecord = record.to_oai
-    oaiRecord.header.identifier.should == record.identifier
-    oaiRecord.header.datestamp.should == record.datestamp
+    oaiRecord.header.identifier.should be == record.identifier
+    oaiRecord.header.datestamp.should be == record.datestamp
     oaiRecord.metadata.to_s.should == record.metadata
   end
 
