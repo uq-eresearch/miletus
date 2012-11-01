@@ -6,8 +6,7 @@ class CreateFacetLinks < ActiveRecord::Migration
       t.timestamps
     end
     # Trigger updates so the new links exist
-    ( Miletus::Harvest::Atom::RDC::Entry.all +
-      Miletus::Harvest::Document::RIFCS.all +
+    ( Miletus::Harvest::Document::RIFCS.all +
       Miletus::Harvest::OAIPMH::RIFCS::Record.all
     ).each do |record|
       RifcsRecordObserver.instance.after_touch(record)

@@ -6,7 +6,7 @@ class RifcsRecordObserver < ActiveRecord::Observer
 
   # Handles pretty much anything that provides :to_rif
   observe(
-    Miletus::Harvest::Atom::RDC::Entry,
+    Miletus::Harvest::Document::RDCAtom,
     Miletus::Harvest::Document::RIFCS,
     Miletus::Harvest::OAIPMH::RIFCS::Record)
 

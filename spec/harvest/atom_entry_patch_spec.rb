@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-require 'miletus/harvest/atom_rdc/atom_entry_patch'
+require 'miletus/harvest/atom_entry_patch'
 
 describe Atom::Entry do
 
@@ -46,7 +46,7 @@ describe Atom::Entry do
   describe ":georss_polygons" do
     subject do
       fixture_file = File.join(File.dirname(__FILE__),
-          '..', '..', 'fixtures', 'atom-entry-3.xml')
+          '..', 'fixtures', 'atom-entry-3.xml')
       Atom::Entry.new(XML::Reader.string(IO.read(fixture_file)))
     end
 
@@ -75,7 +75,7 @@ describe Atom::Entry do
   describe ":metas" do
     subject do
       fixture_file = File.join(File.dirname(__FILE__),
-          '..', '..', 'fixtures', 'atom-entry-1.xml')
+          '..', 'fixtures', 'atom-entry-1.xml')
       Atom::Entry.new(XML::Reader.string(IO.read(fixture_file)))
     end
 

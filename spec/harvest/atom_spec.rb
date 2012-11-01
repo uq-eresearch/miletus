@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe Miletus::Harvest::Atom::RDC do
+describe Miletus::Harvest::Atom do
 
   it "should expose jobs for updating feeds" do
-    Miletus::Harvest::Atom::RDC::Feed.create(
+    Miletus::Harvest::Atom::Feed.create(
       :url => 'http://example.test/feed.atom')
     subject.should have(1).jobs
     subject.jobs.each do |job|

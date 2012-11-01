@@ -15,9 +15,6 @@ describe Miletus::Harvest::FacetLink do
     it "should use with add, update and delete" do
       # Disable delayed run for hooks
       RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
-      VCR.use_cassette('lookup_rifcs_schema') do
-        ns_by_prefix('rif').schema # Pre-cache so we can use later
-      end
       # Create new doc
       doc = Miletus::Harvest::Document::RIFCS.new
       VCR.use_cassette('ands_rifcs_example') do
@@ -42,28 +39,12 @@ describe Miletus::Harvest::FacetLink do
     end
   end
 
-  describe "integration with Miletus::Harvest::Atom::RDC::Entry" do
-    let :fixture do
-      fixture_file = File.join(File.dirname(__FILE__),
-          '..', 'fixtures', 'atom-entry-1.xml')
-      Miletus::Harvest::Atom::RDC::Entry.new(:xml => IO.read(fixture_file))
+  describe "integration with Miletus::Harvest::Document::RDCAtom" do
+
+    it "should respond to :facet_links" do
+      Miletus::Harvest::Document::RDCAtom.respond_to?(:facet_links)
     end
 
-    it "should use with add, update and delete" do
-      # Disable delayed run for hooks
-      RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
-      # Check the database has no existing concepts
-      Miletus::Merge::Concept.count.should be == 0
-      # Create entry
-      entry = fixture
-      entry.should respond_to(:facet_links)
-      entry.save!
-      # Check that facet links have been created
-      entry.should have(6).facet_links
-      entry.xml = nil
-      entry.save!
-      entry.should have(0).facet_links
-    end
   end
 
   describe "integration with Miletus::Harvest::OAIPMH::RIFCS::Record" do

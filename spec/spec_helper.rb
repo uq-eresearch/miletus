@@ -12,6 +12,7 @@ def start_simplecov
     # Mixin namespace helpers
     config.include Miletus::NamespaceHelper
   end
+
 end
 
 Spork.prefork do

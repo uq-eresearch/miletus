@@ -27,8 +27,10 @@ module Miletus::Harvest::RDCAtom
 
     REL_TYPE = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
     REL_ACCESS_RIGHTS = 'http://purl.org/dc/terms/accessRights'
+    REL_DESCRIBES = 'http://www.openarchives.org/ore/terms/describes'
     REL_FAMILY_NAME = 'http://xmlns.com/foaf/0.1/familyName'
     REL_GIVEN_NAME = 'http://xmlns.com/foaf/0.1/givenName'
+    REL_TITLE = 'http://xmlns.com/foaf/0.1/title'
     REL_MADE = 'http://xmlns.com/foaf/0.1/made'
     REL_MBOX = 'http://xmlns.com/foaf/0.1/mbox'
     REL_OUTPUT_OF = \
@@ -56,14 +58,16 @@ module Miletus::Harvest::RDCAtom
       false
     end
 
+    def name_title
+      meta_content_with_property(REL_TITLE)
+    end
+
     def given_name
-      meta = metas.detect {|m| m.property == REL_GIVEN_NAME}
-      meta.nil? ? nil : meta.content
+      meta_content_with_property(REL_GIVEN_NAME)
     end
 
     def family_name
-      meta = metas.detect {|m| m.property == REL_FAMILY_NAME}
-      meta.nil? ? nil : meta.content
+      meta_content_with_property(REL_FAMILY_NAME)
     end
 
     def type
@@ -83,18 +87,19 @@ module Miletus::Harvest::RDCAtom
         else
           ['party', 'person']
         end
+      when 'http://xmlns.com/foaf/0.1/Person'
+        ['party', 'person']
       when 'http://purl.org/dc/dcmitype/Dataset'
         ['collection', 'dataset']
       when 'http://purl.org/dc/dcmitype/Collection'
         ['collection', 'collection']
       else
-        raise NotImplementedError.new('Unknown Atom RDC type')
+        raise NotImplementedError.new('Unknown Atom RDC type: #{link.inspect}')
       end
     end
 
     def access_rights
-      meta = metas.detect {|m| m.property == REL_ACCESS_RIGHTS}
-      meta.nil? ? nil : meta.content
+      meta_content_with_property(REL_ACCESS_RIGHTS)
     end
 
     def license
@@ -156,8 +161,14 @@ module Miletus::Harvest::RDCAtom
       xml.name(:type => 'primary') {
         case subtype
         when 'person'
-          xml.namePart family_name, :type => 'family'
-          xml.namePart given_name,  :type => 'given'
+          nameParts = {
+            'title' => name_title,
+            'family' => family_name,
+            'given' => given_name
+          }
+          nameParts.each do |k, v|
+            xml.namePart(v, :type => k) if v
+          end
         else
           xml.namePart title
         end
@@ -256,6 +267,9 @@ module Miletus::Harvest::RDCAtom
     end
 
     def rifcs_alternate_ids(xml)
+      links.select{|l| l.rel == REL_DESCRIBES}.each do |link|
+        xml.identifier(link.href, :type => 'uri')
+      end
       links.alternates.each do |link|
         xml.identifier(link.href, :type => 'uri')
       end
@@ -467,7 +481,11 @@ module Miletus::Harvest::RDCAtom
       } unless [access_rights, license, rights].all?(&:nil?)
     end
 
+    def meta_content_with_property(property)
+      meta = metas.detect {|m| m.property == property}
+      meta ? meta.content : nil
+    end
+
   end
 
 end
-
