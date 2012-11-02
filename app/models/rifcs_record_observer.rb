@@ -38,7 +38,7 @@ class RifcsRecordObserver < ActiveRecord::Observer
     # Split RIF-CS document into multiple documents representing a single facet
     def split_rifcs_document
       xml = record.to_rif_file rescue record.to_rif
-      return [] if xml.nil?
+      return [] if xml.nil? || xml == ''
       SplitDocumentWrapper.new(Nokogiri::XML::Reader(xml))
     end
 

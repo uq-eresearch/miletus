@@ -26,9 +26,6 @@ describe Miletus::Harvest::Atom::Feed do
         link.document.document.should be_present
         link.document.to_rif.should_not be_nil
       end
-      Miletus::Merge::Concept.all.each do |c|
-        puts c.to_rif
-      end
       Miletus::Merge::Concept.count.should be == 3
     end
   end
