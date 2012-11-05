@@ -5,9 +5,9 @@ module Miletus::Harvest::Document
 
   class Base < ActiveRecord::Base
 
-    self.table_name = 'harvest_documents'
+    self.table_name = :harvest_documents
 
-    attr_accessible :url
+    attr_accessible :url, :managed
 
     has_attached_file :document
     has_many :facet_links, :as => :harvest_record,
@@ -16,6 +16,8 @@ module Miletus::Harvest::Document
     validates :url, :presence => true
     validates_format_of :url, :with => URI::regexp(%w(http https file))
     validates_uniqueness_of :url
+
+    scope :unmanaged, where(:managed => false)
 
     def deleted?
       not document.present?

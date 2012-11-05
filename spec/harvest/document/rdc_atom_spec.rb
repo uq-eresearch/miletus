@@ -5,7 +5,9 @@ require 'yaml'
 
 describe Miletus::Harvest::Document::RDCAtom do
 
-  it { should respond_to(:url, :document, :fetch, :to_rif) }
+  it { should respond_to(:to_rif) }
+
+  it { should be_kind_of(Miletus::Harvest::Document::Base) }
 
   it "should produce valid RIF-CS" do
     subject.url = 'http://dimer.uq.edu.au/dataspace.atom'

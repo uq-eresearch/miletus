@@ -87,7 +87,7 @@ module Miletus::Harvest::Atom
           nil
         end
       return nil if model.nil?
-      model.find_or_create_by_url(:url => link.href)
+      model.find_or_create_by_url(:url => link.href, :managed => true)
     end
 
   end

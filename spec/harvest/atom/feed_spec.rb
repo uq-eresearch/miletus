@@ -24,6 +24,7 @@ describe Miletus::Harvest::Atom::Feed do
         atom_link = e.links.alternates.first
         link.document.url.should be == atom_link.href
         link.document.document.should be_present
+        link.document.should be_managed
         link.document.to_rif.should_not be_nil
       end
       Miletus::Merge::Concept.count.should be == 3

@@ -1,5 +1,5 @@
 class RemoveAtomRdcAndCreateAtom < ActiveRecord::Migration
-  def up
+  def change
     drop_table :harvest_atom_rdc_feeds
     drop_table :harvest_atom_rdc_entries
 
@@ -25,10 +25,8 @@ class RemoveAtomRdcAndCreateAtom < ActiveRecord::Migration
 
     # Add column to distinguish between user-created and managed documents
     add_column :harvest_documents, :managed, :boolean, { :default => false }
+    # Reset column info for unit tests
+    Miletus::Harvest::Document::Base.reset_column_information
 
-  end
-
-  def down
-    raise NotImplementedError.new("Deleting table, can't go back.")
   end
 end

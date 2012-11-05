@@ -5,7 +5,9 @@ require 'yaml'
 
 describe Miletus::Harvest::Document::RIFCS do
 
-  it { should respond_to(:url, :document, :fetch, :to_rif, :to_rif_file) }
+  it { should respond_to(:to_rif, :to_rif_file) }
+
+  it { should be_kind_of(Miletus::Harvest::Document::Base) }
 
   it "should work for the file scheme" do
     fixture_file = File.expand_path(

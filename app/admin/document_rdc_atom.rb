@@ -1,7 +1,7 @@
 require 'miletus'
 
-ActiveAdmin.register Miletus::Harvest::Document::RIFCS,
-  :as => "Direct RIF-CS Documents" do
+ActiveAdmin.register Miletus::Harvest::Document::RDCAtom,
+  :as => "Direct RDC Atom Documents" do
 
   scope :unmanaged
 
@@ -17,14 +17,14 @@ ActiveAdmin.register Miletus::Harvest::Document::RIFCS,
   end
 
   form do |f|
-    f.inputs "RIF-CS Document" do
+    f.inputs "RDC Atom Document" do
       f.input :url
     end
     f.buttons
   end
 
   batch_action :fetch do |selection|
-    Miletus::Harvest::Document::RIFCS.find(selection).each do |doc|
+    Miletus::Harvest::Document::RDCAtom.find(selection).each do |doc|
       doc.delay.fetch
     end
     flash[:notice] = \
