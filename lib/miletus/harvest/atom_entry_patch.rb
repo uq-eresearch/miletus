@@ -43,9 +43,9 @@ Atom::Entry.class_eval do
     require 'geo_ruby'
     require 'geo_ruby/georss'
     require 'geo_ruby/simple_features/polygon'
-    k = '{http://www.georss.org/georss,polygon}'
-    return [] unless @simple_extensions.key? k
-    @simple_extensions[k].map do |point_string|
+    ns = 'http://www.georss.org/georss'
+    return [] if self[ns, 'polygon'].empty?
+    self[ns, 'polygon'].map do |point_string|
       GeoRuby::SimpleFeatures::Geometry.from_georss(
         '<g:polygon>%s</g:polygon>' % point_string)
     end

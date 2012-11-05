@@ -31,4 +31,9 @@ describe Miletus::Harvest::Atom::Feed do
     end
   end
 
+  it "should handle complete feeds" do
+    # TODO: Write a test to check it works
+    pending
+  end
+
 end
