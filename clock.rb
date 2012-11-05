@@ -6,7 +6,7 @@ module Clockwork
   every(5.minutes, 'check.upstreams') do
     require 'miletus'
     jobs = Miletus::Harvest::OAIPMH::RIFCS.jobs +
-           Miletus::Harvest::Atom::RDC.jobs
+           Miletus::Harvest::Atom.jobs
     if jobs.length > 0
       jobs.each do |job|
         puts "Scheduling harvest job for #{job}"
