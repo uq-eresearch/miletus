@@ -24,7 +24,7 @@ module Miletus
           def get(identifier)
             saw(identifier)
             r = self.records.find_by_identifier(identifier)
-            r && r.to_oai # Convert to OAI:Record unless nil
+            r.try(:to_oai) # Convert to OAI:Record unless nil
           end
 
           def add(oaiRecord)

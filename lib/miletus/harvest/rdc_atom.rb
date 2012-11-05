@@ -483,7 +483,7 @@ module Miletus::Harvest::RDCAtom
 
     def meta_content_with_property(property)
       meta = metas.detect {|m| m.property == property}
-      meta ? meta.content : nil
+      meta.try(:content)
     end
 
   end
