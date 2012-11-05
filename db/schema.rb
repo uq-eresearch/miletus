@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121031002144) do
+ActiveRecord::Schema.define(:version => 20121101051504) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -70,28 +70,41 @@ ActiveRecord::Schema.define(:version => 20121031002144) do
     t.datetime "updated_at",          :null => false
   end
 
-  create_table "harvest_atom_rdc_entries", :force => true do |t|
-    t.integer "feed_id"
-    t.text    "xml"
-    t.string  "atom_id"
+  create_table "harvest_atom_entries", :force => true do |t|
+    t.integer  "feed_id"
+    t.string   "identifier"
+    t.string   "updated"
+    t.text     "xml"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
-  create_table "harvest_atom_rdc_feeds", :force => true do |t|
-    t.string  "url",         :null => false
-    t.integer "entry_count"
+  create_table "harvest_atom_entry_documents", :force => true do |t|
+    t.integer  "entry_id"
+    t.integer  "document_id"
+    t.text     "info"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  create_table "harvest_atom_feeds", :force => true do |t|
+    t.string   "url"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "harvest_documents", :force => true do |t|
-    t.string   "type",                  :null => false
-    t.string   "url",                   :null => false
+    t.string   "type",                                     :null => false
+    t.string   "url",                                      :null => false
     t.string   "etag"
     t.string   "last_modified"
     t.string   "document_file_name"
     t.string   "document_content_type"
     t.integer  "document_file_size"
     t.datetime "document_updated_at"
-    t.datetime "created_at",            :null => false
-    t.datetime "updated_at",            :null => false
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
+    t.boolean  "managed",               :default => false
   end
 
   create_table "merge_concepts", :force => true do |t|
