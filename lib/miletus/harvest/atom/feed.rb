@@ -1,4 +1,5 @@
 require 'atom'
+require 'algorithms'
 
 module Miletus::Harvest::Atom
 
@@ -40,7 +41,9 @@ module Miletus::Harvest::Atom
     private
 
     def walk_and_mirror(re, read_to_end)
-      stack = re.map do |entry|
+      # We want an efficient stack, so use one
+      stack = Containers::Stack.new
+      re.each do |entry|
         # Find existing entry
         e = entries.find_by_identifier(entry.id)
         if e.nil?
@@ -55,12 +58,10 @@ module Miletus::Harvest::Atom
         # Update content
         e.xml = entry.to_xml
         # Put in queue to save (so we save in chronological order)
-        e
+        stack << e
       end
-      # Reverse in place to get the effect of a stack
-      stack.reverse!
-      # Save entries in chronological order
-      stack.map {|e| e.save!}
+      # Save entries in chronological order (stack iterates LIFO)
+      stack.map {|e| e.save! && e}
     end
 
 

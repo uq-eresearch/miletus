@@ -19,7 +19,7 @@ http_interactions:
       Server:
       - nginx/1.0.15
       Date:
-      - Mon, 05 Nov 2012 23:22:23 GMT
+      - Mon, 05 Nov 2012 23:22:27 GMT
       Content-Type:
       - application/atom+xml; type=entry;charset=atom
       Transfer-Encoding:
@@ -27,11 +27,11 @@ http_interactions:
       Connection:
       - keep-alive
       Etag:
-      - ! '"b69749e766eccb823d8cf6e223f898d3"'
+      - ! '"7b561886f3b7e836a99113924c566ea6"'
       Vary:
       - Accept
       Last-Modified:
-      - Mon, 05 Nov 2012 23:21:11 GMT
+      - Mon, 05 Nov 2012 23:22:25 GMT
       Location:
       - http://dataspace.uq.edu.au/collections/1r
     body:
@@ -54,27 +54,28 @@ http_interactions:
         from each of the industry partners. Some aspects of the work were further
         supported by funding from the Murray Darling Basin Commission and the New
         South Wales Department of Conservation.</content>\n  <link href=\"http://dataspace.uq.edu.au/collections/1r\"
-        rel=\"self\" title=\"1r\" />\n  <updated>2012-11-05T23:21:11.848Z</updated>\n
+        rel=\"self\" title=\"1r\" />\n  <updated>2012-11-05T23:22:25.855Z</updated>\n
         \ <published>2012-07-11T06:58:45.965Z</published>\n  <link href=\"http://dataspace.uq.edu.au/collections/1r#\"
-        rel=\"http://www.openarchives.org/ore/terms/describes\" />\n  <author>\n    <name>Anthony
-        Pople</name>\n    <email>tony.pople@deedi.qld.gov.au</email>\n    <uri>http://dataspace.uq.edu.au/agents/17#</uri>\n
-        \ </author>\n  <author>\n    <name>Emeritus Professor Gordon Grigg</name>\n
-        \   <email>g.grigg@uq.edu.au</email>\n    <uri>http://dataspace.uq.edu.au/agents/15#</uri>\n
-        \ </author>\n  <link href=\"http://purl.org/dc/dcmitype/Collection\" rel=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\"
+        rel=\"http://www.openarchives.org/ore/terms/describes\" />\n  <author>\n    <name>Emeritus
+        Professor Gordon Grigg</name>\n    <email>g.grigg@uq.edu.au</email>\n    <uri>http://dataspace.uq.edu.au/agents/15#</uri>\n
+        \ </author>\n  <author>\n    <name>Anthony Pople</name>\n    <email>tony.pople@deedi.qld.gov.au</email>\n
+        \   <uri>http://dataspace.uq.edu.au/agents/17#</uri>\n  </author>\n  <link
+        href=\"http://purl.org/dc/dcmitype/Collection\" rel=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\"
         title=\"Collection\" />\n  <rdfa:meta property=\"http://purl.org/dc/terms/alternative\"
         content=\"Kangaroo survey\" />\n  <link href=\"http://espace.library.uq.edu.au/collection/UQ:27\"
-        rel=\"http://xmlns.com/foaf/0.1/page\" />\n  <category term=\"http://purl.org/asc/1297.0/2008/for/050206\"
-        scheme=\"http://purl.org/asc/1297.0/2008/for/\" label=\"050206 - Environmental
-        Monitoring\" />\n  <category term=\"Macropus robustus\" />\n  <category term=\"http://purl.org/asc/1297.0/2008/for/050202\"
+        rel=\"http://xmlns.com/foaf/0.1/page\" />\n  <category term=\"harvesting\"
+        />\n  <category term=\"Macropus robustus\" />\n  <category term=\"http://purl.org/asc/1297.0/2008/for/050202\"
         scheme=\"http://purl.org/asc/1297.0/2008/for/\" label=\"050202 - Conservation
-        and Biodiversity\" />\n  <category term=\"Macropus fuliginosus\" />\n  <category
-        term=\"rangelands\" />\n  <category term=\"Macropus giganteus\" />\n  <category
-        term=\"monitoring\" />\n  <category term=\"harvesting\" />\n  <category term=\"Macropus
-        rufus\" />\n  <category term=\"aerial survey\" />\n  <rights type=\"text\">Data
-        contributed by The University of Queensland, Commonwealth Department of Environment
-        and Heritage, New South Wales Department of Conservation, Queensland Parks
-        and Wildlife Service, South Australian Department for Environment and Heritage,
-        University of New England, and Packer Tanning.</rights>\n  <rdfa:meta property=\"http://purl.org/dc/terms/accessRights\"
+        and Biodiversity\" />\n  <category term=\"aerial survey\" />\n  <category
+        term=\"Macropus rufus\" />\n  <category term=\"monitoring\" />\n  <category
+        term=\"http://purl.org/asc/1297.0/2008/for/050206\" scheme=\"http://purl.org/asc/1297.0/2008/for/\"
+        label=\"050206 - Environmental Monitoring\" />\n  <category term=\"rangelands\"
+        />\n  <category term=\"Macropus giganteus\" />\n  <category term=\"Macropus
+        fuliginosus\" />\n  <rights type=\"text\">Data contributed by The University
+        of Queensland, Commonwealth Department of Environment and Heritage, New South
+        Wales Department of Conservation, Queensland Parks and Wildlife Service, South
+        Australian Department for Environment and Heritage, University of New England,
+        and Packer Tanning.</rights>\n  <rdfa:meta property=\"http://purl.org/dc/terms/accessRights\"
         content=\"Data only available through negotiation with Professor Gordon Grigg.\"
         />\n  <rdfa:meta property=\"http://purl.org/dc/terms/temporal\" content=\"start=1975;end=2003;\"
         />\n  <app:control xmlns:app=\"http://www.w3.org/2007/app\">\n    <app:draft>no</app:draft>\n
@@ -94,7 +95,7 @@ http_interactions:
         type=\"application/rdf+xml\" rel=\"alternate\" title=\"rdf\" />\n  <link href=\"http://dataspace.uq.edu.au/collections/1r?repr=application/rifcs+xml\"
         type=\"application/rifcs+xml\" rel=\"alternate\" title=\"rifcs\" />\n</entry>"
     http_version: 
-  recorded_at: Mon, 05 Nov 2012 23:22:23 GMT
+  recorded_at: Mon, 05 Nov 2012 23:22:27 GMT
 - request:
     method: get
     uri: http://dataspace.uq.edu.au/agents/15?repr=application/atom%20xml;type=entry
@@ -114,7 +115,7 @@ http_interactions:
       Server:
       - nginx/1.0.15
       Date:
-      - Mon, 05 Nov 2012 23:22:23 GMT
+      - Mon, 05 Nov 2012 23:22:27 GMT
       Content-Type:
       - application/atom+xml; type=entry;charset=atom
       Transfer-Encoding:
@@ -122,11 +123,11 @@ http_interactions:
       Connection:
       - keep-alive
       Etag:
-      - ! '"479c54b9e8ad07d40da76c771dfe6e66"'
+      - ! '"eef3fe2ecb709b0d463c3b2d68709203"'
       Vary:
       - Accept
       Last-Modified:
-      - Mon, 05 Nov 2012 23:21:12 GMT
+      - Mon, 05 Nov 2012 23:22:26 GMT
       Location:
       - http://dataspace.uq.edu.au/agents/15
     body:
@@ -137,7 +138,7 @@ http_interactions:
         type=\"text\">Emeritus Professor Gordon Grigg is a Emeritus Professor in the
         School of Biological Sciences at The University of Queensland.</content>\n
         \ <link href=\"http://dataspace.uq.edu.au/agents/15\" rel=\"self\" title=\"15\"
-        />\n  <updated>2012-11-05T23:21:12.281Z</updated>\n  <published>2012-07-11T07:05:26.613Z</published>\n
+        />\n  <updated>2012-11-05T23:22:26.527Z</updated>\n  <published>2012-07-11T07:05:26.613Z</published>\n
         \ <link href=\"http://dataspace.uq.edu.au/agents/15#\" rel=\"http://www.openarchives.org/ore/terms/describes\"
         />\n  <link href=\"http://xmlns.com/foaf/0.1/Person\" rel=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\"
         title=\"Person\" />\n  <rdfa:meta property=\"http://xmlns.com/foaf/0.1/title\"
@@ -163,7 +164,7 @@ http_interactions:
         rel=\"alternate\" title=\"rdf\" />\n  <link href=\"http://dataspace.uq.edu.au/agents/15?repr=application/rifcs+xml\"
         type=\"application/rifcs+xml\" rel=\"alternate\" title=\"rifcs\" />\n</entry>"
     http_version: 
-  recorded_at: Mon, 05 Nov 2012 23:22:23 GMT
+  recorded_at: Mon, 05 Nov 2012 23:22:27 GMT
 - request:
     method: get
     uri: http://dataspace.uq.edu.au/agents/17?repr=application/atom%20xml;type=entry
@@ -183,7 +184,7 @@ http_interactions:
       Server:
       - nginx/1.0.15
       Date:
-      - Mon, 05 Nov 2012 23:22:24 GMT
+      - Mon, 05 Nov 2012 23:22:27 GMT
       Content-Type:
       - application/atom+xml; type=entry;charset=atom
       Transfer-Encoding:
@@ -191,11 +192,11 @@ http_interactions:
       Connection:
       - keep-alive
       Etag:
-      - ! '"1d52c6d057a35b09b3cc08755e1b9772"'
+      - ! '"ded75c21ff606b4e076b9379261030d0"'
       Vary:
       - Accept
       Last-Modified:
-      - Mon, 05 Nov 2012 23:21:12 GMT
+      - Mon, 05 Nov 2012 23:22:25 GMT
       Location:
       - http://dataspace.uq.edu.au/agents/17
     body:
@@ -204,7 +205,7 @@ http_interactions:
         xmlns:rdfa=\"http://www.w3.org/ns/rdfa#\">\n  <id>http://dataspace.uq.edu.au/agents/17#</id>\n
         \ <title type=\"text\">Anthony Pople</title>\n  <content type=\"text\">Former
         student at UQ, and now based at DEEDI, Qld. </content>\n  <link href=\"http://dataspace.uq.edu.au/agents/17\"
-        rel=\"self\" title=\"17\" />\n  <updated>2012-11-05T23:21:12.691Z</updated>\n
+        rel=\"self\" title=\"17\" />\n  <updated>2012-11-05T23:22:25.459Z</updated>\n
         \ <published>2012-07-11T07:08:53.680Z</published>\n  <link href=\"http://dataspace.uq.edu.au/agents/17#\"
         rel=\"http://www.openarchives.org/ore/terms/describes\" />\n  <link href=\"http://xmlns.com/foaf/0.1/Person\"
         rel=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\" title=\"Person\" />\n
@@ -229,5 +230,5 @@ http_interactions:
         rel=\"alternate\" title=\"rdf\" />\n  <link href=\"http://dataspace.uq.edu.au/agents/17?repr=application/rifcs+xml\"
         type=\"application/rifcs+xml\" rel=\"alternate\" title=\"rifcs\" />\n</entry>"
     http_version: 
-  recorded_at: Mon, 05 Nov 2012 23:22:24 GMT
+  recorded_at: Mon, 05 Nov 2012 23:22:27 GMT
 recorded_with: VCR 2.2.5

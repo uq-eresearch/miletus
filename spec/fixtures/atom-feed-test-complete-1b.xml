@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"
+      xmlns:fh="http://purl.org/syndication/history/1.0">
+	<updated>2012-09-05T16:13:41+10:00</updated>
+	<title>Dataspace</title>
+	<fh:complete/>
+	<entry>
+    <id>http://example.test/2</id>
+		<title>Emeritus Professor Gordon Grigg</title>
+    <link rel="alternate" type="application/atom+xml"
+          href="http://dataspace.uq.edu.au/agents/15?repr=application/atom+xml;type=entry"/>
+		<updated>2012-09-05T16:13:26+10:00</updated>
+	</entry>
+  <entry>
+    <id>http://example.test/1</id>
+    <title>Kangaroo Populations of Eastern Australia - Ecology and Management</title>
+    <link rel="alternate" type="application/atom+xml"
+          href="http://dataspace.uq.edu.au/collections/1r?repr=application/atom+xml;type=entry"/>
+    <updated>2012-09-05T16:13:26+10:00</updated>
+  </entry>
+</feed>

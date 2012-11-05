@@ -31,9 +31,59 @@ describe Miletus::Harvest::Atom::Feed do
     end
   end
 
-  it "should handle complete feeds" do
-    # TODO: Write a test to check it works
-    pending
+  describe "normal feeds" do
+
+    def fixture_filename(suffix)
+      fixture_file = File.join(File.dirname(__FILE__),
+          '..', '..', 'fixtures', 'atom-feed-test-%s.xml' % suffix)
+    end
+
+
+    it "should not remove entries not seen in subsequent passes" do
+      VCR.use_cassette 'dataspace_rdcatom_feed_entries_normal_feed' do
+        subject.url = 'file://' + fixture_filename('1a')
+        subject.save!
+        subject.mirror
+        subject.reload
+        subject.entries.count.should be == 3
+        Miletus::Merge::Concept.count.should be == 3
+        # Parse again, seeing one less entry
+        subject.url = 'file://' + fixture_filename('1b')
+        subject.save!
+        subject.mirror
+        subject.reload
+        subject.entries.count.should be == 3
+      end
+    end
+
   end
+
+  describe "complete feeds" do
+
+    def fixture_filename(suffix)
+      fixture_file = File.join(File.dirname(__FILE__),
+          '..', '..', 'fixtures', 'atom-feed-test-complete-%s.xml' % suffix)
+    end
+
+    it "should remove entries not seen in subsequent passes" do
+      VCR.use_cassette 'dataspace_rdcatom_feed_entries_complete_feed' do
+        subject.url = 'file://' + fixture_filename('1a')
+        subject.save!
+        subject.mirror
+        subject.reload
+        subject.entries.count.should be == 3
+        Miletus::Merge::Concept.count.should be == 3
+        # Parse again, seeing one less entry
+        subject.url = 'file://' + fixture_filename('1b')
+        subject.save!
+        subject.mirror
+        subject.reload
+        subject.entries.count.should be == 2
+      end
+    end
+
+  end
+
+
 
 end

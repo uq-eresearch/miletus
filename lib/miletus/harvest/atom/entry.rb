@@ -57,7 +57,7 @@ module Miletus::Harvest::Atom
         alt_link_urls.include?(dl.document.url)
       end.each(&:destroy)
       # Add new documents
-      document_link_urls = document_links.map{|dl| document.url}
+      document_link_urls = document_links.map{|dl| dl.document.url}
       alt_links.reject do |l|
         document_link_urls.include?(l.href)
       end.each do |l|
