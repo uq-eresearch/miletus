@@ -7,7 +7,10 @@ module Miletus::Harvest::Atom
     store :info, :accessors => [:type, :length]
 
     belongs_to :entry, :class_name => 'Miletus::Harvest::Atom::Entry'
-    belongs_to :document, :class_name => 'Miletus::Harvest::Document::Base'
+
+    belongs_to :document,
+      :class_name => 'Miletus::Harvest::Document::Base',
+      :dependent => :destroy
 
   end
 

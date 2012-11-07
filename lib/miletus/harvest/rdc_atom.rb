@@ -391,7 +391,10 @@ module Miletus::Harvest::RDCAtom
           xml.key(rifcs_author_key(author))
           xml.originatingSource(source.id)
           xml.party(:type => 'group') {
-            xml.identifier(author.uri, :type => 'uri')
+            xml.identifier(author.uri, :type => 'uri') unless author.uri.nil?
+            unless author.email.nil?
+              xml.identifier("mailto:#{author.email}", :type => 'uri')
+            end
             xml.name(:type => 'primary') {
               xml.namePart(author.name)
             } unless author.name.nil?

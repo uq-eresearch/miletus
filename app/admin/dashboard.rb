@@ -8,11 +8,13 @@ ActiveAdmin.register_page "Dashboard" do
         panel "Statistics" do
           div do
             stats = {
-              'OAI-PMH input records' => \
-                Miletus::Harvest::OAIPMH::RIFCS::Record.count,
               'OAI-PMH endpoints' => \
                 Miletus::Harvest::OAIPMH::RIFCS::RecordCollection.count,
+              'Atom feeds' => Miletus::Harvest::Atom::Feed.count,
               'SRU interfaces' => Miletus::Harvest::SRU::Interface.count,
+              'OAI-PMH input records' => \
+                Miletus::Harvest::OAIPMH::RIFCS::Record.count,
+              'RDC Atom documents' => Miletus::Harvest::Document::RDCAtom.count,
               'RIF-CS documents' => Miletus::Harvest::Document::RIFCS.count,
               'concepts' => Miletus::Merge::Concept.count,
               'facets' => Miletus::Merge::Facet.count,

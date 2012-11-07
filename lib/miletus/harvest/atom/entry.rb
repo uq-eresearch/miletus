@@ -35,7 +35,8 @@ module Miletus::Harvest::Atom
       :class_name => 'Miletus::Harvest::Atom::Feed'
 
     has_many :document_links,
-      :class_name => 'Miletus::Harvest::Atom::DocumentLink'
+      :class_name => 'Miletus::Harvest::Atom::DocumentLink',
+      :dependent => :destroy
 
     def atom_entry
       begin

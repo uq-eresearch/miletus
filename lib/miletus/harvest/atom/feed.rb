@@ -24,7 +24,8 @@ module Miletus::Harvest::Atom
     attr_accessible :url
 
     has_many :entries,
-      :class_name => 'Miletus::Harvest::Atom::Entry'
+      :class_name => 'Miletus::Harvest::Atom::Entry',
+      :dependent => :destroy
 
     def mirror
       re = remote_entries
