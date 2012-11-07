@@ -38,9 +38,9 @@ init_graph = (selector) ->
         nodesToDelete = []
         # Add colour and transform square plotting to rectangle
         sigInst.iterNodes((node) ->
-          type = node['attr']['attributes'][0].val
-          subtype = node['attr']['attributes'][1].val
-          facets = node['attr']['attributes'][2].val
+          type = node['attr']['attributes']['type']
+          subtype = node['attr']['attributes']['subtype']
+          facets = node['attr']['attributes']['facets']
           node.color =
             switch type
               when 'party'

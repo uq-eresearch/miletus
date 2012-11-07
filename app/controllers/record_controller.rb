@@ -5,13 +5,17 @@ class RecordController < ApplicationController
   def index
     concepts = Miletus::Merge::Concept.order('updated_at DESC').all
     sorted_concepts = concepts.each_with_object({}) do |c, ch|
-      ch[c.type] ||= []
-      ch[c.type] << c
+      begin
+        ch[c.type] ||= []
+        ch[c.type] << c
+      rescue Error => e
+        Rails.logger.warn "#{e} | #{c.type}"
+      end
     end
     # Safety check in case some concepts won't classify
     if sorted_concepts.key? nil
       Rails.logger.warn "Concepts detected without type: %s" %
-        sorted_concepts[nil].inspect
+        sorted_concepts[nil].map(&:id).inspect
       sorted_concepts.delete(nil)
     end
     @concepts_by_type = Hash[sorted_concepts.sort]
