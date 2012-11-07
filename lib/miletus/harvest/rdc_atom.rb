@@ -310,7 +310,7 @@ module Miletus::Harvest::RDCAtom
       temporal_coverage.each do |meta|
         xml.coverage {
           xml.temporal {
-            meta.content.split(';').each do |chunk|
+            meta.content.split(/\s*;\s*/).each do |chunk|
               k, _, v = chunk.partition('=')
               next unless translation.key?(k)
               xml.date(v, :dateFormat => 'W3CDTF', :type => translation[k])

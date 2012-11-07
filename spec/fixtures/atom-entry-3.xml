@@ -24,7 +24,7 @@
   <link href="http://espace.library.uq.edu.au/view/UQ:198635" rel="http://purl.org/dc/terms/isReferencedBy" title="Developing a Web-Based e-Research Facility for Socio-Spatial Analysis to Investigate Relationships between Voting Patterns and Local Population Characteristics" />
   <rights type="text">Digital boundaries and variables: copyright University of Queensland. Census information: based on Australian Bureau of Statistics data. Electoral division, booth and voting information: incorporates data that is copyright Commonwealth of Australia (Australian Electoral Commission)</rights>
   <rdfa:meta property="http://purl.org/dc/terms/accessRights" content="Conditions apply to the use of the data. Contact Paul Shyy or Bob Stimson for access to the data." />
-  <rdfa:meta property="http://purl.org/dc/terms/temporal" content="start=2006;end=2007;" />
+  <rdfa:meta property="http://purl.org/dc/terms/temporal" content="start=2006; end=2007;" />
   <georss:polygon>-9.3985000000002 143.4947 -24.4123 154.9387 -30.5956 155.3876 -45.5735 149.4398 -45.5232 145.3856 -34.4765 130.4967 -37.3957 117.4523 -34.4645 113.5287 -21.3876 112.4745 -10.3825 129.4475 -9.3985000000002 143.4947</georss:polygon>
   <link href="http://www.geonames.org/2077456/" rel="http://purl.org/dc/terms/spatial" title="Australia" />
   <app:control xmlns:app="http://www.w3.org/2007/app">
