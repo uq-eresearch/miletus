@@ -21,6 +21,39 @@ describe SruRifcsLookupObserver do
     SruRifcsLookupObserver.run_job(test_job)
   end
 
+  it "should look up identifiers and keys" do
+    # Disable delayed run for hooks
+    SruRifcsLookupObserver.stub(:run_job).and_return { |j| j.run }
+    # Create concept and facet
+    xml = get_fixture('party', '1c')
+    # Create mock SRU Interface with expectations
+    sru_interface = double(Miletus::Harvest::SRU::Interface)
+    sru_interface.stub(:endpoint).and_return('http://example.test/sru')
+    sru_interface.should_receive(:suitable_type?).with('party').and_return(true)
+    looked_up = []
+    sru_interface.should_receive(:lookup_by_identifier).with(kind_of(String))\
+      .exactly(3).times \
+      .and_return do |ident|
+        looked_up << ident
+        nil
+      end
+    Miletus::Harvest::SRU::Interface.should_receive(:all).and_return(
+      [sru_interface]
+    )
+    # Create concept
+    concept = Miletus::Merge::Concept.create()
+    # Create record to trigger lookup
+    concept.facets.create(:metadata => Nokogiri::XML(xml).to_s)
+    # Check values
+    [
+      'http://nla.gov.au/nla.party-1486629',
+      'mirage.cmm.uq.edu.au/user/1',
+      concept.key
+    ].each do |ident|
+      looked_up.should include(ident)
+    end
+  end
+
   it "should do a new lookup when a facet is created" do
     VCR.use_cassette('nla_lookup_for_party_1c') do
       # Disable delayed run for hooks

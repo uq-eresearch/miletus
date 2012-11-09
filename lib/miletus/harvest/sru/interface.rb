@@ -46,7 +46,7 @@ module Miletus::Harvest::SRU
 
       num_records = records.number_of_records
       return nil if num_records.zero?
-      raise DataError, "multiple matches found: #{value}" if num_records > 1
+      raise Error, "multiple matches found: #{value}" if num_records > 1
 
       # Get the contents of the first record
       doc = Nokogiri::XML(records.first.to_s).root.children.first

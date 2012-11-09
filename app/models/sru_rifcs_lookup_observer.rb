@@ -13,7 +13,7 @@ class SruRifcsLookupObserver < ActiveRecord::Observer
       return if blocked_key?(facet.key)
       concept = facet.concept
     end
-    Miletus::Harvest::SRU::Interface.find(:all).each do |interface|
+    Miletus::Harvest::SRU::Interface.all.each do |interface|
       if interface.suitable_type?(concept.type)
         self.class.run_job(JobProcessor.new(concept, interface))
       end
@@ -67,6 +67,8 @@ class SruRifcsLookupObserver < ActiveRecord::Observer
       identifiers = \
         concept.indexed_attributes.where(
           :key => 'identifier').pluck(:value) +
+        concept.facets.pluck(:key) + # Handle systems that only index on key
+        [concept.key] + # Handle downstream system lookups
         concept.indexed_attributes.where(
           :key => 'email').pluck(:value).map {|e| "mailto:%s" % e }
       identifiers.each do |identifier|
