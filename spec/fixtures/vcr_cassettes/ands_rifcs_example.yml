@@ -19,7 +19,7 @@ http_interactions:
       Server:
       - nginx/0.8.55
       Date:
-      - Thu, 25 Oct 2012 01:57:09 GMT
+      - Thu, 08 Nov 2012 06:45:46 GMT
       Content-Type:
       - text/xml
       Last-Modified:
@@ -31,7 +31,7 @@ http_interactions:
       Content-Length:
       - '6459'
       Age:
-      - '126'
+      - '64421'
       X-Cache:
       - HIT from proxy7.uq.edu.au
       X-Cache-Lookup:
@@ -121,5 +121,5 @@ http_interactions:
         \       <endDate dateFormat=\"W3CDTF\">2007-05-01T00:00:00Z</endDate>\r\n
         \     </existenceDates>\r\n    </party>\r\n  </registryObject>\r\n</registryObjects>\r\n"
     http_version: 
-  recorded_at: Thu, 25 Oct 2012 01:59:15 GMT
+  recorded_at: Fri, 09 Nov 2012 00:39:27 GMT
 recorded_with: VCR 2.2.5

@@ -33,7 +33,21 @@ describe Miletus::Harvest::Document::RIFCS do
       subject.to_rif.should be == open(subject.url).read
       subject.document.content_type.should == 'application/xml'
     end
+  end
 
+  it "should work for gzipped representations" do
+    VCR.use_cassette('uq_rifcs_example') do
+      subject.url = \
+        'http://uq-eresearch.github.com/rifcs-examples/'+
+        'the_university_of_queensland.rifcs.xml'
+      subject.save!
+      subject.fetch
+    end
+    subject.document.should be_present
+    VCR.use_cassette('uq_rifcs_example') do
+      subject.to_rif.should be == Zlib::GzipReader.new(open(subject.url)).read
+      subject.document.content_type.should == 'application/xml'
+    end
   end
 
   it "should take advantage of Etag and Last-Modified headers" do

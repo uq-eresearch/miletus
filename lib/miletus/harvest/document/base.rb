@@ -29,10 +29,12 @@ module Miletus::Harvest::Document
         open(remote_file_location, fetch_options) do |f|
           tempfile = Tempfile.new('fetched-document-')
           begin
+            if f.respond_to?(:meta) and f.meta['content-encoding'] == 'gzip'
+              f = Zlib::GzipReader.new(f)
+            end
             IO.copy_stream(f, tempfile)
             tempfile.close
-            tempfile.open
-            self.document = tempfile
+            self.document = tempfile.open
           ensure
             tempfile.unlink
           end
@@ -62,6 +64,7 @@ module Miletus::Harvest::Document
 
     def fetch_options
       opts = {}
+      opts['Accept-Encoding'] = 'gzip;q=1.0,identity;q=0.5' # Prefer compression
       opts[:read_timeout] = 600 # Handle very large documents
       opts['If-None-Match'] = self.etag if self.etag
       opts['If-Modified-Since'] = self.last_modified if self.last_modified

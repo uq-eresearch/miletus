@@ -7,6 +7,8 @@ http_interactions:
       encoding: US-ASCII
       string: ''
     headers:
+      Accept-Encoding:
+      - gzip;q=1.0,identity;q=0.5
       If-None-Match:
       - ! '"41b1ee-193b-4b1ce1cf46280"'
       If-Modified-Since:
@@ -21,7 +23,7 @@ http_interactions:
       message: Not Modified
     headers:
       Date:
-      - Thu, 25 Oct 2012 01:57:09 GMT
+      - Thu, 08 Nov 2012 06:45:46 GMT
       Content-Type:
       - text/xml
       Last-Modified:
@@ -29,7 +31,7 @@ http_interactions:
       Etag:
       - ! '"41b1ee-193b-4b1ce1cf46280"'
       Age:
-      - '21520'
+      - '64428'
       X-Cache:
       - HIT from proxy7.uq.edu.au
       X-Cache-Lookup:
@@ -42,5 +44,5 @@ http_interactions:
       encoding: US-ASCII
       string: ''
     http_version: 
-  recorded_at: Thu, 25 Oct 2012 07:55:49 GMT
+  recorded_at: Fri, 09 Nov 2012 00:39:34 GMT
 recorded_with: VCR 2.2.5

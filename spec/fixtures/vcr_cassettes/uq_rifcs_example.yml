@@ -1,0 +1,71 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://uq-eresearch.github.com/rifcs-examples/the_university_of_queensland.rifcs.xml
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,identity;q=0.5
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Thu, 08 Nov 2012 06:31:53 GMT
+      Content-Type:
+      - text/xml
+      Last-Modified:
+      - Thu, 08 Nov 2012 06:31:23 GMT
+      Expires:
+      - Fri, 09 Nov 2012 06:31:53 GMT
+      Cache-Control:
+      - max-age=86400
+      Content-Encoding:
+      - gzip
+      Age:
+      - '65261'
+      Content-Length:
+      - '846'
+      X-Cache:
+      - HIT from proxy7.uq.edu.au
+      X-Cache-Lookup:
+      - HIT from proxy7.uq.edu.au:80
+      Via:
+      - 1.1 proxy7.uq.edu.au:80 (squid/2.7.STABLE9)
+      Connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        H4sIAAAAAAAAA61W23LTSBB95yum9ALURhrLMnackgVeQqqo8kJSxLW8jqS2
+        PSDNiLn48vfbI8mK4oRkl8UPsdXqPn36nvjtvizIFpTmUsy8MBh4BEQmcy7W
+        M295e+Wfe2+TF7GCNddGHT6n3yAzmqCV0DNvY0x1QSkTuQ6kWgfMUm3wialc
+        U8VXfoZf9029F6Sxvthr3iHsdrtgFzkMOhwMQvr1r8WXbAMl87lwiBnUdppf
+        6Fq8kBkzNeVfoEBaGw1qyzPQQZ9/LjNbgjA1vIsBQwiDiDZ+T6MJ9jr3EqR2
+        kiGyVtJWM+92A2QpeJ1gcyByRW4sgNAFuqzt0PI7HJKWkf0RQG5dGmPqxI2C
+        VHzNBRIS6y/SqgyO6mtuNjYNMllS+8MHBRqYyjYNax/2rKwK0DF9CNAAV0wh
+        KXOoYObVhFtKSIrnmAO+4qDa91Zx7zGad4oN28ds50t//mlxcf1hvuwwRMGC
+        tdy6WN3Pmoo/Gg/Ox5OY/htQlgovGUdkOhqSaTgk4/PRo4aCldDGUCleMnXo
+        okSu7u01+k6eqlRMO7U6cWhXS7qIez5YmirYcmbgWOBavwNY3jyLloPOFK9c
+        A7bEU8Vh1dF+iip5tbx5TbgmUoBrt7nFsWUFZy81qRSUrqAFdonAZiLYhOTY
+        NMQNGjfWedVBF2aPSxdt0Q7fUYDhsTxHIH0nQVm1OWieseKYfImDXMwbxV4J
+        6vS09q4SrXorWXAB3jPF6Rn3CTwP+6fiOmWYqJvFJRkNJsOY/jJWl+j/hmGg
+        gGqDxfpkyxSUl/wxDsmryWsSReM3JMTPT/FiesxwrxDHAJ6pDXrNjJKCZ226
+        cafy4rQqW1ZYSHC9lBY1642o33U7KqbN+7ZXmrG4A/4NpKz6CaV2Xbqr0V+Z
+        /4OPrjC8rle/l8W1LA7vpcRD5iXhmygYhFF05g8nwWg6OT+LBjFtTbqxoKdz
+        EcMejyaeU7jEddAbjhgnQRknJDn+uZKqZGbm/R29v7y9QnfTwdQPh37onBw1
+        79w8jooHqHBL56NYybamO0jx6uD4dBV6eq3fTydLpTV4hx7uYhws3BQFJHOn
+        QtxGa567rdHj0jjHXnUL3j3EJzcU/7s4varJPzP5nSSXCAAA
+    http_version: 
+  recorded_at: Fri, 09 Nov 2012 00:39:34 GMT
+recorded_with: VCR 2.2.5
