@@ -82,7 +82,7 @@ init_graph = (selector) ->
             0.1*$(targetElement).width(),
             0.1*$(targetElement).height(),
             0.8).draw()
-        , $(targetElement).attr('data-delay') || 30000)
+        , $(targetElement).attr('data-delay') || 15000)
 
 
         sigInst.bind('upnodes', (event) ->

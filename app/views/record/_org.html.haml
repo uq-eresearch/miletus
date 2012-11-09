@@ -11,6 +11,11 @@
           %address
             - address['addressLine'].each do |line|
               %span.block= line
+    - related_objects(doc, 'isPartOf').each do |org|
+      %li{:property => 'v:affiliation', :typeof => 'v:Organization'}
+        %i.icon-cog{:title => 'is part of'}
+        %a{:href => org.href}
+          %span{:property => 'v:name'}= org.title
     - email_uris(doc).each do |uri|
       %li
         %i.icon-envelope{:title => 'Email'}
