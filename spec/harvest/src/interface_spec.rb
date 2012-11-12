@@ -15,7 +15,7 @@ describe Miletus::Harvest::SRU::Interface do
       xml = interface.lookup_by_identifier(test_identifier)
       xml.should_not be_nil
       Nokogiri::XML(xml).at_xpath('//rif:identifier[@type="AU-ANL:PEAU"]',
-        ns_decl).content.strip.should == test_identifier
+        ns_decl).content.strip.should be == test_identifier
       Nokogiri::XML(xml).at_xpath('//rif:namePart[@type="family"]',
         ns_decl).content.strip.should == 'Drennan'
     end
@@ -36,10 +36,30 @@ describe Miletus::Harvest::SRU::Interface do
       xml = interface.lookup_by_identifier(test_identifier)
       xml.should_not be_nil
       Nokogiri::XML(xml).at_xpath('//rif:identifier[@type="AU-ANL:PEAU"]',
-        ns_decl).content.strip.should == test_identifier
+        ns_decl).content.strip.should be == test_identifier
       Nokogiri::XML(xml).at_xpath('//rif:namePart[@type="family"]',
         ns_decl).should be_nil
     end
+  end
+
+  # Editing with Active Admin can mangle the Array into a String, so check that
+  # this is handled.
+  it "should ensure :exclude_xpaths is always an Array" do
+    interface = Miletus::Harvest::SRU::Interface.create(
+      :endpoint => 'http://www.nla.gov.au/apps/srw/search/peopleaustralia',
+      :schema => ns_by_prefix('rif').uri,
+      :exclude_xpaths => <<-EOH
+        [
+          "//rif:registryObject/*/*[not(local-name()=\\\"identifier\\\")]",
+          "//rif:identifier[not(@type=\\\"AU-ANL:PEAU\\\")]"
+        ]
+      EOH
+      )
+    interface.exclude_xpaths.should be_a Array
+    interface.exclude_xpaths.should be == [
+      '//rif:registryObject/*/*[not(local-name()="identifier")]',
+      '//rif:identifier[not(@type="AU-ANL:PEAU")]'
+    ]
   end
 
 end

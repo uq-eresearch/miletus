@@ -12,6 +12,12 @@ module Miletus::Harvest::SRU
     validates_format_of :endpoint, :with => URI::regexp(%w(http https))
     validates_uniqueness_of :endpoint
 
+    before_save do
+      if self.exclude_xpaths.is_a? String
+        self.exclude_xpaths = eval self.exclude_xpaths
+      end
+    end
+
     def lookup_by_identifier(value)
       # Create Common/Contextual Query Language (CQL) query
 
