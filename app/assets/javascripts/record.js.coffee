@@ -100,3 +100,9 @@ else
   window.onload = init_graph('.sigma-expand')
 
 prettyPrint()
+
+$('.type-toggle').on('click', 'a', (event) ->
+  type = $(event.target).attr('data-type')
+  $('#concepts p[data-type="'+type+'"]').toggleClass('hidden')
+  $(event.delegateTarget).toggleClass('active'))
+

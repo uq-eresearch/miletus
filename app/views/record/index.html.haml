@@ -1,19 +1,20 @@
-%div.page-header
+.page-header
   %h1 Metadata Records
 
-%div.row-fluid
-  - @concepts_by_type.each do |type, concepts|
+.row-fluid
 
-    %div.span3
+  #concepts.span12
 
-      %h2
-        = type_image(type)
-        = type.pluralize.titleize
+    %ul.nav.nav-pills
+      - @types.sort.each do |ct|
+        %li.active.type-toggle
+          %a{:href => '#',
+             'data-type' => ct,
+             :title => 'Click to toggle '+ct.pluralize}
+            = ct.pluralize.titleize
 
-      - concepts.each do |c|
-        %p
-          - action = c.updated_at - c.created_at < 1 ? 'created' : 'updated'
-          %i{:class => action == 'created' ? 'icon-bolt' : 'icon-copy',
-             :title => "#{action} @ #{c.updated_at}"}
-          %a{:href => concept_path(c.id)}
-            = c.title
+    - @concepts.each do |c|
+      %p{'data-type' => c.type}
+        = type_image(c.type)
+        %a{:href => concept_path(c.id)}
+          = c.title
