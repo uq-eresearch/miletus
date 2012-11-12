@@ -34,6 +34,7 @@ init_graph = (selector) ->
       success: (data) ->
         sigInst.parseGexfDocument data
 
+        node_i = 0
         nodeCount = sigInst.getNodesCount()
         nodesToDelete = []
         # Add colour and transform square plotting to rectangle
@@ -55,11 +56,16 @@ init_graph = (selector) ->
                 '#44f'
               else
                 '#f0f'
-          node.size = facets
+          # Spiral outwards rather than random
+          angle = 0.5 * node_i++
+          node.x = (1 + 1 * angle) * Math.cos(angle)
+          node.y = (1 + 1 * angle) * Math.sin(angle)
+          # Rescale
           node.x = node.x * $(targetElement).width() / $(targetElement).height()
           if nodeCount > 1 and node.degree == 0
             # Drop unconnected
             nodesToDelete.push node.id
+          node.size = node.degree
         , null)
 
         window.sigInst = sigInst
