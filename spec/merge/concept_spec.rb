@@ -15,7 +15,7 @@ describe Miletus::Merge::Concept do
     end
   end
 
-  it { should respond_to(:facets, :indexed_attributes, :key) }
+  it { should respond_to(:facets, :indexed_attributes, :key, :sort_key) }
 
   it "should merge facet metadata when identifiers match" do
     # Create multi-faceted concept
@@ -30,8 +30,8 @@ describe Miletus::Merge::Concept do
       get_identifiers(f.to_rif).to_set.should be_subset(merged_identifiers)
     end
     merged_doc = Nokogiri::XML(concept.to_rif)
-    merged_doc.xpath('//rif:location', ns_decl).count.should == 2
-    merged_doc.xpath('//rif:name', ns_decl).count.should == 2
+    merged_doc.xpath('//rif:location', ns_decl).count.should be == 2
+    merged_doc.xpath('//rif:name', ns_decl).count.should be == 2
     merged_doc.xpath('//rif:name[@type="primary"]', ns_decl).count.should == 1
   end
 
@@ -42,14 +42,14 @@ describe Miletus::Merge::Concept do
       concept.facets.create(:metadata => fixture_xml)
       concept
     end
-    Miletus::Merge::Concept.count.should == 2
+    Miletus::Merge::Concept.count.should be == 2
     concepts.each do |concept|
       concept.should have(1).facets
       concept.to_rif.should_not be(nil)
     end
     Miletus::Merge::Concept.should respond_to(:deduplicate)
     Miletus::Merge::Concept.deduplicate
-    Miletus::Merge::Concept.count.should == 1
+    Miletus::Merge::Concept.count.should be == 1
     Miletus::Merge::Concept.where(:facets_count => 2).count.should == 1
   end
 
@@ -60,14 +60,14 @@ describe Miletus::Merge::Concept do
       concept.facets.create(:metadata => fixture_xml)
       concept
     end
-    Miletus::Merge::Concept.count.should == 2
+    Miletus::Merge::Concept.count.should be == 2
     concepts.each do |concept|
       concept.should have(1).facets
       concept.to_rif.should_not be(nil)
     end
     Miletus::Merge::Concept.should respond_to(:merge)
     Miletus::Merge::Concept.merge(concepts)
-    Miletus::Merge::Concept.count.should == 1
+    Miletus::Merge::Concept.count.should be == 1
     Miletus::Merge::Concept.where(:facets_count => 2).count.should == 1
   end
 
@@ -84,9 +84,9 @@ describe Miletus::Merge::Concept do
       get_identifiers(f.to_rif).to_set.should be_subset(merged_identifiers)
     end
     merged_doc = Nokogiri::XML(concept.to_rif)
-    merged_doc.xpath('//rif:location', ns_decl).count.should == 2
-    merged_doc.xpath('//rif:name', ns_decl).count.should == 4
-    merged_doc.xpath('//rif:name[@type="primary"]', ns_decl).count.should == 1
+    merged_doc.xpath('//rif:location', ns_decl).count.should be == 2
+    merged_doc.xpath('//rif:name', ns_decl).count.should be == 4
+    merged_doc.xpath('//rif:name[@type="primary"]', ns_decl).count.should be(1)
     # Primary name should be the "best" one we have, not the first
     merged_doc.xpath('//rif:name[@type="primary"]/rif:namePart[@type="given"]',
       ns_decl).count.should == 2
@@ -107,8 +107,8 @@ describe Miletus::Merge::Concept do
         get_identifiers(f.to_rif).to_set.should be_subset(merged_identifiers)
       end
       merged_doc = Nokogiri::XML(concept.to_rif)
-      merged_doc.xpath('//rif:location', ns_decl).count.should == 1
-      merged_doc.xpath('//rif:name', ns_decl).count.should == 1
+      merged_doc.xpath('//rif:location', ns_decl).count.should be == 1
+      merged_doc.xpath('//rif:name', ns_decl).count.should be == 1
       ns_by_prefix('rif').schema.valid?(merged_doc).should be_true
       concept.destroy
     end
@@ -201,9 +201,9 @@ describe Miletus::Merge::Concept do
       concept = Miletus::Merge::Concept.create()
       concept.facets.create(:metadata => xml)
     end
-    Miletus::Merge::Concept.count.should == 2
+    Miletus::Merge::Concept.count.should be == 2
     Miletus::Merge::Concept.all.each do |concept|
-      concept.related_concepts.count.should == 1
+      concept.related_concepts.count.should be == 1
       doc = Nokogiri::XML(concept.to_rif)
       doc.xpath('//rif:relatedObject/rif:key', ns_decl).each do |other_key_e|
         other_key_e.content.strip.should == concept.related_concepts.first.key
@@ -243,7 +243,7 @@ describe Miletus::Merge::Concept do
           :key => 'relatedKey'
         ).count
         edges = doc.xpath('//gexf:edge', ns_decl)
-        edges.count.should == relationship_count
+        edges.count.should be == relationship_count
         edges.each do |e|
           ['source', 'target'].each do |a|
             lambda do
@@ -256,7 +256,7 @@ describe Miletus::Merge::Concept do
     end
   end
 
-  describe "title" do
+  describe ":title" do
 
     it "produces a list of titles for a RIF-CS document" do
       concept = Miletus::Merge::Concept.create()
@@ -275,9 +275,26 @@ describe Miletus::Merge::Concept do
     it "uses the key if there are no titles or the title is blank" do
       concept = Miletus::Merge::Concept.create()
       concept.titles = []
-      concept.title.should == concept.key
+      concept.title.should be == concept.key
       concept.titles = ['']
-      concept.title.should == concept.key
+      concept.title.should be == concept.key
+    end
+
+  end
+
+  describe ":sort_key" do
+
+    it "produces a sort key for a RIF-CS document" do
+      concept = Miletus::Merge::Concept.create()
+      concept.facets.create(:metadata => get_fixture('party', 1))
+      concept.reload
+      concept.sort_key.should be == "DETTRICK_TIMOTHY_JOHN"
+    end
+
+    it "uses the ID if no name is present" do
+      concept = Miletus::Merge::Concept.create()
+      concept.reindex
+      concept.sort_key.should be == concept.id.to_s
     end
 
   end

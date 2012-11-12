@@ -12,6 +12,14 @@ module Miletus::Merge
       instance
     end
 
+    def sort_key
+      name_order = ['primary', 'abbreviated', 'alternative', nil]
+      names = xpath("//rif:name", ns_decl).to_ary.sort_by! do |n|
+        name_order.index(n['type'])
+      end
+      names.map{|n| sort_key_from_name_element(n)}.compact.first
+    end
+
     def titles
       name_order = ['primary', 'abbreviated', 'alternative', nil]
       names = xpath("//rif:name", ns_decl).to_ary.sort_by! do |n|
@@ -113,21 +121,29 @@ module Miletus::Merge
         alt_parent)
     end
 
+    def sort_key_from_name_element(name)
+      sk = join_name_parts_in_order(name, %w[family given title suffix], '_')
+      sk.upcase
+    end
+
     def title_from_name_element(name)
-      part_order = ['title', 'given', 'family', 'suffix']
+      join_name_parts_in_order(name, %w[title given family suffix])
+    end
+
+    def join_name_parts_in_order(name, part_order, separator = ' ')
       found_parts = name.xpath("rif:namePart", ns_decl).to_ary
       parts = found_parts.select do |part|
         part_order.include?(part['type'])
       end
       if parts.empty?
         # No formal name parts, so just join them all in order
-        found_parts.map{|e| e.content}.join(" ")
+        found_parts.map{|e| e.content}.join(separator)
       else
         parts.sort_by! do |part|
           # In part order, but use original index to sort equal elements
           part_order.index(part['type']) * parts.length + parts.index(part)
         end
-        parts.map{|e| e.content}.join(" ")
+        parts.map{|e| e.content}.join(separator)
       end
     end
 

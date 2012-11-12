@@ -3,7 +3,7 @@ require 'miletus'
 class RecordController < ApplicationController
 
   def index
-    concepts = Miletus::Merge::Concept.order('updated_at DESC').all
+    concepts = Miletus::Merge::Concept.order(:sort_key).all
     sorted_concepts = concepts.each_with_object({}) do |c, ch|
       begin
         ch[c.type] ||= []

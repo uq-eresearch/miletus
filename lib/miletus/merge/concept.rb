@@ -161,6 +161,7 @@ module Miletus::Merge
 
     def recache_attributes
       rifcs_doc = RifcsDoc.create(to_rif)
+      self.sort_key = rifcs_doc.sort_key || self.id.to_s
       self.titles = rifcs_doc.titles
       self.type, self.subtype = rifcs_doc.types
       # Key index for faster graph generation
