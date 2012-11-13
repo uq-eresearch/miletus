@@ -200,11 +200,15 @@ module RecordHelper
   end
 
   def urls(rifcs_doc)
+    (address_urls(rifcs_doc) + identifier_urls(rifcs_doc)).uniq
+  end
+
+  def address_urls(rifcs_doc)
     extend Miletus::NamespaceHelper
     nodes = rifcs_doc.xpath(
       "//rif:location/rif:address/rif:electronic[@type='url']/rif:value",
       ns_decl)
-    (nodes.map(&:content) + identifier_urls(rifcs_doc)).uniq
+    nodes.map(&:content).map(&:strip).uniq
   end
 
   def identifier_urls(rifcs_doc)
@@ -212,7 +216,7 @@ module RecordHelper
     nodes = rifcs_doc.xpath(
       "//rif:registryObject/rif:*/rif:identifier",
       ns_decl)
-    nodes.map(&:content).uniq.select do |uri_str|
+    nodes.map(&:content).map(&:strip).uniq.select do |uri_str|
       begin
         %w[http https].include? URI.parse(uri_str).scheme
       rescue
