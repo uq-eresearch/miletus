@@ -42,7 +42,7 @@ module RecordHelper
     email_addresses(rifcs_doc).map do |addr|
       obsfucated_addr = addr.bytes.map{|b| '&#%d;' % b}.join('')
       "mailto:%s" % obsfucated_addr
-    end
+    end.uniq
   end
 
   def physical_addresses(rifcs_doc)
@@ -173,7 +173,7 @@ module RecordHelper
       rescue
         nil
       end
-    end.compact
+    end.compact.uniq
   end
 
   def keywords(rifcs_doc)
@@ -204,7 +204,21 @@ module RecordHelper
     nodes = rifcs_doc.xpath(
       "//rif:location/rif:address/rif:electronic[@type='url']/rif:value",
       ns_decl)
-    nodes.map {|e| e.content}
+    (nodes.map(&:content) + identifier_urls(rifcs_doc)).uniq
+  end
+
+  def identifier_urls(rifcs_doc)
+    extend Miletus::NamespaceHelper
+    nodes = rifcs_doc.xpath(
+      "//rif:registryObject/rif:*/rif:identifier",
+      ns_decl)
+    nodes.map(&:content).uniq.select do |uri_str|
+      begin
+        %w[http https].include? URI.parse(uri_str).scheme
+      rescue
+        false
+      end
+    end
   end
 
   def type_image(type)
