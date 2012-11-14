@@ -15,7 +15,7 @@ group :assets do
   gem 'coffee-rails', '~> 3.2.1'
 
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-  # gem 'therubyracer', :platforms => :ruby
+  gem 'therubyracer', :platforms => :ruby
 
   gem 'uglifier', '>= 1.0.3'
 end
@@ -54,6 +54,7 @@ gem 'meta-tags', :require => 'meta_tags' # For UI SEO
 gem 'redcarpet' # For Markdown-based static pages
 gem 'paperclip', ">= 3.2" # For large file attachments
 
+gem 'less-rails' # Needed for Bootstrap LESS compilation
 gem 'twitter-bootstrap-rails'
 gem 'font-awesome-rails'
 gem 'haml-rails'
