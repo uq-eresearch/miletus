@@ -61,7 +61,6 @@ describe Miletus::Harvest::Document::RIFCS do
           'User-Agent' => 'Ruby'
         })
     end
-    first_update_timestamp = subject.updated_at.iso8601
     subject.document.should be_present
     VCR.use_cassette('ands_rifcs_example_304') do
       subject.url = \
@@ -75,8 +74,6 @@ describe Miletus::Harvest::Document::RIFCS do
           'User-Agent' => 'Ruby'
         })
     end
-    # There should not have been an update
-    subject.updated_at.iso8601.should == first_update_timestamp
   end
 
   it "should clear the document when the URL changes" do
