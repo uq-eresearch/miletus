@@ -60,14 +60,6 @@ describe RecordHelper do
          "http://services.ands.org.au/home/orca/rda/view.php?"+
          "key=mirage.cmm.uq.edu.au/user/1"]
     end
-
-    it "produces a list of all URLs for a RIF-CS document" do
-      subject.urls(doc).count.should be == 2
-      subject.urls(doc).to_set.should be == (
-        subject.identifier_urls(doc) +
-        subject.address_urls(doc)
-      ).to_set
-    end
   end
 
   describe "rights_data_from_url" do

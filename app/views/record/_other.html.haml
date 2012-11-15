@@ -4,11 +4,7 @@
       %i.icon-envelope
       %a{:href => uri.html_safe}
         =uri.gsub(/^mailto:/,'').html_safe
-  - urls(doc).each do |url|
-    %li
-      %i.icon-globe
-      %a{:href => url}
-        =url
+  = render "record/links", :doc => doc
 
 %p.description{:property => 'dc:description'}
   =description(doc).gsub(/\n/,"<br/>\n").html_safe

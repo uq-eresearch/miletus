@@ -21,11 +21,7 @@
         %i.icon-envelope{:title => 'Email'}
         %a{:href => uri.html_safe}
           =uri.gsub(/^mailto:/,'').html_safe
-    - urls(doc).each do |url|
-      %li
-        %i.icon-globe{:title => 'URL'}
-        %a{:href => url, :property => "v:url"}
-          =url
+    = render "record/links", :doc => doc
     - physical_addrs.each do |address|
       - if address.key?('telephoneNumber')
         %li

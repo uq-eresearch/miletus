@@ -1,0 +1,10 @@
+- identifier_urls(doc).each do |url|
+  %li
+    %i.icon-barcode{:title => 'identifier'}
+    %a{:href => url, :property => "v:url"}
+      =url
+- address_urls(doc).each do |url|
+  %li
+    %i.icon-globe
+    %a{:href => url, :property => "v:url"}
+      =url

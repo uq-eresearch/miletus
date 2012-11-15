@@ -199,10 +199,6 @@ module RecordHelper
     end
   end
 
-  def urls(rifcs_doc)
-    (address_urls(rifcs_doc) + identifier_urls(rifcs_doc)).uniq
-  end
-
   def address_urls(rifcs_doc)
     extend Miletus::NamespaceHelper
     nodes = rifcs_doc.xpath(
