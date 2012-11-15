@@ -107,13 +107,13 @@ else
 
 prettyPrint()
 
-$('.type-display').on('click', 'a', (event) ->
+$('#concept-type-filter').on('click', 'li a', (event) ->
   type = $(event.target).attr('data-type')
   if type == ""
     $('#concepts p').removeClass('hidden')
   else
     $('#concepts p').addClass('hidden')
     $('#concepts p[data-type="'+type+'"]').removeClass('hidden')
-  $('.type-display').removeClass('active')
-  $(event.delegateTarget).addClass('active'))
+  $('#concept-type-filter li').removeClass('active')
+  $(event.target).parents('li').first().addClass('active'))
 

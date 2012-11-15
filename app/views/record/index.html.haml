@@ -5,17 +5,17 @@
 
   #concepts.span12
 
-    %ul.nav.nav-pills
-      %li.active.type-display
+    %ul#concept-type-filter.nav.nav-pills
+      %li.active
         %a{:href => '#',
            'data-type' => '',
-           :title => 'Click to show all records'}
+           :title => 'Show all records'}
           All
       - @types.sort.each do |ct|
-        %li.type-display
+        %li
           %a{:href => '#',
              'data-type' => ct,
-             :title => 'Click to show '+ct.pluralize}
+             :title => 'Show only '+ct.pluralize}
             = ct.pluralize.titleize
 
     - @concepts.each do |c|
