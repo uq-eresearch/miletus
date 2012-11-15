@@ -3,8 +3,13 @@ require 'miletus'
 ActiveAdmin.register Miletus::Merge::Concept,
   :as => "Concept" do
 
-  sidebar :recheck_sru do
-    button_to "Recheck SRU", :action => :recheck_sru, :method => :post
+  sidebar "Maintenance" do
+    para do
+      button_to "Recheck SRU", :action => :recheck_sru, :method => :post
+    end
+    para do
+      button_to "Reindex", :action => :reindex, :method => :post
+    end
   end
 
   batch_action :recheck_sru do |selection|
@@ -21,6 +26,12 @@ ActiveAdmin.register Miletus::Merge::Concept,
       SruRifcsLookupObserver.instance.find_sru_records(concept)
     end
     flash[:notice] = "Scheduled recheck for all concepts from SRU interfaces."
+    redirect_to :action => :index
+  end
+
+  collection_action :reindex, :method => :post do
+    Miletus::Merge::Concept.all.each(&:reindex)
+    flash[:notice] = "All concepts have been reindexed."
     redirect_to :action => :index
   end
 
