@@ -107,8 +107,13 @@ else
 
 prettyPrint()
 
-$('.type-toggle').on('click', 'a', (event) ->
+$('.type-display').on('click', 'a', (event) ->
   type = $(event.target).attr('data-type')
-  $('#concepts p[data-type="'+type+'"]').toggleClass('hidden')
-  $(event.delegateTarget).toggleClass('active'))
+  if type == ""
+    $('#concepts p').removeClass('hidden')
+  else
+    $('#concepts p').addClass('hidden')
+    $('#concepts p[data-type="'+type+'"]').removeClass('hidden')
+  $('.type-display').removeClass('active')
+  $(event.delegateTarget).addClass('active'))
 

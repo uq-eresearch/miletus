@@ -6,11 +6,16 @@
   #concepts.span12
 
     %ul.nav.nav-pills
+      %li.active.type-display
+        %a{:href => '#',
+           'data-type' => '',
+           :title => 'Click to show all records'}
+          All
       - @types.sort.each do |ct|
-        %li.active.type-toggle
+        %li.type-display
           %a{:href => '#',
              'data-type' => ct,
-             :title => 'Click to toggle '+ct.pluralize}
+             :title => 'Click to show '+ct.pluralize}
             = ct.pluralize.titleize
 
     - @concepts.each do |c|
