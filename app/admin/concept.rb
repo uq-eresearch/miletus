@@ -40,7 +40,7 @@ ActiveAdmin.register Miletus::Merge::Concept,
     column :type
     column :subtype
     column :title do |concept|
-      link_to concept.title, concept_path(concept.id)
+      link_to concept.title, concept_id_path(concept.id)
     end
     column :facets_count
     column :updated_at

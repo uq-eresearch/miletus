@@ -64,6 +64,7 @@ gem 'google-analytics-rails'
 gem 'locale'
 gem 'memoize'
 gem 'algorithms' # For efficient data structures like Stack
+gem 'uuidtools' # For UUID generation
 gem 'rdf'
 gem 'rdf-rdfa'
 gem 'rdf-rdfxml'

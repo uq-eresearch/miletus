@@ -48,7 +48,7 @@ describe SruRifcsLookupObserver do
     [
       'http://nla.gov.au/nla.party-1486629',
       'mirage.cmm.uq.edu.au/user/1',
-      concept.key
+      concept.reload.key
     ].each do |ident|
       looked_up.should include(ident)
     end

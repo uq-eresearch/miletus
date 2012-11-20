@@ -13,7 +13,12 @@ class RecordController < ApplicationController
   end
 
   def view
-    @concept = Miletus::Merge::Concept.find_by_id!(params[:id])
+    k = [:id, :uuid].detect {|sym| params.key?(sym) }
+    @concept = Miletus::Merge::Concept.send('find_by_%s!' % k, params[k])
+    # Redirect if a better path exists
+    if k == :id and @concept.uuid
+      redirect_to :action => 'view', :uuid => @concept.uuid
+    end
     @doc = Nokogiri::XML(@concept.to_rif)
   end
 
@@ -42,7 +47,7 @@ class RecordController < ApplicationController
                 :scheme => request.scheme,
                 :host => request.host,
                 :port => request.port,
-                :path => concept_path(:id => concept.id)
+                :path => concept_path(:uuid => concept.uuid)
               )
               xml.loc url
               xml.lastmod concept.updated_at.iso8601

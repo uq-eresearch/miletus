@@ -4,8 +4,8 @@ module RecordHelper
   extend Memoize
 
   def href_from_key(key)
-    id = key.partition(Miletus::Merge::Concept.key_prefix).last
-    concept_path(id)
+    uuid = key.partition(Miletus::Merge::Concept.key_prefix).last
+    concept_path(uuid)
   end
 
   def annotated_xml(rifcs_doc)

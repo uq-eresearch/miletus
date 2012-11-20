@@ -14,8 +14,12 @@ Miletus::Application.routes.draw do
 
   get '/records/:id.gexf' => 'record#gexf',
     :constraints => {:id => /\d+/}, :as => :concept_gexf
+  get '/records/:uuid' => 'record#view',
+    :constraints => {
+      :uuid => /[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/
+    }, :as => :concept
   get '/records/:id' => 'record#view',
-    :constraints => {:id => /\d+/}, :as => :concept
+    :constraints => {:id => /\d+/}, :as => :concept_id
 
   post '/records/:id/recheck-sru' => 'record#recheck_sru',
     :constraints => {:id => /\d+/}

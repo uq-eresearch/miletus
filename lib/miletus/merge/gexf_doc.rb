@@ -16,7 +16,7 @@ module Miletus::Merge
             :title => 'relationships_outbound', :type => 'integer')
         }
         xml.nodes {
-          @concepts.each { |c| node(xml, c) }
+          @concepts.reject { |c| c.key.nil? }.each { |c| node(xml, c) }
         }
         edges(xml, @concepts)
       end
@@ -42,7 +42,7 @@ module Miletus::Merge
 
     def edges(xml, concepts)
       xml.edges {
-        concept_keys = concepts.map{|c| c.key}.to_set
+        concept_keys = concepts.map{|c| c.key}.reject(&:nil?).to_set
         concepts.each do |c|
           next if c.outbound_related_concept_keys.nil?
           c.outbound_related_concept_keys.each do |oc_key|

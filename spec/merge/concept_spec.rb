@@ -15,7 +15,7 @@ describe Miletus::Merge::Concept do
     end
   end
 
-  it { should respond_to(:facets, :indexed_attributes, :key, :sort_key) }
+  it { should respond_to(:facets, :indexed_attributes, :key, :sort_key, :uuid) }
 
   it "should merge facet metadata when identifiers match" do
     # Create multi-faceted concept
@@ -114,6 +114,26 @@ describe Miletus::Merge::Concept do
     end
   end
 
+  describe "RIF-CS key" do
+
+    it "should be nil until the UUID is populated" do
+      concept = Miletus::Merge::Concept.create()
+      concept.key.should be_nil
+    end
+
+    it "should be composed of the key prefix and uuid" do
+      # Create multi-faceted concept
+      concept = Miletus::Merge::Concept.create()
+      [1, '1b'].map{|n| get_fixture('party', n)}.each do |fixture_xml|
+        concept.facets.create(:metadata => fixture_xml)
+      end
+      concept.reload
+      concept.should have(2).facets
+      concept.uuid.should_not be_nil
+    end
+
+  end
+
   describe "RIF-CS group replacement" do
 
     def create_concept_for_group_replacement
@@ -155,6 +175,7 @@ describe Miletus::Merge::Concept do
       [1, '1b'].map {|n| get_fixture('party', n) }.each do |fixture_xml|
         concept.facets.create(:metadata => fixture_xml)
       end
+      concept.reload
       concept.should have(2).facets
       concept.to_rif.should_not be(nil)
       concept
@@ -227,6 +248,11 @@ describe Miletus::Merge::Concept do
 
       it "should generate a valid global GEXF graph" do
         ns_by_prefix('gexf').schema.validate(doc).should == []
+      end
+
+      it "should exclude concepts with nil keys" do
+        Miletus::Merge::Concept.create()
+        doc.at_xpath('//gexf:node[@id=""]', ns_decl).should be_nil
       end
 
       it "should have a node for each concepts" do

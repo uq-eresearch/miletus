@@ -77,7 +77,7 @@ describe OaipmhOutputObserver do
     output_record.to_rif.should_not be(nil)
     # Delete facet
     concept.facets.first.destroy
-    Miletus::Merge::Facet.all.count.should == 0
+    Miletus::Merge::Facet.all.count.should be == 0
     # The record should be marked deleted as a result
     output_record = Miletus::Output::OAIPMH::Record.find(:first)
     output_record.should_not be_nil
@@ -91,10 +91,10 @@ describe OaipmhOutputObserver do
       [get_fixture('collection', 1), get_fixture('party', 1)].map do |xml|
         concept = Miletus::Merge::Concept.create()
         concept.facets.create(:metadata => xml)
-        concept
+        concept.reload
       end
     # Two new records should exist as a result
-    Miletus::Output::OAIPMH::Record.count.should == 2
+    Miletus::Output::OAIPMH::Record.count.should be == 2
     Miletus::Output::OAIPMH::Record.all.each do |record|
       doc = Nokogiri::XML(record.to_rif)
       doc.xpath('//rif:relatedObject/rif:key', ns_decl).each do |other_key_e|

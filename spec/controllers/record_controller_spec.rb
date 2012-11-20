@@ -33,6 +33,35 @@ describe RecordController do
 
   end
 
+  describe "GET 'view'" do
+
+    before(:each) do
+      fixture_file = File.join(File.dirname(__FILE__),
+        '..', 'fixtures',"rifcs-collection-1.xml")
+      @concept = Miletus::Merge::Concept.create()
+      @concept.facets.create(
+        :metadata => File.open(fixture_file) { |f| f.read() }
+      )
+      @concept.reload
+    end
+
+    it "returns http success for uuid fetch" do
+      get 'view', :uuid => @concept.uuid
+      response.should be_success
+    end
+
+    it "returns http redirect for id fetch" do
+      get 'view', :id => @concept.id
+      response.should be_redirect
+    end
+
+    it "returns http success for id fetch when no uuid exists" do
+      concept = Miletus::Merge::Concept.create()
+      get 'view', :id => concept.id
+      response.should be_success
+    end
+  end
+
   describe "GET 'gexf'" do
     it "returns valid GEXF graph" do
       get 'gexf'

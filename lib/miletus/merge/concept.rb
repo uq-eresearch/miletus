@@ -18,6 +18,8 @@ module Miletus::Merge
     has_many :indexed_attributes,
       :dependent => :destroy, :order => [:key, :value]
 
+    validates_uniqueness_of :uuid, :allow_nil => true
+
     def group
       if ENV.has_key? 'CONCEPT_GROUP'
         # Get env variable (substitution fixes a common Foreman bug)
@@ -28,7 +30,7 @@ module Miletus::Merge
     end
 
     def key
-      "%s%d" % [key_prefix, id]
+      uuid && [key_prefix, uuid].join
     end
 
     def title
@@ -41,9 +43,13 @@ module Miletus::Merge
     end
 
     def self.find_by_key!(key)
-      _, _, id = key.partition(key_prefix)
-      raise ActiveRecord::RecordNotFound("Invalid prefix") unless id =~ /^\d+$/
-      find_by_id!(id.to_i)
+      _, _, uuid = key.partition(key_prefix)
+      begin
+        UUIDTools::UUID.parse(uuid)
+      rescue ArgumentError
+        raise ActiveRecord::RecordNotFound("Invalid prefix")
+      end
+      find_by_uuid!(uuid)
     end
 
     def self.find_existing(xml)
@@ -60,14 +66,17 @@ module Miletus::Merge
           concept.facets.count,
           concept.id,
           primary_concept.id])
-        concept.facets.each do |facet|
-          facet.concept = primary_concept
-          facet.save!
+        concept.transaction do
+          # Transfer concept to primary
+          facets = concept.facets.update_all(:concept_id => primary_concept.id)
+          Rails.logger.info("Removing empty concept #%d" % concept.id)
+          concept.reload.destroy
+          # Update primary concept details
+          primary_concept.class.reset_counters(primary_concept.id, :facets)
+          primary_concept.reload.reindex
         end
-        Rails.logger.info("Removing empty concept #%d" % concept.id)
-        concept.reload.destroy
       end
-      primary_concept.reload.reindex
+      primary_concept.reload
     end
 
     def self.deduplicate
@@ -93,6 +102,7 @@ module Miletus::Merge
     end
 
     def reindex
+      generate_uuid
       update_indexed_attributes_from_facet_rifcs
       recache_attributes
     end
@@ -146,6 +156,27 @@ module Miletus::Merge
       where(:id => existing)
     end
 
+    def generate_uuid
+      return unless uuid.nil? and facets.count > 0
+      facet_key = facets.first.key
+      return if facet_key.nil?
+      self.uuid = uuid_from_facet_key(facet_key).to_s
+    end
+
+    def uuid_from_facet_key(facet_key)
+      begin
+        # Assume that the key is a valid URI
+        UUIDTools::UUID.sha1_create(
+          UUIDTools::UUID_URL_NAMESPACE,
+          URI.parse(facet_key).to_s)
+      rescue
+        # Handle the key not being a valid URI
+        UUIDTools::UUID.sha1_create(
+          UUIDTools::UUID.parse('00000000-0000-0000-0000-000000000000'),
+          facet_key)
+      end
+    end
+
     def update_indexed_attributes_from_facet_rifcs
       input_docs = rifcs_facets
       update_indexed_attributes('identifier',
@@ -183,11 +214,7 @@ module Miletus::Merge
     end
 
     def self.key_prefix
-      return ENV['CONCEPT_KEY_PREFIX'] if ENV.has_key? 'CONCEPT_KEY_PREFIX'
-      @@key_prefix ||= begin
-        require 'socket'
-        'info:%s/' % Socket.gethostname
-      end
+      ENV.key?('CONCEPT_KEY_PREFIX') ? ENV['CONCEPT_KEY_PREFIX'] : 'urn:uuid:'
     end
 
     def tn(relation)
