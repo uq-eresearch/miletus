@@ -17,7 +17,7 @@ describe Atom::Entry do
       reader.read
       reader.read_outer_xml.should_not be_nil
       obj = Atom::Entry::RdfaMeta.new(reader)
-      obj.content.should == \
+      obj.content.should be == \
         'This data is freely available via the DIMER website'
       obj.property.should == 'http://purl.org/dc/terms/accessRights'
     end
@@ -25,9 +25,9 @@ describe Atom::Entry do
     it "should be registered in the element specs" do
       Atom::Entry.element_specs.should have_key('meta')
       parser = Atom::Entry.element_specs['meta']
-      parser.name.should == 'metas'
-      parser.options[:class].should == Atom::Entry::RdfaMeta
-      parser.attribute.should == :metas
+      parser.name.should be == 'metas'
+      parser.options[:class].should be == Atom::Entry::RdfaMeta
+      parser.attribute.should be == :metas
       xml = <<-EOH
         <rdfa:meta xmlns:rdfa=\"http://www.w3.org/ns/rdfa#\"
           property=\"http://purl.org/dc/terms/accessRights\"

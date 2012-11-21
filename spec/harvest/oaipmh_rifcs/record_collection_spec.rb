@@ -28,9 +28,9 @@ describe Miletus::Harvest::OAIPMH::RIFCS::RecordCollection do
     subject.add(record)
 
     r = subject.get(record.header.identifier)
-    r.header.identifier.should == record.header.identifier
-    r.header.datestamp.to_i.should == record.header.datestamp.to_i
-    r.metadata.should == record.metadata
+    r.header.identifier.should be == record.header.identifier
+    r.header.datestamp.to_i.should be == record.header.datestamp.to_i
+    r.metadata.should be == record.metadata
   end
 
   it "updates existing OAI::Record instances in a collection" do
@@ -46,9 +46,9 @@ describe Miletus::Harvest::OAIPMH::RIFCS::RecordCollection do
       subject.add(record)
       # Check attributes are what they should be
       r = subject.get(record.header.identifier)
-      r.header.identifier.should == record.header.identifier
-      r.header.datestamp.to_i.should == record.header.datestamp.to_i
-      r.metadata.should == record.metadata
+      r.header.identifier.should be == record.header.identifier
+      r.header.datestamp.to_i.should be == record.header.datestamp.to_i
+      r.metadata.should be == record.metadata
     end
   end
 
@@ -62,16 +62,16 @@ describe Miletus::Harvest::OAIPMH::RIFCS::RecordCollection do
 
     # Check attributes are what they should be
     r = subject.get(record.header.identifier)
-    r.header.identifier.should == record.header.identifier
-    r.header.datestamp.to_i.should == record.header.datestamp.to_i
+    r.header.identifier.should be == record.header.identifier
+    r.header.datestamp.to_i.should be == record.header.datestamp.to_i
     r.header.deleted?.should be_false
 
     subject.remove(record.header.identifier)
 
     # Check attributes are what they should be
     r = subject.get(record.header.identifier)
-    r.header.identifier.should == record.header.identifier
-    r.header.datestamp.to_i.should == record.header.datestamp.to_i
+    r.header.identifier.should be == record.header.identifier
+    r.header.datestamp.to_i.should be == record.header.datestamp.to_i
     r.header.deleted?.should be_true
   end
 
@@ -96,9 +96,9 @@ describe Miletus::Harvest::OAIPMH::RIFCS::RecordCollection do
     subject.add(record1)
 
     r = subject.get(record1.header.identifier)
-    r.header.identifier.should == record1.header.identifier
-    r.header.datestamp.to_i.should == record1.header.datestamp.to_i
-    r.metadata.should == record1.metadata
+    r.header.identifier.should be == record1.header.identifier
+    r.header.datestamp.to_i.should be == record1.header.datestamp.to_i
+    r.metadata.should be == record1.metadata
 
     record2 = Struct.new(:header, :metadata).new(
       Struct.new(:identifier, :datestamp, :status).new(
@@ -111,9 +111,9 @@ describe Miletus::Harvest::OAIPMH::RIFCS::RecordCollection do
 
     r = subject.get(record2.header.identifier)
     r.should_not be_nil
-    r.header.identifier.should == record2.header.identifier
-    r.header.datestamp.to_i.should == record2.header.datestamp.to_i
-    r.metadata.should == record2.metadata
+    r.header.identifier.should be == record2.header.identifier
+    r.header.datestamp.to_i.should be == record2.header.datestamp.to_i
+    r.metadata.should be == record2.metadata
 
     # Original (unseen) record should not be there
     subject.get(record1.header.identifier).should be_nil

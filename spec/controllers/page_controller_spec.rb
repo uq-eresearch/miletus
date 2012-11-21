@@ -23,7 +23,7 @@ describe PageController do
 
       it "should return the provided content" do
         subject.save!
-        Page.count.should == 1
+        Page.count.should be == 1
         get 'view', :name => 'index'
         response.should be_success
         response.body.should match(/#{subject.content}/)
@@ -47,7 +47,7 @@ describe PageController do
 
       it "should return the rendered content" do
         subject.save!
-        Page.count.should == 1
+        Page.count.should be == 1
         get 'view', :name => 'index'
         response.should be_success
         response.body.should match(/#{expected_content}/)
@@ -72,7 +72,7 @@ describe PageController do
     it "returns a valid XML sitemap for all existing pages" do
       Page.create(:name => 'index', :content => "Hello World!")
       Page.create(:name => 'test', :content => "Test Page.")
-      Page.count.should == 2
+      Page.count.should be == 2
 
       get 'sitemap'
       response.should be_success

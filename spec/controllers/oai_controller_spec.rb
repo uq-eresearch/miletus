@@ -24,11 +24,11 @@ describe OaiController do
       identify_node = xml.at_xpath('//oai:Identify', ns_decl)
       identify_node.should_not be_nil
       protocol_node = xml.at_xpath('//oai:protocolVersion', ns_decl)
-      protocol_node.content.should == "2.0"
+      protocol_node.content.should be == "2.0"
       baseurl_node = xml.at_xpath('//oai:baseURL', ns_decl)
-      baseurl_node.content.should == "http://test.host/oai"
+      baseurl_node.content.should be == "http://test.host/oai"
       repo_id_node = xml.at_xpath('//oaii:repositoryIdentifier', ns_decl)
-      repo_id_node.content.should == "test.host"
+      repo_id_node.content.should be == "test.host"
     end
 
     it "lists RIF-CS as a metadata format" do
@@ -86,7 +86,7 @@ describe OaiController do
 
       describe "ListRecords" do
         it "should respond with the records that currently exist" do
-          Miletus::Output::OAIPMH::Record.count.should == 1
+          Miletus::Output::OAIPMH::Record.count.should be == 1
           get 'index', { 'verb' => 'ListRecords', 'metadataPrefix' => 'oai_dc' }
           response.should be_success
           xml = Nokogiri::XML(response.body).root
@@ -97,7 +97,7 @@ describe OaiController do
         end
 
         it "should put records in sets" do
-          Miletus::Output::OAIPMH::Record.count.should == 1
+          Miletus::Output::OAIPMH::Record.count.should be == 1
           get 'index', {
             'verb' => 'ListRecords',
             'metadataPrefix' => 'oai_dc',
@@ -106,8 +106,8 @@ describe OaiController do
           xml = Nokogiri::XML(response.body).root
           xml.at_xpath('//oai:error', ns_decl).should be_nil
           xml.at_xpath('//oai:ListRecords', ns_decl).should_not be_nil
-          xml.xpath('//oai:record', ns_decl).count.should == 1
-          xml.xpath('//oai:header/oai:setSpec', ns_decl).count.should > 1
+          xml.xpath('//oai:record', ns_decl).count.should be == 1
+          xml.xpath('//oai:header/oai:setSpec', ns_decl).count.should be > 1
           get 'index', {
             'verb' => 'ListRecords',
             'metadataPrefix' => 'oai_dc',
@@ -130,7 +130,7 @@ describe OaiController do
         end
 
         it "should respond with any sets that exist" do
-          Miletus::Output::OAIPMH::Set.count.should > 0
+          Miletus::Output::OAIPMH::Set.count.should be > 0
           get 'index', { 'verb' => 'ListSets' }
           response.should be_success
           xml = Nokogiri::XML(response.body).root

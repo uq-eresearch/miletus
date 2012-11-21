@@ -73,8 +73,8 @@ module Miletus::Output::OAIPMH
 
     def clean_metadata
       return if read_attribute(:metadata).nil?
-      xml = Nokogiri::XML(read_attribute(:metadata)).tap do |xml|
-          update_datetime(xml)
+      xml = Nokogiri::XML(read_attribute(:metadata)).tap do |x|
+          update_datetime(x)
         end.root.to_s
       write_attribute(:metadata, xml)
     end
