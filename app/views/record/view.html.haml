@@ -19,6 +19,8 @@
   .container-fluid
     .row-fluid
       .span8
+        .pull-right
+          = render 'record/share_buttons'
         - case @concept.type
         - when 'collection'
           = render 'record/collection', :concept => @concept, :doc => @doc
@@ -53,7 +55,7 @@
           = render 'record/rights', :rights => r
 
       .span4
-        %div.sigma-parent-small
+        .sigma-parent-small
           .sigma-expand{:'data-href' => concept_gexf_path(@concept.id),
                         :'data-delay' => 1000}
 
