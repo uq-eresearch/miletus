@@ -21,7 +21,7 @@ module Miletus::Merge
     validates_uniqueness_of :uuid, :allow_nil => true
 
     def self.updated_at
-      self.order(:updated_at).reverse_order.first.updated_at
+      self.order(:updated_at).reverse_order.first.try(:updated_at)
     end
 
     def group
