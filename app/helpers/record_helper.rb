@@ -168,7 +168,7 @@ module RecordHelper
         OpenStruct.new({
           :title => concept.title,
           :type => concept.type,
-          :href => concept_path(concept.id)
+          :href => concept_path(concept.uuid)
         })
       rescue
         nil
