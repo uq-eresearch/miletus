@@ -17,7 +17,7 @@ class RecordController < ApplicationController
     @concept = Miletus::Merge::Concept.send('find_by_%s!' % k, params[k])
     # Redirect if a better path exists
     if k == :id and @concept.uuid
-      redirect_to :action => 'view', :uuid => @concept.uuid
+      redirect_to :action => 'view', :uuid => @concept.uuid, :status => 301
     end
     @doc = Nokogiri::XML(@concept.to_rif)
   end
