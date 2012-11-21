@@ -78,8 +78,10 @@ init_graph = (selector) ->
         # Draw the graph
         sigInst.draw()
 
-        # Start ForceAtlas2
-        sigInst.startForceAtlas2()
+        # Start ForceAtlas2 when we're next free
+        _.delay () ->
+          sigInst.startForceAtlas2()
+        # Stop ForceAtlas after some time
         _.delay(() ->
           # Finish calculations
           sigInst.stopForceAtlas2()
@@ -99,11 +101,8 @@ init_graph = (selector) ->
         )
     )
 
-if (document.addEventListener)
-  document.addEventListener(
-    "DOMContentLoaded", init_graph('.sigma-expand'), false)
-else
-  window.onload = init_graph('.sigma-expand')
+$(document).ready (e) ->
+  init_graph('.sigma-expand')
 
 prettyPrint()
 

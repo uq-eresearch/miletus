@@ -27,13 +27,11 @@ class RecordController < ApplicationController
   end
 
   def gexf
-    if params.key?(:id)
-      concept = Miletus::Merge::Concept.find_by_id!(params[:id])
-      xml = concept.to_gexf
-    else
-      xml = Miletus::Merge::Concept.to_gexf
+    target = params.key?(:id) ?
+      Miletus::Merge::Concept.find_by_id!(params[:id]) : Miletus::Merge::Concept
+    if stale?(:last_modified => target.updated_at, :public => true)
+      render :text => target.to_gexf, :content_type => 'text/xml'
     end
-    render :text => xml, :content_type => 'text/xml'
   end
 
   def sitemap
