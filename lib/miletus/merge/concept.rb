@@ -18,6 +18,8 @@ module Miletus::Merge
     has_many :indexed_attributes,
       :dependent => :destroy, :order => [:key, :value]
 
+    before_save :generate_uuid
+
     validates_uniqueness_of :uuid, :allow_nil => true
 
     def self.updated_at
@@ -106,7 +108,6 @@ module Miletus::Merge
     end
 
     def reindex
-      generate_uuid
       update_indexed_attributes_from_facet_rifcs
       recache_attributes
     end
