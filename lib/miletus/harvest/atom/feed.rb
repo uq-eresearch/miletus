@@ -47,22 +47,21 @@ module Miletus::Harvest::Atom
       re.each do |entry|
         # Find existing entry
         e = entries.find_by_identifier(entry.id)
-        if e.nil?
-          # No matching entry, so create new
-          e = entries.new()
-        else
-          unless read_to_end
-            # Stop unless this entry was updated we don't reparse old entries
-            break unless entry.updated.utc.iso8601 > e.updated.utc.iso8601
-          end
+        if e and not read_to_end
+          # Stop unless this entry was updated we don't reparse old entries
+          break unless entry.updated.utc.iso8601 > e.updated.utc.iso8601
         end
-        # Update content
-        e.xml = entry.to_xml
-        # Put in queue to save (so we save in chronological order)
-        stack << e
+        # Put entry in queue to save (so we save in chronological order)
+        stack << entry
       end
       # Save entries in chronological order (stack iterates LIFO)
-      stack.map {|e| e.save! && e}
+      stack.map do |entry|
+        # Find the existing entry again
+        e = entries.find_by_identifier(entry.id)
+        e ||= entries.new()
+        e.xml = entry.to_xml
+        e.save! && e
+      end
     end
 
 
@@ -82,7 +81,8 @@ module Miletus::Harvest::Atom
       def each
         until @feed.nil? do
           # Enumerate through remote entries
-          @feed.entries.each {|e| yield e }
+          @feed.entries.sort {|a,b| b.updated <=> a.updated} \
+                       .each {|e| yield e}
           # Find url to continue
           @feed = @feed.continuing_url.try {|url| feed_from_url(url) }
         end

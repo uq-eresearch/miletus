@@ -1,0 +1,312 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://dataspace.uq.edu.au/collections/1r?repr=application/atom%20xml;type=entry
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,identity;q=0.5
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.0.15
+      Date:
+      - Thu, 22 Nov 2012 03:48:07 GMT
+      Content-Type:
+      - application/atom+xml; type=entry;charset=atom
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Etag:
+      - ! '"ef4efa477f48f8d2791ab8ed1c6adc19"'
+      Vary:
+      - Accept
+      Last-Modified:
+      - Thu, 22 Nov 2012 00:51:54 GMT
+      Location:
+      - http://dataspace.uq.edu.au/collections/1r
+    body:
+      encoding: US-ASCII
+      string: ! "<?xml version='1.0' encoding='UTF-8'?>\n<entry xmlns=\"http://www.w3.org/2005/Atom\"
+        xmlns:rdfa=\"http://www.w3.org/ns/rdfa#\">\n  <id>http://espace.library.uq.edu.au/collection/UQ:27</id>\n
+        \ <title type=\"text\">Kangaroo Populations of Eastern Australia - Ecology
+        and Management</title>\n  <content type=\"text\">Kangaroo population data
+        derived from analysis of aerial surveys, harvest statistics, satellite imagery,
+        and rainfall data in Queensland, New South Wales, and South Australia over
+        a period of 20 years.\n\n  \nThe data consists of two Microsoft Access databases
+        (The Queensland and South Australian Kangaroo surveys), two Excel spreadsheets
+        (red and grey kangaroo counts) and a 257-page report that includes a number
+        of publications based on the data. \nThe Microsoft Access datasets and Excel
+        files are also held by each of the relevant state agencies and by The Ecology
+        Centre at The University of Queensland. Raw data from New South Wales, prior
+        to 1993, was unfortunately lost in a fire.\n\n \nThe project was funded by
+        the Australian Research Council as part of its Strategic Partnerships with
+        Industry (now Linkage) program, which involves cash and in-kind contributions
+        from each of the industry partners. Some aspects of the work were further
+        supported by funding from the Murray Darling Basin Commission and the New
+        South Wales Department of Conservation.</content>\n  <link href=\"http://dataspace.uq.edu.au/collections/1r\"
+        rel=\"self\" title=\"1r\" />\n  <updated>2012-11-22T00:51:54.792Z</updated>\n
+        \ <published>2012-07-11T06:58:45.965Z</published>\n  <link href=\"http://dataspace.uq.edu.au/collections/1r#\"
+        rel=\"http://www.openarchives.org/ore/terms/describes\" />\n  <author>\n    <name>Emeritus
+        Professor Gordon Grigg</name>\n    <email>gcgrigg@uq.edu.au</email>\n    <uri>http://dataspace.uq.edu.au/agents/15#</uri>\n
+        \ </author>\n  <author>\n    <name>Anthony Pople</name>\n    <email>tony.pople@deedi.qld.gov.au</email>\n
+        \   <uri>http://dataspace.uq.edu.au/agents/17#</uri>\n  </author>\n  <link
+        href=\"http://purl.org/dc/dcmitype/Collection\" rel=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\"
+        title=\"Collection\" />\n  <rdfa:meta property=\"http://purl.org/dc/terms/alternative\"
+        content=\"Kangaroo survey\" />\n  <link href=\"http://espace.library.uq.edu.au/collection/UQ:27\"
+        rel=\"http://xmlns.com/foaf/0.1/page\" />\n  <category term=\"Macropus robustus\"
+        />\n  <category term=\"harvesting\" />\n  <category term=\"aerial survey\"
+        />\n  <category term=\"monitoring\" />\n  <category term=\"http://purl.org/asc/1297.0/2008/for/050202\"
+        scheme=\"http://purl.org/asc/1297.0/2008/for/\" label=\"050202 - Conservation
+        and Biodiversity\" />\n  <category term=\"Macropus rufus\" />\n  <category
+        term=\"http://purl.org/asc/1297.0/2008/for/050206\" scheme=\"http://purl.org/asc/1297.0/2008/for/\"
+        label=\"050206 - Environmental Monitoring\" />\n  <category term=\"rangelands\"
+        />\n  <category term=\"Macropus giganteus\" />\n  <category term=\"Macropus
+        fuliginosus\" />\n  <rights type=\"text\">Data contributed by The University
+        of Queensland, Commonwealth Department of Environment and Heritage, New South
+        Wales Department of Conservation, Queensland Parks and Wildlife Service, South
+        Australian Department for Environment and Heritage, University of New England,
+        and Packer Tanning.</rights>\n  <rdfa:meta property=\"http://purl.org/dc/terms/accessRights\"
+        content=\"Data only available through negotiation with Professor Gordon Grigg.\"
+        />\n  <rdfa:meta property=\"http://purl.org/dc/terms/temporal\" content=\"start=1975;end=2003;\"
+        />\n  <app:control xmlns:app=\"http://www.w3.org/2007/app\">\n    <app:draft>no</app:draft>\n
+        \ </app:control>\n  <source>\n    <id>http://dataspace.uq.edu.au/</id>\n    <title
+        type=\"text\">UQ Data Collections Registry</title>\n    <author>\n      <name>Ms
+        Belinda Weaver</name>\n      <email>b.weaver@uq.edu.au</email>\n    </author>\n
+        \   <link href=\"http://www.uq.edu.au\" rel=\"http://purl.org/dc/terms/publisher\"
+        title=\"The University of Queensland\" />\n    <rights type=\"text\">All Rights
+        reserved to UQ Data Collections Registry</rights>\n    <link href=\"http://creativecommons.org/licenses/by-nc/2.5/rdf\"
+        rel=\"license\" />\n  </source>\n  <link href=\"http://dataspace.uq.edu.au/collections/1r/5\"
+        rel=\"working-copy\" title=\"5\" />\n  <link href=\"http://dataspace.uq.edu.au/collections/1r/5\"
+        rel=\"latest-version\" title=\"5\" />\n  <link href=\"http://dataspace.uq.edu.au/collections/1r\"
+        rel=\"edit\" />\n  <link href=\"http://dataspace.uq.edu.au/collections/1r/4\"
+        rel=\"predecessor-version\" />\n  <link href=\"http://dataspace.uq.edu.au/collections/1r?repr=application/xhtml+xml\"
+        type=\"application/xhtml+xml\" rel=\"alternate\" title=\"xhtml\" />\n  <link
+        href=\"http://dataspace.uq.edu.au/collections/1r?repr=application/rdf+xml\"
+        type=\"application/rdf+xml\" rel=\"alternate\" title=\"rdf\" />\n  <link href=\"http://dataspace.uq.edu.au/collections/1r?repr=application/rifcs+xml\"
+        type=\"application/rifcs+xml\" rel=\"alternate\" title=\"rifcs\" />\n</entry>"
+    http_version: 
+  recorded_at: Thu, 22 Nov 2012 03:48:07 GMT
+- request:
+    method: get
+    uri: http://dataspace.uq.edu.au/agents/15?repr=application/atom%20xml;type=entry
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,identity;q=0.5
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.0.15
+      Date:
+      - Thu, 22 Nov 2012 03:48:07 GMT
+      Content-Type:
+      - application/atom+xml; type=entry;charset=atom
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Etag:
+      - ! '"ac0e8e6298f775b4384f835d6a5fe106"'
+      Vary:
+      - Accept
+      Last-Modified:
+      - Thu, 22 Nov 2012 03:28:26 GMT
+      Location:
+      - http://dataspace.uq.edu.au/agents/15
+    body:
+      encoding: US-ASCII
+      string: ! "<?xml version='1.0' encoding='UTF-8'?>\n<entry xmlns=\"http://www.w3.org/2005/Atom\"
+        xmlns:rdfa=\"http://www.w3.org/ns/rdfa#\">\n  <id>http://dataspace.uq.edu.au/agents/15#</id>\n
+        \ <title type=\"text\">Emeritus Professor Gordon Grigg</title>\n  <content
+        type=\"text\">Emeritus Professor Gordon Grigg is a Emeritus Professor in the
+        School of Biological Sciences at The University of Queensland.</content>\n
+        \ <link href=\"http://dataspace.uq.edu.au/agents/15\" rel=\"self\" title=\"15\"
+        />\n  <updated>2012-11-22T03:28:26.923Z</updated>\n  <published>2012-07-11T07:05:26.613Z</published>\n
+        \ <link href=\"http://dataspace.uq.edu.au/agents/15#\" rel=\"http://www.openarchives.org/ore/terms/describes\"
+        />\n  <link href=\"http://xmlns.com/foaf/0.1/Person\" rel=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\"
+        title=\"Person\" />\n  <rdfa:meta property=\"http://xmlns.com/foaf/0.1/title\"
+        content=\"Emeritus Professor\" />\n  <rdfa:meta property=\"http://xmlns.com/foaf/0.1/givenName\"
+        content=\"Gordon Clifford\" />\n  <rdfa:meta property=\"http://xmlns.com/foaf/0.1/familyName\"
+        content=\"Grigg\" />\n  <link href=\"mailto:gcgrigg@uq.edu.au\" rel=\"http://xmlns.com/foaf/0.1/mbox\"
+        title=\"gcgrigg@uq.edu.au\" />\n  <link href=\"mailto:g.grigg@uq.edu.au\"
+        rel=\"http://xmlns.com/foaf/0.1/mbox\" title=\"g.grigg@uq.edu.au\" />\n  <app:control
+        xmlns:app=\"http://www.w3.org/2007/app\">\n    <app:draft>no</app:draft>\n
+        \ </app:control>\n  <source>\n    <id>http://dataspace.uq.edu.au/</id>\n    <title
+        type=\"text\">UQ Data Collections Registry</title>\n    <author>\n      <name>Tim
+        Dettrick</name>\n      <email>t.dettrick@mailinator.com</email>\n    </author>\n
+        \   <link href=\"http://www.uq.edu.au\" rel=\"http://purl.org/dc/terms/publisher\"
+        title=\"The University of Queensland\" />\n    <rights type=\"text\">All Rights
+        reserved to UQ Data Collections Registry</rights>\n    <link href=\"http://creativecommons.org/licenses/by-nc/2.5/rdf\"
+        rel=\"license\" />\n  </source>\n  <link href=\"http://dataspace.uq.edu.au/agents/15/4\"
+        rel=\"working-copy\" title=\"4\" />\n  <link href=\"http://dataspace.uq.edu.au/agents/15/4\"
+        rel=\"latest-version\" title=\"4\" />\n  <link href=\"http://dataspace.uq.edu.au/agents/15\"
+        rel=\"edit\" />\n  <link href=\"http://dataspace.uq.edu.au/agents/15/3\" rel=\"predecessor-version\"
+        />\n  <link href=\"http://dataspace.uq.edu.au/agents/15?repr=application/xhtml+xml\"
+        type=\"application/xhtml+xml\" rel=\"alternate\" title=\"xhtml\" />\n  <link
+        href=\"http://dataspace.uq.edu.au/agents/15?repr=application/rdf+xml\" type=\"application/rdf+xml\"
+        rel=\"alternate\" title=\"rdf\" />\n  <link href=\"http://dataspace.uq.edu.au/agents/15?repr=application/rifcs+xml\"
+        type=\"application/rifcs+xml\" rel=\"alternate\" title=\"rifcs\" />\n</entry>"
+    http_version: 
+  recorded_at: Thu, 22 Nov 2012 03:48:07 GMT
+- request:
+    method: get
+    uri: http://dataspace.uq.edu.au/agents/17?repr=application/atom%20xml;type=entry
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,identity;q=0.5
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.0.15
+      Date:
+      - Thu, 22 Nov 2012 03:48:08 GMT
+      Content-Type:
+      - application/atom+xml; type=entry;charset=atom
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Etag:
+      - ! '"0d21d4c7a1fedf6265cef29e5b374e41"'
+      Vary:
+      - Accept
+      Last-Modified:
+      - Thu, 22 Nov 2012 03:28:18 GMT
+      Location:
+      - http://dataspace.uq.edu.au/agents/17
+    body:
+      encoding: US-ASCII
+      string: ! "<?xml version='1.0' encoding='UTF-8'?>\n<entry xmlns=\"http://www.w3.org/2005/Atom\"
+        xmlns:rdfa=\"http://www.w3.org/ns/rdfa#\">\n  <id>http://dataspace.uq.edu.au/agents/17#</id>\n
+        \ <title type=\"text\">Anthony Pople</title>\n  <content type=\"text\">Former
+        student at UQ, and now based at DEEDI, Qld. </content>\n  <link href=\"http://dataspace.uq.edu.au/agents/17\"
+        rel=\"self\" title=\"17\" />\n  <updated>2012-11-22T03:28:18.252Z</updated>\n
+        \ <published>2012-07-11T07:08:53.680Z</published>\n  <link href=\"http://dataspace.uq.edu.au/agents/17#\"
+        rel=\"http://www.openarchives.org/ore/terms/describes\" />\n  <link href=\"http://xmlns.com/foaf/0.1/Person\"
+        rel=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\" title=\"Person\" />\n
+        \ <rdfa:meta property=\"http://xmlns.com/foaf/0.1/givenName\" content=\"Tony\"
+        />\n  <rdfa:meta property=\"http://xmlns.com/foaf/0.1/familyName\" content=\"Pople\"
+        />\n  <link href=\"mailto:tony.pople@deedi.qld.gov.au\" rel=\"http://xmlns.com/foaf/0.1/mbox\"
+        title=\"tony.pople@deedi.qld.gov.au\" />\n  <link href=\"http://dataspace.uq.edu.au/collections/1r#\"
+        rel=\"http://xmlns.com/foaf/0.1/made\" title=\"Kangaroo Populations of Eastern
+        Australia - Ecology and Management\" />\n  <app:control xmlns:app=\"http://www.w3.org/2007/app\">\n
+        \   <app:draft>no</app:draft>\n  </app:control>\n  <source>\n    <id>http://dataspace.uq.edu.au</id>\n
+        \   <title type=\"text\">UQ Data Collections Registry</title>\n    <author>\n
+        \     <name>Ms Belinda Weaver</name>\n      <email>b.weaver@uq.edu.au</email>\n
+        \   </author>\n    <link href=\"http://www.uq.edu.au\" rel=\"http://purl.org/dc/terms/publisher\"
+        title=\"The University of Queensland\" />\n    <rights type=\"text\">All Rights
+        reserved to UQ Data Collections Registry</rights>\n    <link href=\"http://creativecommons.org/licenses/by-nc/2.5/rdf\"
+        rel=\"license\" />\n  </source>\n  <link href=\"http://dataspace.uq.edu.au/agents/17/1\"
+        rel=\"working-copy\" title=\"1\" />\n  <link href=\"http://dataspace.uq.edu.au/agents/17/1\"
+        rel=\"latest-version\" title=\"1\" />\n  <link href=\"http://dataspace.uq.edu.au/agents/17\"
+        rel=\"edit\" />\n  <link href=\"http://dataspace.uq.edu.au/agents/17?repr=application/xhtml+xml\"
+        type=\"application/xhtml+xml\" rel=\"alternate\" title=\"xhtml\" />\n  <link
+        href=\"http://dataspace.uq.edu.au/agents/17?repr=application/rdf+xml\" type=\"application/rdf+xml\"
+        rel=\"alternate\" title=\"rdf\" />\n  <link href=\"http://dataspace.uq.edu.au/agents/17?repr=application/rifcs+xml\"
+        type=\"application/rifcs+xml\" rel=\"alternate\" title=\"rifcs\" />\n</entry>"
+    http_version: 
+  recorded_at: Thu, 22 Nov 2012 03:48:08 GMT
+- request:
+    method: get
+    uri: http://dataspace.uq.edu.au/agents/17?repr=application/atom%20xml;type=entry
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,identity;q=0.5
+      If-None-Match:
+      - ! '"0d21d4c7a1fedf6265cef29e5b374e41"'
+      If-Modified-Since:
+      - Thu, 22 Nov 2012 03:28:18 GMT
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.0.15
+      Date:
+      - Thu, 22 Nov 2012 03:48:08 GMT
+      Content-Type:
+      - application/atom+xml; type=entry;charset=atom
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Etag:
+      - ! '"e4825c411b8dcf56e75af5055cd7f279"'
+      Vary:
+      - Accept
+      Last-Modified:
+      - Thu, 22 Nov 2012 03:48:08 GMT
+      Location:
+      - http://dataspace.uq.edu.au/agents/17
+    body:
+      encoding: US-ASCII
+      string: ! "<?xml version='1.0' encoding='UTF-8'?>\n<entry xmlns=\"http://www.w3.org/2005/Atom\"
+        xmlns:rdfa=\"http://www.w3.org/ns/rdfa#\">\n  <id>http://dataspace.uq.edu.au/agents/17#</id>\n
+        \ <title type=\"text\">Anthony Pople</title>\n  <content type=\"text\">Former
+        student at UQ, and now based at DEEDI, Qld. </content>\n  <link href=\"http://dataspace.uq.edu.au/agents/17\"
+        rel=\"self\" title=\"17\" />\n  <updated>2012-11-22T03:48:08.139Z</updated>\n
+        \ <published>2012-07-11T07:08:53.680Z</published>\n  <link href=\"http://dataspace.uq.edu.au/agents/17#\"
+        rel=\"http://www.openarchives.org/ore/terms/describes\" />\n  <link href=\"http://xmlns.com/foaf/0.1/Person\"
+        rel=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\" title=\"Person\" />\n
+        \ <rdfa:meta property=\"http://xmlns.com/foaf/0.1/givenName\" content=\"Tony\"
+        />\n  <rdfa:meta property=\"http://xmlns.com/foaf/0.1/familyName\" content=\"Pople\"
+        />\n  <link href=\"mailto:tony.pople@deedi.qld.gov.au\" rel=\"http://xmlns.com/foaf/0.1/mbox\"
+        title=\"tony.pople@deedi.qld.gov.au\" />\n  <link href=\"http://dataspace.uq.edu.au/collections/1r#\"
+        rel=\"http://xmlns.com/foaf/0.1/made\" title=\"Kangaroo Populations of Eastern
+        Australia - Ecology and Management\" />\n  <app:control xmlns:app=\"http://www.w3.org/2007/app\">\n
+        \   <app:draft>no</app:draft>\n  </app:control>\n  <source>\n    <id>http://dataspace.uq.edu.au</id>\n
+        \   <title type=\"text\">UQ Data Collections Registry</title>\n    <author>\n
+        \     <name>Ms Belinda Weaver</name>\n      <email>b.weaver@uq.edu.au</email>\n
+        \   </author>\n    <link href=\"http://www.uq.edu.au\" rel=\"http://purl.org/dc/terms/publisher\"
+        title=\"The University of Queensland\" />\n    <rights type=\"text\">All Rights
+        reserved to UQ Data Collections Registry</rights>\n    <link href=\"http://creativecommons.org/licenses/by-nc/2.5/rdf\"
+        rel=\"license\" />\n  </source>\n  <link href=\"http://dataspace.uq.edu.au/agents/17/1\"
+        rel=\"working-copy\" title=\"1\" />\n  <link href=\"http://dataspace.uq.edu.au/agents/17/1\"
+        rel=\"latest-version\" title=\"1\" />\n  <link href=\"http://dataspace.uq.edu.au/agents/17\"
+        rel=\"edit\" />\n  <link href=\"http://dataspace.uq.edu.au/agents/17?repr=application/xhtml+xml\"
+        type=\"application/xhtml+xml\" rel=\"alternate\" title=\"xhtml\" />\n  <link
+        href=\"http://dataspace.uq.edu.au/agents/17?repr=application/rdf+xml\" type=\"application/rdf+xml\"
+        rel=\"alternate\" title=\"rdf\" />\n  <link href=\"http://dataspace.uq.edu.au/agents/17?repr=application/rifcs+xml\"
+        type=\"application/rifcs+xml\" rel=\"alternate\" title=\"rifcs\" />\n</entry>"
+    http_version: 
+  recorded_at: Thu, 22 Nov 2012 03:48:08 GMT
+recorded_with: VCR 2.3.0

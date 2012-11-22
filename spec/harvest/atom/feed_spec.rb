@@ -84,6 +84,30 @@ describe Miletus::Harvest::Atom::Feed do
 
   end
 
+  describe "out-of-order feeds" do
+
+    def fixture_filename(suffix)
+      fixture_file = File.join(File.dirname(__FILE__),
+          '..', '..', 'fixtures', 'atom-feed-test-complete-%s.xml' % suffix)
+    end
+
+    it "should handle out-of-order entries in a single feed document" do
+      VCR.use_cassette(
+        'dataspace_rdcatom_feed_entries_out_of_order complete_feed'
+      ) do
+        subject.url = 'file://' + fixture_filename('2')
+        subject.save!
+        subject.mirror
+        subject.reload
+        subject.entries.count.should be == 3
+        subject.entries.each do |entry|
+          # Note: This is the entry update time we're checking
+          entry.updated.iso8601.should be == '2012-09-05T16:13:26+10:00'
+        end
+      end
+    end
+  end
+
 
 
 end
