@@ -62,7 +62,7 @@ ActiveAdmin.register Miletus::Merge::Concept,
       row :type
       row :subtype
       row :titles do |concept|
-        concept.titles.each do |title|
+        (concept.titles || []).each do |title|
           div title
         end
       end

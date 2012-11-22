@@ -2,7 +2,13 @@ class Page < ActiveRecord::Base
   attr_accessible :content, :created_at, :name, :updated_at
 
   def to_html
-    @renderer ||= Redcarpet::Markdown.new(Redcarpet::Render::XHTML)
-    @renderer.render(content)
+    content ? renderer.render(content) : ''
   end
+
+  private
+
+  def renderer
+    @renderer ||= Redcarpet::Markdown.new(Redcarpet::Render::XHTML)
+  end
+
 end

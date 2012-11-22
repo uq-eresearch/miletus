@@ -30,4 +30,18 @@ describe Admin::ConceptsController do
     end
   end
 
+  describe "GET show" do
+
+    context "for a single facetless concept" do
+      before(:each) do
+        get :show, :id => Miletus::Merge::Concept.create.id
+      end
+
+      it "is successful" do
+        response.should be_success
+      end
+    end
+
+  end
+
 end
