@@ -9,8 +9,7 @@ module Miletus::Merge
 
     self.table_name = 'merge_concepts'
 
-    store :cache, :accessors => [
-      :titles, :type, :subtype, :outbound_related_concept_keys]
+    store :cache, :accessors => [:titles, :type, :subtype]
 
     has_many :facets,
       :dependent => :destroy,
@@ -202,12 +201,8 @@ module Miletus::Merge
       self.type, self.subtype = rifcs_doc.types
       # Key index for faster graph generation
       out_keys = indexed_attributes.where(:key => 'relatedKey').pluck(:value)
-      self.outbound_related_concept_keys = self.class.joins(:facets).where(
-          "#{tn(:facets)}.key in (?)", out_keys
-        ).map {|c| c.key}
       save!
     end
-
     def related_key_dictionary
       Hash[*outbound_related_concepts.map do |c|
         c.facets.map {|f| [f.key, c.key] }
