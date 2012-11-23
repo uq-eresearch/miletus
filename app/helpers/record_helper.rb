@@ -191,6 +191,7 @@ module RecordHelper
   def name(rifcs_doc)
     extend Miletus::NamespaceHelper
     name = rifcs_doc.at_xpath("//rif:name[@type='primary']", ns_decl)
+    return {} if name.nil?
     nodes = name.xpath("rif:namePart", ns_decl)
     nodes.each_with_object({}) do |e, memo|
       t = e['type']

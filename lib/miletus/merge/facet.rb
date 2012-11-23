@@ -13,6 +13,7 @@ module Miletus::Merge
 
     before_validation :update_key
     after_save :reindex_concept
+    after_destroy :destroy_empty_concept
 
     def self.find_existing(xml)
       find_by_key(global_key(xml))
@@ -28,6 +29,12 @@ module Miletus::Merge
     end
 
     private
+
+    def destroy_empty_concept
+      return if self.concept.nil?
+      self.concept.reload
+      concept.destroy if self.concept.facets.count == 0
+    end
 
     def update_key
       write_attribute(:key, self.class.global_key(metadata))

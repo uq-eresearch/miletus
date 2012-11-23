@@ -35,6 +35,7 @@ module Miletus::Harvest::RDCAtom
     REL_MBOX = 'http://xmlns.com/foaf/0.1/mbox'
     REL_OUTPUT_OF = \
       'http://www.ands.org.au/ontologies/ns/0.1/VITRO-ANDS.owl#isOutputOf'
+    REL_PUBLISHER = 'http://purl.org/dc/terms/publisher'
     REL_REFERENCED_BY = 'http://purl.org/dc/terms/isReferencedBy'
     REL_RELATED_WEBSITE = 'http://xmlns.com/foaf/0.1/page'
     REL_SPATIAL = 'http://purl.org/dc/terms/spatial'
@@ -137,6 +138,7 @@ module Miletus::Harvest::RDCAtom
               rifcs_spatial(xml)
               rifcs_referenced_by_related_info(xml)
               rifcs_author_related_objects(xml)
+              rifcs_publisher_related_objects(xml)
               rifcs_collection_related_objects(xml)
               rifcs_made_related_objects(xml)
               rifcs_output_of_related_objects(xml)
@@ -144,6 +146,7 @@ module Miletus::Harvest::RDCAtom
           }
           rifcs_activities(xml)
           rifcs_authors(xml)
+          rifcs_publishers(xml)
           rifcs_made_collection(xml)
           rifcs_related_collections(xml)
         }
@@ -187,17 +190,21 @@ module Miletus::Harvest::RDCAtom
       end
     end
 
-    def rifcs_author_key(author)
+    def rifcs_synthetic_key(type, uri)
       uri_hash = Digest::SHA2.new
-      uri_hash << (author.uri || 'mailto:%s' % author.email)
-      author_fragment = 'author-%s' % uri_hash.hexdigest
+      uri_hash << uri.to_s
+      synthetic_key_fragment = '%s-%s' % [type, uri_hash.hexdigest]
       uri = URI.parse(atom_entry.id)
       if uri.fragment.nil? || uri.fragment.length == 0
-        uri.fragment = author_fragment
+        uri.fragment = synthetic_key_fragment
       else
-        uri.fragment += '-%s' % author_fragment
+        uri.fragment += '-%s' % synthetic_key_fragment
       end
       uri.to_s
+    end
+
+    def rifcs_author_key(author)
+      rifcs_synthetic_key('author', author.uri || 'mailto:%s' % author.email)
     end
 
     def rifcs_related_key(prefix, href)
@@ -218,6 +225,16 @@ module Miletus::Harvest::RDCAtom
         xml.relatedObject {
           xml.key(rifcs_author_key(author))
           xml.relation(:type => 'hasCollector')
+        }
+      end
+    end
+
+    def rifcs_publisher_related_objects(xml)
+      publisher_links = links.select {|l| l.rel == REL_PUBLISHER}
+      publisher_links.each do |l|
+        xml.relatedObject {
+          xml.key(rifcs_synthetic_key('publisher', l.href))
+          xml.relation(:type => 'isManagedBy')
         }
       end
     end
@@ -364,7 +381,7 @@ module Miletus::Harvest::RDCAtom
             xml.coverage {
               xml.spatial dcmi_point, :type => 'dcmiPoint'
             }
-          rescue
+          rescue Exception
             unless link.title.nil? or link.title == ''
               xml.coverage {
                 xml.spatial link.title, :type => 'text'
@@ -408,6 +425,26 @@ module Miletus::Harvest::RDCAtom
             xml.relatedObject {
               xml.key(atom_entry.id)
               xml.relation(:type => 'isCollectorOf')
+            }
+          }
+        }
+      end
+    end
+
+    def rifcs_publishers(xml)
+      publisher_links = links.select {|l| l.rel == REL_PUBLISHER}
+      publisher_links.each do |l|
+        xml.registryObject(:group => source.title) {
+          xml.key rifcs_synthetic_key('publisher', l.href)
+          xml.originatingSource source.id
+          xml.party(:type => 'group') {
+            xml.identifier(l.href, :type => 'uri')
+            xml.name(:type => 'primary') {
+              xml.namePart(l.title)
+            } if l.title
+            xml.relatedObject {
+              xml.key(atom_entry.id)
+              xml.relation(:type => 'isManagerOf')
             }
           }
         }

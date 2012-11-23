@@ -2,8 +2,10 @@ module Miletus::Harvest::Document
 
   class RDCAtom < Base
 
+    # Valid content types (with text/html in there for file:// URLs)
     validates_attachment_content_type :document,
-      :content_type => %w[application/atom+xml application/xml text/xml]
+      :content_type => %w[
+        application/atom+xml application/xml text/xml text/html]
 
     # Produces RIF-CS document from RDC Atom feed
     #

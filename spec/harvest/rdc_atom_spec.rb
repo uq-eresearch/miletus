@@ -81,7 +81,7 @@ describe Miletus::Harvest::RDCAtom::Entry do
     related_objects.select do |ro|
       ro.at_xpath('rif:party', ns_decl)
     end.tap do |authors|
-      authors.count.should == 3
+      authors.count.should == 4
     end.each do |author|
       author.at_xpath('rif:party/rif:identifier', ns_decl).should_not be_nil
       author.at_xpath('rif:party/rif:name', ns_decl).should_not be_nil
@@ -142,7 +142,7 @@ describe Miletus::Harvest::RDCAtom::Entry do
     rifcs_schema = Miletus::NamespaceHelper::ns_by_prefix('rif').schema
     rifcs_schema.validate(@doc).should eq([])
     objects = @doc.xpath('//rif:registryObject', ns_decl)
-    objects.count.should be 4
+    objects.count.should be == 5
     primary_object, *related_objects = objects
     primary_entity = primary_object.at_xpath('rif:collection', ns_decl)
     primary_entity.at_xpath('@type', ns_decl).content.should eq('collection')

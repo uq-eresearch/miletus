@@ -48,6 +48,7 @@
 		<name>Bostjan Kobe</name>
 		<uri>http://dataspace.uq.edu.au/agents/p</uri>
 	</author>
+	<link href="http://example.test/t.atkins" rel="http://purl.org/dc/terms/publisher" title="Tom Atkins"/>
 	<category term="Crystallography" />
 	<category term="X-Ray Diffraction" />
 	<category scheme="http://purl.org/asc/1297.0/2008/for/" term="http://purl.org/asc/1297.0/2008/for/060112"

@@ -152,11 +152,8 @@ describe RifcsRecordObserver do
       input_record.save!
       # Run hook - which will happen as part of the environment
       # subject.after_update(input_record)
-      # Check the record was updated
-      Miletus::Merge::Concept.all.count.should be == 1
-      concept = Miletus::Merge::Concept.find(:first)
-      concept.should_not be_nil
-      concept.to_rif.should be_nil
+      # Check the concept was removed
+      Miletus::Merge::Concept.all.should be_empty
     end
 
 
@@ -175,11 +172,8 @@ describe RifcsRecordObserver do
       input_record.destroy
       # Run hook - which will happen as part of the environment
       # subject.after_destroy(input_record)
-      # Check the record was updated
-      Miletus::Merge::Concept.all.count.should be == 1
-      concept = Miletus::Merge::Concept.find(:first)
-      concept.should_not be_nil
-      concept.to_rif.should be_nil
+      # Check the concept was removed
+      Miletus::Merge::Concept.all.should be_empty
     end
 
     it "should merge output record data when identifiers match" do
@@ -210,52 +204,6 @@ describe RifcsRecordObserver do
     end
 
   end
-
-  # describe "Atom Entry Observation" do
-  #
-  #   def get_fixture(n)
-  #     fixture_file = File.join(File.dirname(__FILE__),
-  #         '..', 'fixtures', 'atom-entry-%d.xml' % n)
-  #     Miletus::Harvest::Atom::RDC::Entry.new(:xml => IO.read(fixture_file))
-  #   end
-  #
-  #   it "should create new concepts for a new harvested entry" do
-  #     # Disable delayed run for hooks
-  #     RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
-  #     # Check the database has no existing concepts
-  #     Miletus::Merge::Concept.count.should be == 0
-  #     # Create entry
-  #     entry = get_fixture(1)
-  #     entry.save!
-  #     # Check that associated concepts have been created
-  #     Miletus::Merge::Concept.count.should == 6
-  #   end
-  #
-  #   it "should update concepts for an updated entry" do
-  #     extend Miletus::NamespaceHelper
-  #     # Disable delayed run for hooks
-  #     RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
-  #     # Check the database has no existing concepts
-  #     Miletus::Merge::Concept.count.should be == 0
-  #     # Create entry
-  #     entry = get_fixture(1)
-  #     entry.save!
-  #     # Check that associated concepts have been created
-  #     Miletus::Merge::Concept.count.should be == 6
-  #     updated_entry = entry.atom_entry
-  #     updated_entry.content = "Test description"
-  #     entry.xml = updated_entry.to_xml
-  #     entry.save!
-  #     collection = Miletus::Merge::IndexedAttribute.find_by_key_and_value(
-  #       'identifier', 'http://dimer.uq.edu.au/ref/3r').concept
-  #     doc = Miletus::Merge::RifcsDoc.parse(collection.to_rif)
-  #     doc.at_xpath('//rif:description', ns_decl)\
-  #       .content.should be == 'Test description'
-  #     # Check that associated concepts have been created
-  #     Miletus::Merge::Concept.count.should == 6
-  #   end
-  #
-  # end
 
   describe "RIF-CS Document Observation" do
 

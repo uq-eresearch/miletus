@@ -31,8 +31,11 @@ module Miletus::Harvest::Document
           begin
             if f.respond_to?(:meta) and f.meta['content-encoding'] == 'gzip'
               f = Zlib::GzipReader.new(f)
+            else
+              f = f.binmode
             end
-            IO.copy_stream(f, tempfile)
+            # Both streams must be in binary mode to allow multi-byte UTF-8
+            IO.copy_stream(f, tempfile.binmode)
             tempfile.close
             self.document = tempfile.open
           ensure
@@ -64,6 +67,7 @@ module Miletus::Harvest::Document
 
     def fetch_options
       opts = {}
+      opts['Accept-Charset'] = 'UTF-8' # Handling is simpler in Ruby with UTF-8
       opts['Accept-Encoding'] = 'gzip;q=1.0,identity;q=0.5' # Prefer compression
       opts[:read_timeout] = 600 # Handle very large documents
       opts['If-None-Match'] = self.etag if self.etag

@@ -25,6 +25,25 @@ describe Miletus::Merge::Facet do
     end
   end
 
+  it "should destroy the concept if it is the last facet left" do
+    subject.save!
+    concept = subject.concept
+    second_facet = concept.facets.create
+    # Reload concept again for latest data
+    concept.reload
+    concept.should have(2).facets
+    # Destroy one facet
+    second_facet.destroy
+    # Reload concept again for latest data
+    concept.reload
+    concept.should_not be_nil
+    concept.should have(1).facets
+    # Destroy last facet
+    subject.destroy
+    # Concept should no longer exist
+    lambda { concept.reload }.should raise_error(ActiveRecord::RecordNotFound)
+  end
+
   context "RIF-CS" do
 
     it { should respond_to(:to_rif) }
