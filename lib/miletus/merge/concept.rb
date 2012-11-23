@@ -85,6 +85,13 @@ module Miletus::Merge
     end
 
     def self.deduplicate
+      duplicate_uuids = Miletus::Merge::Concept \
+        .group('uuid')\
+        .having('count(uuid) > 1')\
+        .pluck('uuid')
+      duplicate_uuids.each do |uuid|
+        self.merge Miletus::Merge::Concept.where(:uuid => uuid)
+      end
       duplicate_identifiers = Miletus::Merge::IndexedAttribute \
         .where(:key => 'identifier') \
         .group('value')\
@@ -164,7 +171,14 @@ module Miletus::Merge
       return unless uuid.nil? and facets.count > 0
       facet_key = facets.first.key
       return if facet_key.nil?
-      self.uuid = uuid_from_facet_key(facet_key).to_s
+      uuid = uuid_from_facet_key(facet_key).to_s
+      # UUIDs are based on the facet key, so merge if identical
+      existing_concept = self.class.find_by_uuid(uuid)
+      if existing_concept.nil?
+        self.uuid = uuid
+      else
+        self.class.merge([existing_concept, self])
+      end
     end
 
     def uuid_from_facet_key(facet_key)

@@ -10,6 +10,9 @@ ActiveAdmin.register Miletus::Merge::Concept,
     para do
       button_to "Reindex", :action => :reindex, :method => :post
     end
+    para do
+      button_to "Deduplicate", :action => :deduplicate, :method => :post
+    end
   end
 
   batch_action :recheck_sru do |selection|
@@ -32,6 +35,12 @@ ActiveAdmin.register Miletus::Merge::Concept,
   collection_action :reindex, :method => :post do
     Miletus::Merge::Concept.all.each(&:reindex)
     flash[:notice] = "All concepts have been reindexed."
+    redirect_to :action => :index
+  end
+
+  collection_action :deduplicate, :method => :post do
+    Miletus::Merge::Concept.deduplicate
+    flash[:notice] = "Finished merging duplicate concepts."
     redirect_to :action => :index
   end
 
