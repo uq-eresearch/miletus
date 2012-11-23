@@ -51,6 +51,7 @@ module Miletus::Harvest::Atom
     end
 
     def update_document_links
+      destroy_hanging_links
       alt_links = atom_entry.links.alternates
       # Remove disappeared documents
       alt_link_urls = alt_links.map {|l| l.href}
@@ -89,6 +90,13 @@ module Miletus::Harvest::Atom
         end
       return nil if model.nil?
       model.find_or_create_by_url(:url => link.href, :managed => true)
+    end
+
+    private
+
+    def destroy_hanging_links
+      document_links.select{|dl| dl.document.nil?}.each(&:destroy)
+      document_links(true) # Refresh from DB
     end
 
   end
