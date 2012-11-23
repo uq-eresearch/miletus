@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121119054113) do
+ActiveRecord::Schema.define(:version => 20121123045342) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -149,6 +149,9 @@ ActiveRecord::Schema.define(:version => 20121119054113) do
     t.integer "record_id"
     t.integer "set_id"
   end
+
+  add_index "output_oaipmh_record_set_memberships", ["record_id"], :name => "index_output_oaipmh_record_set_memberships_on_record_id"
+  add_index "output_oaipmh_record_set_memberships", ["set_id"], :name => "index_output_oaipmh_record_set_memberships_on_set_id"
 
   create_table "output_oaipmh_records", :force => true do |t|
     t.integer  "underlying_concept_id"
