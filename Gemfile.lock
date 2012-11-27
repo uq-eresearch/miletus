@@ -141,6 +141,9 @@ GEM
       faraday (>= 0.7.4, < 0.9)
     fastercsv (1.5.5)
     ffi (1.2.0)
+    flog (2.5.3)
+      ruby_parser (~> 2.0)
+      sexp_processor (~> 3.0)
     font-awesome-rails (0.4.1)
       railties (~> 3.1)
     foreman (0.60.2)
@@ -381,6 +384,7 @@ DEPENDENCIES
   deface (>= 1.0.0.rc1)
   delayed_job_active_record
   equivalent-xml
+  flog
   font-awesome-rails
   foreman
   georuby!

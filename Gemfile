@@ -99,6 +99,7 @@ group :development do
   gem 'guard-rails_best_practices'
   gem 'guard-rspec'
   gem 'debugger'
+  gem 'flog' # Cyclomatic complexity reporting
   gem 'pry-rails'
   gem 'ruby-prof'
   gem 'rb-inotify', '~> 0.8.8'

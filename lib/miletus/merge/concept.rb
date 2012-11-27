@@ -92,17 +92,15 @@ module Miletus::Merge
 
     # Move another concept's facets to this one, then destroy the empty concept.
     def merge(concept)
-      Rails.logger.info(
-        "Merging %d facets from concept #%d into #%d" %
-        [concept.facets.count, concept.id, self.id])
+      Rails.logger.info("Merging #{concept.facets.count} facets "\
+                        "from concept #{concept.id} into #{self.id}")
       concept.transaction do
         # Transfer concept to primary
         concept.facets.update_all(:concept_id => self.id)
-        Rails.logger.info("Removing empty concept #%d" % concept.id)
+        Rails.logger.info("Removing empty concept #{concept.id}")
         concept.reload.destroy
         # Update primary concept details
-        self.class.reset_counters(self.id, :facets)
-        self.reload.reindex
+        reload_facets_and_reindex
       end
       self
     end
@@ -230,7 +228,7 @@ module Miletus::Merge
       key_xpaths = {
         'identifier' => '//rif:registryObject/rif:*/rif:identifier',
         'relatedKey' => '//rif:relatedObject/rif:key',
-        'email'      => '//rif:registryObject/rif:party/rif:location/'+
+        'email'      => '//rif:registryObject/rif:party/rif:location/'\
                         'rif:address/rif:electronic[@type="email"]/rif:value'
       }
       key_xpaths.each do |key, xpath|
@@ -268,6 +266,11 @@ module Miletus::Merge
 
     def rifcs_docs
       RifcsDocs.new facets.order(:created_at).map(&:to_rif).compact
+    end
+
+    def reload_facets_and_reindex
+      self.class.reset_counters(self.id, :facets)
+      self.reload.reindex
     end
 
   end
