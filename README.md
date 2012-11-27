@@ -48,8 +48,59 @@ it takes to merge facets.
 
 An example of the sequence for OAI-PMH RIF-CS records is as follows:
 
-![Data flow sequence](images/sequence.png)
+<!-- Graphviz source (turned into boxart by graph-easy):
+digraph miletus {
+  node[shape=box];
+  input_record [label=" Miletus::Harvest::OAIPMH::RIFCS::Record "];
+  rifcs_record_observer [label=" RifcsRecordObserver "];
+  facet [label=" Miletus::Merge::Facet "];
+  concept [label=" Miletus::Merge::Concept "];
+  oaipmh_output_observer [label=" OaipmhOutputObserver "];
+  output_record [label=" Miletus::Output::OAIPMH::Record "];
+  input_record -> rifcs_record_observer [ label=" :after_save " ];
+  rifcs_record_observer -> facet [ label=" :create" ];
+  facet -> concept [ label=" :reindex " ];
+  concept -> oaipmh_output_observer [ label=" :after_save " ];
+  oaipmh_output_observer -> output_record [ label=" :create " ];
+}
+-->
 
+```
+┌─────────────────────────────────────────┐
+│ Miletus::Harvest::OAIPMH::RIFCS::Record │
+└─────────────────────────────────────────┘
+  │
+  │ :after_save
+  ▼
+┌─────────────────────────────────────────┐
+│           RifcsRecordObserver           │
+└─────────────────────────────────────────┘
+  │
+  │ :create
+  ▼
+┌─────────────────────────────────────────┐
+│          Miletus::Merge::Facet          │
+└─────────────────────────────────────────┘
+  │
+  │ :reindex
+  ▼
+┌─────────────────────────────────────────┐
+│         Miletus::Merge::Concept         │
+└─────────────────────────────────────────┘
+  │
+  │ :after_save
+  ▼
+┌─────────────────────────────────────────┐
+│          OaipmhOutputObserver           │
+└─────────────────────────────────────────┘
+  │
+  │ :create
+  ▼
+┌─────────────────────────────────────────┐
+│     Miletus::Output::OAIPMH::Record     │
+└─────────────────────────────────────────┘
+
+```
 
 ## Acknowledgements
 
@@ -58,3 +109,4 @@ project.
 
 [ANDS]: http://www.ands.org.au/
 [RIF-CS]: http://services.ands.org.au/documentation/rifcs/guidelines/rif-cs.html
+
