@@ -21,3 +21,8 @@
 /bin/
 /coverage/
 /public/system/
+
+# Ignore generated docs
+.yardoc/
+doc/
+doc_assets/images/*.png

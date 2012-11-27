@@ -1,0 +1,5 @@
+--asset docs/images:images
+lib/**/*.rb
+-
+README.md
+COPYING

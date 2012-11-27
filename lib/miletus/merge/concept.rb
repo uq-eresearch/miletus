@@ -3,6 +3,13 @@ require 'set'
 
 module Miletus::Merge
 
+  # Represents a single concept which may have many facets of information.
+  #
+  # For example, a person would be a _concept_, with individual _facets_ coming
+  # from collection metadata repositories, an institutional HR system and the
+  # National Library of Australia.
+  #
+  # Facets are grouped together into concepts using their common identifiers.
   class Concept < ActiveRecord::Base
     extend Miletus::NamespaceHelper
     include Miletus::NamespaceHelper
@@ -38,11 +45,13 @@ module Miletus::Merge
       uuid && [key_prefix, uuid].join
     end
 
+    # The primary name this concept is known by. (eg. "Howard Walter Florey")
     def title
       title = (self.titles || []).first
       title.nil? || title == '' ? self.key : title
     end
 
+    # Other titles associated with this concept. (eg. "Baron Florey")
     def alternate_titles
       self.titles[1..-1] || [] rescue []
     end
@@ -57,6 +66,8 @@ module Miletus::Merge
       find_by_uuid!(uuid)
     end
 
+    # Find an existing concept with a matching identifier, using the given
+    # RIF-CS XML.
     def self.find_existing(xml)
       id_nodes = Nokogiri::XML(xml).xpath(
         '//rif:identifier', ns_decl)
@@ -64,6 +75,8 @@ module Miletus::Merge
       having_identifier(*identifiers).first
     end
 
+    # Merge multiple concepts into a single concept containing all their
+    # constituent facets.
     def self.merge(concepts)
       primary_concept, *dup_concepts = *concepts
       dup_concepts.each do |concept|
@@ -84,6 +97,8 @@ module Miletus::Merge
       primary_concept.reload
     end
 
+    # Find duplicate concepts in the system (which may have emerged from
+    # identifiers looked up after creation) and merge them together.
     def self.deduplicate
       duplicate_uuids = Miletus::Merge::Concept \
         .group('uuid')\
@@ -102,6 +117,8 @@ module Miletus::Merge
       end
     end
 
+    # Generate a RIF-CS representation of this concept based on its consituent
+    # facets.
     def to_rif
       input_docs = rifcs_facets
       return nil if input_docs.empty?
@@ -113,6 +130,8 @@ module Miletus::Merge
       rifcs_doc.root.to_xml(:indent => 2)
     end
 
+    # Repopulated all the cached lookup and description data from this concept's
+    # facets.
     def reindex
       update_indexed_attributes_from_facet_rifcs
       recache_attributes
@@ -126,10 +145,13 @@ module Miletus::Merge
       "%s incorporating %s" % [key, facets.pluck(:key).inspect]
     end
 
+    # Generate a GEXF document representing all existing concepts.
     def self.to_gexf
       GexfDoc.new(self.all).to_xml
     end
 
+    # Generate a GEXF document representing this concept and directly related
+    # concepts.
     def to_gexf
       GexfDoc.new([self] | outbound_related_concepts).to_xml
     end

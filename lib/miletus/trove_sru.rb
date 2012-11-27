@@ -177,7 +177,7 @@ class TroveSRU
   #
   # *use_test* - query the production Trove or the test Trove
   #
-  # Returns the NLA Party Identifer as a string, or {nil} if not found
+  # Returns the NLA Party Identifer as a string, or nil if not found
   #
   # Raises DataError if an internal error occurs
 

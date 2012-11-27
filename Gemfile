@@ -7,7 +7,6 @@ gem 'rails', '>= 3.2.6'
 
 gem 'sqlite3'
 
-
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
@@ -88,6 +87,7 @@ group :test, :development do
   gem 'spork' # For running a test server (and spec_helper.rb refers to it)
   gem 'brakeman' # For security testing
   gem 'vcr' # For playing back remote service tests
+  gem 'yard' # Documentation
 end
 
 group :development do
