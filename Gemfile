@@ -91,6 +91,7 @@ group :test, :development do
 end
 
 group :development do
+  gem 'code_analyzer' # For Rails BP
   gem 'rails_best_practices', '>= 1.11.0' # Has auto-ignore of schema.rb
   gem 'guard'
   gem 'guard-brakeman'
