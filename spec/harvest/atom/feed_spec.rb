@@ -102,7 +102,7 @@ describe Miletus::Harvest::Atom::Feed do
         subject.entries.count.should be == 3
         subject.entries.each do |entry|
           # Note: This is the entry update time we're checking
-          entry.updated.iso8601.should be == '2012-09-05T16:13:26+10:00'
+          entry.updated.utc.iso8601.should be == '2012-09-05T06:13:26Z'
         end
       end
     end
