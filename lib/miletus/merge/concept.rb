@@ -87,19 +87,17 @@ module Miletus::Merge
     # constituent facets.
     def self.merge(concepts)
       primary_concept = concepts.reduce(:merge)
-
       primary_concept.reload
     end
 
     # Move another concept's facets to this one, then destroy the empty concept.
     def merge(concept)
-      Rails.logger.info("Merging %d facets from concept #%d into #%d" % [
-        concept.facets.count,
-        concept.id,
-        self.id])
+      Rails.logger.info(
+        "Merging %d facets from concept #%d into #%d" %
+        [concept.facets.count, concept.id, self.id])
       concept.transaction do
         # Transfer concept to primary
-        facets = concept.facets.update_all(:concept_id => self.id)
+        concept.facets.update_all(:concept_id => self.id)
         Rails.logger.info("Removing empty concept #%d" % concept.id)
         concept.reload.destroy
         # Update primary concept details
