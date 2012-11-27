@@ -1,4 +1,28 @@
 module Miletus::Merge
+
+  class RifcsDocs
+    include Miletus::NamespaceHelper
+
+    attr_reader :docs
+
+    def initialize(xml_strings = [])
+      @docs = xml_strings.map {|xml| RifcsDoc.create(xml)}
+    end
+
+    def content_from_nodes(xpath)
+      docs.map{|doc| doc.xpath(xpath, ns_decl) # Get nodesets matching pattern
+        }.map{|n| n.to_ary.map {|e| e.content.strip} # Get content values
+        }.reduce(:|) or [] # Join arrays together, and handle nil case
+    end
+
+    def merge
+      return nil if docs.empty?
+      rifcs_doc = docs.first.clone
+      rifcs_doc.merge_rifcs_elements(docs)
+    end
+
+  end
+
   class RifcsDoc < Nokogiri::XML::Document
     include Miletus::NamespaceHelper
 

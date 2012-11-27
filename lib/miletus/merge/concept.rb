@@ -21,8 +21,16 @@ module Miletus::Merge
     has_many :facets,
       :dependent => :destroy,
       :order => 'updated_at DESC'
+
     has_many :indexed_attributes,
-      :dependent => :destroy, :order => [:key, :value]
+      :dependent => :destroy, :order => [:key, :value] do
+
+      def update(key, new_values)
+        proxy_association.reflection.klass\
+          .update_for_concept(proxy_association.owner, key, new_values)
+      end
+
+    end
 
     before_save :generate_uuid
 
@@ -78,23 +86,27 @@ module Miletus::Merge
     # Merge multiple concepts into a single concept containing all their
     # constituent facets.
     def self.merge(concepts)
-      primary_concept, *dup_concepts = *concepts
-      dup_concepts.each do |concept|
-        Rails.logger.info("Merging %d facets from concept #%d into #%d" % [
-          concept.facets.count,
-          concept.id,
-          primary_concept.id])
-        concept.transaction do
-          # Transfer concept to primary
-          facets = concept.facets.update_all(:concept_id => primary_concept.id)
-          Rails.logger.info("Removing empty concept #%d" % concept.id)
-          concept.reload.destroy
-          # Update primary concept details
-          primary_concept.class.reset_counters(primary_concept.id, :facets)
-          primary_concept.reload.reindex
-        end
-      end
+      primary_concept = concepts.reduce(:merge)
+
       primary_concept.reload
+    end
+
+    # Move another concept's facets to this one, then destroy the empty concept.
+    def merge(concept)
+      Rails.logger.info("Merging %d facets from concept #%d into #%d" % [
+        concept.facets.count,
+        concept.id,
+        self.id])
+      concept.transaction do
+        # Transfer concept to primary
+        facets = concept.facets.update_all(:concept_id => self.id)
+        Rails.logger.info("Removing empty concept #%d" % concept.id)
+        concept.reload.destroy
+        # Update primary concept details
+        self.class.reset_counters(self.id, :facets)
+        self.reload.reindex
+      end
+      self
     end
 
     # Find duplicate concepts in the system (which may have emerged from
@@ -120,10 +132,8 @@ module Miletus::Merge
     # Generate a RIF-CS representation of this concept based on its consituent
     # facets.
     def to_rif
-      input_docs = rifcs_facets
-      return nil if input_docs.empty?
-      rifcs_doc = input_docs.first.clone
-      rifcs_doc.merge_rifcs_elements(input_docs)
+      rifcs_doc = rifcs_docs.merge
+      return nil if rifcs_doc.nil?
       rifcs_doc.group = group
       rifcs_doc.key = key
       rifcs_doc.translate_keys(related_key_dictionary)
@@ -218,16 +228,16 @@ module Miletus::Merge
     end
 
     def update_indexed_attributes_from_facet_rifcs
-      input_docs = rifcs_facets
-      update_indexed_attributes('identifier',
-        content_from_nodes(input_docs,
-          '//rif:registryObject/rif:*/rif:identifier'))
-      update_indexed_attributes('relatedKey',
-        content_from_nodes(input_docs, '//rif:relatedObject/rif:key'))
-      update_indexed_attributes('email',
-        content_from_nodes(input_docs,
-          '//rif:registryObject/rif:party/rif:location/rif:address'+
-          '/rif:electronic[@type="email"]/rif:value'))
+      input_docs = rifcs_docs
+      key_xpaths = {
+        'identifier' => '//rif:registryObject/rif:*/rif:identifier',
+        'relatedKey' => '//rif:relatedObject/rif:key',
+        'email'      => '//rif:registryObject/rif:party/rif:location/'+
+                        'rif:address/rif:electronic[@type="email"]/rif:value'
+      }
+      key_xpaths.each do |key, xpath|
+        indexed_attributes.update(key, input_docs.content_from_nodes(xpath))
+      end
     end
 
     def recache_attributes
@@ -239,6 +249,7 @@ module Miletus::Merge
       out_keys = indexed_attributes.where(:key => 'relatedKey').pluck(:value)
       save!
     end
+
     def related_key_dictionary
       Hash[*outbound_related_concepts.map do |c|
         c.facets.map {|f| [f.key, c.key] }
@@ -257,21 +268,10 @@ module Miletus::Merge
       self.class.reflect_on_association(relation).klass.table_name
     end
 
-    def content_from_nodes(docs, xpath)
-      docs.map{|doc| doc.xpath(xpath, ns_decl) # Get nodesets matching pattern
-        }.map{|n| n.to_ary.map {|e| e.content.strip} # Get content values
-        }.reduce(:|) or [] # Join arrays together, and handle nil case
+    def rifcs_docs
+      RifcsDocs.new facets.order(:created_at).map(&:to_rif).compact
     end
 
-    def rifcs_facets
-      facets.order(:created_at).map {|f| f.to_rif}.reject {|xml| xml.nil?}\
-        .map {|xml| RifcsDoc.create(xml)}
-    end
-
-    def update_indexed_attributes(key, new_values)
-      self.class.reflect_on_association(:indexed_attributes).klass\
-        .update_for_concept(self, key, new_values)
-    end
   end
 
 end
