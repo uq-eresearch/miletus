@@ -38,13 +38,13 @@ module Miletus::Merge
 
     def edges(xml, concepts)
       xml.edges {
-        concept_keys = concepts.map{|c| c.key}.reject(&:nil?).to_set
+        keys = all_keys(concepts)
         concepts.each do |c|
-          c.outbound_related_concepts.map(&:key).each do |oc_key|
+          valid_outbound_keys(keys, c).each do |oc_key|
             xml.edge(
-              :id => "%s|%s" % [c.key, oc_key],
+              :id => "#{c.key}|#{oc_key}",
               :source => c.key,
-              :target => oc_key) if concept_keys.include?(oc_key)
+              :target => oc_key)
           end
         end
       }
@@ -59,5 +59,18 @@ module Miletus::Merge
         }
       end
     end
+
+    private
+
+    def all_keys(concepts)
+      # Get all the concept keys, remove nils, then produce frozen set
+      concepts.map(&:key).compact.to_set.freeze
+    end
+
+    def valid_outbound_keys(all_keys, concept)
+      all_keys.intersection(concept.outbound_related_concepts.map(&:key))
+    end
+
+
   end
 end
