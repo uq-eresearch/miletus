@@ -60,4 +60,27 @@ module Miletus
     module_function :ns_decl
 
   end
+
+  # Mixin module which can be used to avoid direct use of "ns_decl" helper
+  module XPathNamespaceMixin
+    include Miletus::NamespaceHelper
+
+    # :at_xpath with namespace definitions
+    def at_xpath(*paths)
+      if paths.last.is_a? Hash
+        super(*paths)
+      else
+        super(*paths, ns_decl)
+      end
+    end
+
+    # :at_xpath with namespace definitions
+    def xpath(*paths)
+      if paths.last.is_a? Hash
+        super(*paths)
+      else
+        super(*paths, ns_decl)
+      end
+    end
+  end
 end

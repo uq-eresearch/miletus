@@ -1,7 +1,7 @@
 module Miletus::Merge
 
   class RifcsDocs
-    include Miletus::NamespaceHelper
+    include Miletus::XPathNamespaceMixin
 
     attr_reader :docs
 
@@ -10,7 +10,7 @@ module Miletus::Merge
     end
 
     def content_from_nodes(xpath)
-      docs.map{|doc| doc.xpath(xpath, ns_decl) # Get nodesets matching pattern
+      docs.map{|doc| doc.xpath(xpath) # Get nodesets matching pattern
         }.map{|n| n.to_ary.map {|e| e.content.strip} # Get content values
         }.reduce(:|) or [] # Join arrays together, and handle nil case
     end
@@ -24,7 +24,7 @@ module Miletus::Merge
   end
 
   class RifcsDoc < Nokogiri::XML::Document
-    include Miletus::NamespaceHelper
+    include Miletus::XPathNamespaceMixin
 
     def self.create(xml)
       instance = self.parse(xml) {|cfg| cfg.noblanks}
@@ -38,7 +38,7 @@ module Miletus::Merge
 
     def sort_key
       name_order = ['primary', 'abbreviated', 'alternative', nil]
-      names = xpath("//rif:name", ns_decl).to_ary.sort_by! do |n|
+      names = xpath("//rif:name").to_ary.sort_by! do |n|
         name_order.index(n['type'])
       end
       names.map{|n| sort_key_from_name_element(n)}.compact.first
@@ -46,31 +46,31 @@ module Miletus::Merge
 
     def titles
       name_order = ['primary', 'abbreviated', 'alternative', nil]
-      names = xpath("//rif:name", ns_decl).to_ary.sort_by! do |n|
+      names = xpath("//rif:name").to_ary.sort_by! do |n|
         name_order.index(n['type'])
       end
       names.map{|n| title_from_name_element(n)}.uniq
     end
 
     def types
-      n = at_xpath("//rif:registryObject/rif:*[last()]", ns_decl)
+      n = at_xpath("//rif:registryObject/rif:*[last()]")
       n.nil? ? [] : [n.name, n['type']]
     end
 
     def group=(value)
-      group_e = at_xpath("//rif:registryObject/@group", ns_decl)
+      group_e = at_xpath("//rif:registryObject/@group")
       return false if group_e.nil?
       group_e.content = value
     end
 
     def key=(value)
-      key_e = at_xpath("//rif:registryObject/rif:key", ns_decl)
+      key_e = at_xpath("//rif:registryObject/rif:key")
       return false if key_e.nil?
       key_e.content = value
     end
 
     def translate_keys(dictionary)
-      xpath("//rif:relatedObject/rif:key", ns_decl).each do |e|
+      xpath("//rif:relatedObject/rif:key").each do |e|
         k = e.content.strip
         e.content = dictionary[k] if dictionary.key? k
       end
@@ -81,12 +81,12 @@ module Miletus::Merge
     def ensure_single_primary_name
       # Ensure there is only one primary name (and use the largest entry)
       first_primary_name, *other_primary_names = \
-        xpath('//rif:name[@type="primary"]', ns_decl).to_ary.sort_by! do |n|
+        xpath('//rif:name[@type="primary"]').to_ary.sort_by! do |n|
           -1 * n.to_xml.length # Reverse sort by length
         end
       if first_primary_name.nil?
         name_order = [nil, 'abbreviated', 'alternative']
-        other_names = xpath('//rif:name', ns_decl).to_ary.sort_by! do |n|
+        other_names = xpath('//rif:name').to_ary.sort_by! do |n|
           name_order.index(n['type'])
         end
         other_names.first['type'] = 'primary' unless other_names.empty?
@@ -108,13 +108,13 @@ module Miletus::Merge
         //rif:relatedInfo
         //rif:rights
       ]
-      alt_parent = at_xpath("//rif:registryObject/rif:*[last()]", ns_decl)
+      alt_parent = at_xpath("//rif:registryObject/rif:*[last()]")
       patterns.each do |pattern|
         # Get all identifier elements, unique in content
         merged_nodes = deduplicate_by_content(input_docs.map do |d|
-          copy_nodes(d.xpath(pattern, ns_decl))
+          copy_nodes(d.xpath(pattern))
         end.reduce(:|))
-        replace_all(xpath(pattern, ns_decl),
+        replace_all(xpath(pattern),
           Nokogiri::XML::NodeSet.new(self, merged_nodes),
           alt_parent)
       end
@@ -136,8 +136,8 @@ module Miletus::Merge
     end
 
     def deduplicate_with_xpath(pattern)
-      original_nodes = xpath(pattern, ns_decl)
-      alt_parent = at_xpath("//rif:registryObject/rif:*[last()]", ns_decl)
+      original_nodes = xpath(pattern)
+      alt_parent = at_xpath("//rif:registryObject/rif:*[last()]")
       merged_nodes = \
         deduplicate_by_content(copy_nodes(original_nodes).to_ary)
       replace_all(original_nodes,

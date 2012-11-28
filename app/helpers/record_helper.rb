@@ -23,18 +23,14 @@ module RecordHelper
   end
 
   def description(rifcs_doc)
-    extend Miletus::NamespaceHelper
-    node = rifcs_doc.at_xpath(
-      "//rif:description",
-      ns_decl)
-    node.nil? ? '' : node.content
+    node = ensure_rifcs_doc(rifcs_doc).at_xpath "//rif:description"
+    node ? node.content : ''
   end
 
   def email_addresses(rifcs_doc)
     extend Miletus::NamespaceHelper
-    nodes = rifcs_doc.xpath(
-      "//rif:location/rif:address/rif:electronic[@type='email']/rif:value",
-      ns_decl)
+    nodes = ensure_rifcs_doc(rifcs_doc).xpath(
+      "//rif:location/rif:address/rif:electronic[@type='email']/rif:value")
     nodes.map {|e| e.content}
   end
 
@@ -47,22 +43,18 @@ module RecordHelper
 
   def physical_addresses(rifcs_doc)
     extend Miletus::NamespaceHelper
-    addrs = rifcs_doc.xpath("//rif:location/rif:address/rif:physical", ns_decl)
+    addrs = ensure_rifcs_doc(rifcs_doc).xpath(
+      "//rif:location/rif:address/rif:physical")
     addrs.map do |address|
       nodes = address.xpath("rif:addressPart", ns_decl)
-      nodes.each_with_object({}) do |e, memo|
-        t = e['type']
-        memo[t] ||= []
-        memo[t] << e.content
-      end
+      type_content_map(nodes)
     end
   end
 
   def related_info(rifcs_doc)
     extend Miletus::NamespaceHelper
-    related_info = rifcs_doc.xpath(
-      "//rif:relatedInfo[rif:identifier/@type='uri']",
-      ns_decl)
+    related_info = ensure_rifcs_doc(rifcs_doc).xpath(
+      "//rif:relatedInfo[rif:identifier/@type='uri']")
     return [] if related_info.nil?
     related_info.map do |info|
       nodes = info.xpath("rif:*", ns_decl)
@@ -75,8 +67,7 @@ module RecordHelper
   end
 
   def rights(rifcs_doc)
-    extend Miletus::NamespaceHelper
-    rights = rifcs_doc.at_xpath("//rif:rights", ns_decl)
+    rights = ensure_rifcs_doc(rifcs_doc).at_xpath "//rif:rights"
     return nil if rights.nil?
     nodes = rights.xpath("rif:*", ns_decl)
     nodes.each_with_object({}) do |e, memo|
@@ -142,25 +133,20 @@ module RecordHelper
     end
   end
 
-
   def role(rifcs_doc)
-    extend Miletus::NamespaceHelper
+    rifcs_doc = ensure_rifcs_doc(rifcs_doc)
     related_key = rifcs_doc.at_xpath(
-      "//rif:relatedObject[rif:relation/@type='isCollectorOf']/rif:key",
-      ns_decl)
+      "//rif:relatedObject[rif:relation/@type='isCollectorOf']/rif:key")
     return "Data Collection Creator" unless related_key.nil?
     related_key = rifcs_doc.at_xpath(
-      "//rif:relatedObject[rif:relation/@type='isManagerOf']/rif:key",
-      ns_decl)
+      "//rif:relatedObject[rif:relation/@type='isManagerOf']/rif:key")
     return "Data Collection Manager" unless related_key.nil?
     nil
   end
 
   def related_objects(rifcs_doc, relationship)
-    extend Miletus::NamespaceHelper
-    related_keys = rifcs_doc.xpath(
-      "//rif:relatedObject[rif:relation/@type='#{relationship}']/rif:key",
-      ns_decl)
+    related_keys = ensure_rifcs_doc(rifcs_doc).xpath(
+      "//rif:relatedObject[rif:relation/@type='#{relationship}']/rif:key")
     return [] if related_keys.nil?
     related_keys.map do |related_key|
       begin
@@ -181,8 +167,7 @@ module RecordHelper
   end
 
   def subjects(rifcs_doc)
-    extend Miletus::NamespaceHelper
-    subjects = rifcs_doc.xpath("//rif:subject", ns_decl)
+    subjects = ensure_rifcs_doc(rifcs_doc).xpath "//rif:subject"
     subjects.map do |e|
       Struct.new(:name, :type).new(e.content, e['type'].titleize.upcase)
     end
@@ -190,29 +175,23 @@ module RecordHelper
 
   def name(rifcs_doc)
     extend Miletus::NamespaceHelper
-    name = rifcs_doc.at_xpath("//rif:name[@type='primary']", ns_decl)
+    name = ensure_rifcs_doc(rifcs_doc).at_xpath "//rif:name[@type='primary']"
     return {} if name.nil?
     nodes = name.xpath("rif:namePart", ns_decl)
-    nodes.each_with_object({}) do |e, memo|
-      t = e['type']
-      memo[t] ||= []
-      memo[t] << e.content
-    end
+    type_content_map(nodes)
   end
 
   def address_urls(rifcs_doc)
-    extend Miletus::NamespaceHelper
-    nodes = rifcs_doc.xpath(
-      "//rif:location/rif:address/rif:electronic[@type='url']/rif:value",
-      ns_decl)
-    nodes.map(&:content).map(&:strip).uniq
+    ensure_rifcs_doc(rifcs_doc).xpath(
+      "//rif:location/rif:address/rif:electronic[@type='url']/rif:value")\
+      .map(&:content)\
+      .map(&:strip)\
+      .uniq
   end
 
   def identifier_urls(rifcs_doc)
-    extend Miletus::NamespaceHelper
-    nodes = rifcs_doc.xpath(
-      "//rif:registryObject/rif:*/rif:identifier",
-      ns_decl)
+    nodes = ensure_rifcs_doc(rifcs_doc).xpath(
+      "//rif:registryObject/rif:*/rif:identifier")
     nodes.map(&:content).map(&:strip).uniq.select do |uri_str|
       begin
         %w[http https].include? URI.parse(uri_str).scheme
@@ -238,4 +217,21 @@ module RecordHelper
       ''
     end
   end
+
+  private
+
+  def ensure_rifcs_doc(rifcs_doc)
+    return rifcs_doc if rifcs_doc.is_a? Miletus::Merge::RifcsDoc
+    Miletus::Merge::RifcsDoc.create(rifcs_doc.to_xml)
+  end
+
+  def type_content_map(nodes)
+    nodes.each_with_object({}) do |e, memo|
+      t = e['type']
+      memo[t] ||= []
+      memo[t] << e.content
+    end
+  end
+
+
 end

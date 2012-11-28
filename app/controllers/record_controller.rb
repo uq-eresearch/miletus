@@ -19,7 +19,7 @@ class RecordController < ApplicationController
     if k == :id and @concept.uuid
       redirect_to :action => 'view', :uuid => @concept.uuid, :status => 301
     end
-    @doc = Nokogiri::XML(@concept.to_rif)
+    @doc = Miletus::Merge::RifcsDoc.create(@concept.to_rif)
   end
 
   def graph
