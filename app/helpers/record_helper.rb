@@ -53,17 +53,10 @@ module RecordHelper
 
   def related_info(rifcs_doc)
     extend Miletus::NamespaceHelper
-    related_info = ensure_rifcs_doc(rifcs_doc).xpath(
-      "//rif:relatedInfo[rif:identifier/@type='uri']")
-    return [] if related_info.nil?
-    related_info.map do |info|
-      nodes = info.xpath("rif:*", ns_decl)
-      nodes.each_with_object({}) do |e, memo|
-        memo[e.name] = e.content
-      end.tap do |obj|
-        obj[:type] = info['type'] if info.key? 'type'
-      end
-    end.map{|h| OpenStruct.new(h)}.sort_by(&:title)
+    ensure_rifcs_doc(rifcs_doc).xpath(
+      "//rif:relatedInfo[rif:identifier/@type='uri']").map do |info|
+      OpenStruct.new node_children_and_attributes(info)
+    end.sort_by(&:title)
   end
 
   def rights(rifcs_doc)
@@ -228,6 +221,16 @@ module RecordHelper
       t = e['type']
       memo[t] ||= []
       memo[t] << e.content
+    end
+  end
+
+  # Get a hash of node children names to contents, merged with attributes
+  def node_children_and_attributes(node)
+    h = node.children.each_with_object({}) do |e, memo|
+      memo[e.name] = e.content.strip
+    end
+    node.attributes.values.each_with_object(h) do |attr|
+      h[attr.name] = attr.value
     end
   end
 

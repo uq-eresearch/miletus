@@ -74,12 +74,12 @@ module Miletus
       end
     end
 
-    # :at_xpath with namespace definitions
+    # :xpath with namespace definitions and no nil results
     def xpath(*paths)
       if paths.last.is_a? Hash
-        super(*paths)
+        super(*paths) || []
       else
-        super(*paths, ns_decl)
+        super(*paths, ns_decl) || []
       end
     end
   end
