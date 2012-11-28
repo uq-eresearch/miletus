@@ -182,17 +182,15 @@ module RecordHelper
   end
 
   def address_urls(rifcs_doc)
-    ensure_rifcs_doc(rifcs_doc).xpath(
-      "//rif:location/rif:address/rif:electronic[@type='url']/rif:value")\
-      .map(&:content)\
-      .map(&:strip)\
-      .uniq
+    nodes = ensure_rifcs_doc(rifcs_doc).xpath(
+      "//rif:location/rif:address/rif:electronic[@type='url']/rif:value")
+    uniq_content(nodes)
   end
 
   def identifier_urls(rifcs_doc)
     nodes = ensure_rifcs_doc(rifcs_doc).xpath(
       "//rif:registryObject/rif:*/rif:identifier")
-    nodes.map(&:content).map(&:strip).uniq.select do |uri_str|
+    uniq_content(nodes).select do |uri_str|
       begin
         %w[http https].include? URI.parse(uri_str).scheme
       rescue
@@ -231,6 +229,10 @@ module RecordHelper
       memo[t] ||= []
       memo[t] << e.content
     end
+  end
+
+  def uniq_content(nodes)
+    nodes.map(&:content).map(&:strip).uniq
   end
 
 
