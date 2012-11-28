@@ -60,6 +60,7 @@ module RecordHelper
   end
 
   def rights(rifcs_doc)
+    extend Miletus::NamespaceHelper
     rights = ensure_rifcs_doc(rifcs_doc).at_xpath "//rif:rights"
     return nil if rights.nil?
     nodes = rights.xpath("rif:*", ns_decl)

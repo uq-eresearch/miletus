@@ -1,0 +1,39 @@
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects">
+  <registryObject group="The University of Queensland ODS">
+    <key>uq-org-unit:250</key>
+    <originatingSource>The University of Queensland ODS</originatingSource>
+    <party type="group">
+      <identifier type="AU-QU-local">uq-org-unit:250</identifier>
+      <identifier type="uri">http://www.library.uq.edu.au/fryer/</identifier>
+      <name type="primary">
+        <namePart>Fryer Library</namePart>
+      </name>
+      <location>
+        <address>
+          <physical type="streetAddress">
+            <addressPart type="addressLine">Level 4</addressPart>
+            <addressPart type="addressLine">Duhig Building</addressPart>
+            <addressPart type="addressLine">St Lucia Campus</addressPart>
+            <addressPart type="addressLine">The University of Queensland, Q 4072</addressPart>
+            <addressPart type="telephoneNumber">+ 61 (7) 3365 6276</addressPart>
+            <addressPart type="faxNumber">+ 61 (7) 3365 6776</addressPart>
+          </physical>
+        </address>
+        <address>
+          <electronic type="email">
+            <value>fryer@library.uq.edu.au</value>
+          </electronic>
+        </address>
+        <address>
+          <electronic type="url">
+            <value>http://www.library.uq.edu.au/fryer/</value>
+          </electronic>
+        </address>
+      </location>
+      <relatedObject>
+        <key>http://uq.edu.au/</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+    </party>
+  </registryObject>
+</registryObjects>
