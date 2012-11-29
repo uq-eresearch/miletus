@@ -22,15 +22,25 @@ describe RecordController do
   end
 
   describe "GET 'index'" do
-    it "returns http success" do
+    subject do
       get 'index'
-      response.should be_success
+      response
     end
 
-    it "should run without request parameters" do
-      lambda { subject.index }.should_not raise_error
+    context "when no concepts exist" do
+      it { should be_success }
     end
 
+    context "when concepts exist" do
+      before(:each) do
+        Miletus::Merge::Concept.create()
+        Miletus::Merge::Concept.create().tap do |concept|
+          concept.type = 'activity'
+          concept.save!
+        end
+      end
+      it { should be_success }
+    end
   end
 
   describe "GET 'view'" do
