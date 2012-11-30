@@ -3,6 +3,8 @@ require 'miletus'
 ActiveAdmin.register Miletus::Harvest::Document::RDCAtom,
   :as => "Direct RDC Atom Documents" do
 
+  menu :parent => 'Documents'
+
   scope :unmanaged
 
   index do

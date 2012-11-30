@@ -3,6 +3,8 @@ require 'miletus'
 ActiveAdmin.register Miletus::Harvest::OAIPMH::RIFCS::RecordCollection,
   :as => "RIFCS-over-OAIPMH Record Collection" do
 
+  menu :parent => 'Harvest'
+
   sidebar "Maintenance" do
     para do
       button_to "Harvest", :action => :harvest, :method => :post

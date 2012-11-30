@@ -3,7 +3,7 @@ require 'miletus'
 ActiveAdmin.register Miletus::Merge::Concept,
   :as => "Concept" do
 
-  sidebar "Maintenance" do
+  sidebar "Maintenance", :only => :index do
     para do
       button_to "Recheck SRU", :action => :recheck_sru, :method => :post
     end
@@ -30,6 +30,12 @@ ActiveAdmin.register Miletus::Merge::Concept,
     end
     flash[:notice] = \
       "Scheduled recheck for selected concepts from SRU interfaces."
+    redirect_to :action => :index
+  end
+
+  batch_action :reindex do |selection|
+    Miletus::Merge::Concept.find(selection).each(&:reindex)
+    flash[:notice] = "Selected concepts have been reindexed."
     redirect_to :action => :index
   end
 
@@ -60,7 +66,9 @@ ActiveAdmin.register Miletus::Merge::Concept,
     column :title do |concept|
       link_to concept.title, concept_id_path(concept.id)
     end
-    column :facets_count
+    column "No. of Facets" do |concept|
+      link_to(concept.facets.count, resource_path(concept))
+    end
     column :updated_at
     column '' do |resource|
       links = ''.html_safe
@@ -84,7 +92,13 @@ ActiveAdmin.register Miletus::Merge::Concept,
           div title
         end
       end
-      row :facets_count
+      row :facets do |concept|
+        links = ''.html_safe
+        concept.facets.each do |facet|
+          links << div(link_to(facet.key, admin_facet_path(facet)))
+        end
+        links
+      end
       row 'Indexed Attributes' do |concept|
         concept.indexed_attributes.order('key, value').each do |i|
           dl do

@@ -3,6 +3,8 @@ require 'miletus'
 ActiveAdmin.register Miletus::Harvest::Atom::Feed,
   :as => "Atom Feed" do
 
+  menu :parent => 'Harvest'
+
   sidebar "Maintenance" do
     para do
       button_to "Harvest", :action => :harvest, :method => :post

@@ -3,6 +3,8 @@ require 'miletus'
 ActiveAdmin.register Miletus::Harvest::SRU::Interface,
   :as => "SRU Lookup Interface" do
 
+  menu :parent => 'Harvest'
+
   index do
     selectable_column
     column :endpoint

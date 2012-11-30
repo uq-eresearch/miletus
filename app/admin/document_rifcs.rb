@@ -3,6 +3,8 @@ require 'miletus'
 ActiveAdmin.register Miletus::Harvest::Document::RIFCS,
   :as => "Direct RIF-CS Documents" do
 
+  menu :parent => 'Documents'
+
   scope :unmanaged
 
   index do
