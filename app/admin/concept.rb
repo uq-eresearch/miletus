@@ -15,6 +15,15 @@ ActiveAdmin.register Miletus::Merge::Concept,
     end
   end
 
+  batch_action :merge,
+    :confirm => "Are you sure you want to merge these concepts?" do |selection|
+    concepts = Miletus::Merge::Concept
+    merged_concept = concepts.merge(concepts.find(selection))
+    flash[:notice] = \
+      "Merged selected concepts."
+    redirect_to :action => :show, :id => merged_concept.id
+  end
+
   batch_action :recheck_sru do |selection|
     Miletus::Merge::Concept.find(selection).each do |concept|
       SruRifcsLookupObserver.instance.find_sru_records(concept)

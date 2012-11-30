@@ -44,4 +44,22 @@ describe Admin::ConceptsController do
 
   end
 
+  describe "POST batch_action - merge" do
+
+    context "for two single facetless concepts" do
+      before(:each) do
+        concepts = 2.times.collect { Miletus::Merge::Concept.create() }
+        post :batch_action,
+          :batch_action => 'merge',
+          :collection_selection => concepts.map(&:id)
+      end
+
+      it "is successful" do
+        response.should be_redirect
+        Miletus::Merge::Concept.count.should be == 1
+      end
+    end
+
+  end
+
 end
