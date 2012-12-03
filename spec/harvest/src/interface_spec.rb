@@ -42,17 +42,13 @@ describe Miletus::Harvest::SRU::Interface do
     end
   end
 
-  # Editing with Active Admin can mangle the Array into a String, so check that
-  # this is handled.
-  it "should ensure :exclude_xpaths is always an Array" do
+  it "should take input for :exclude_xpaths via :exclude_xpaths_string" do
     interface = Miletus::Harvest::SRU::Interface.create(
       :endpoint => 'http://www.nla.gov.au/apps/srw/search/peopleaustralia',
       :schema => ns_by_prefix('rif').uri,
-      :exclude_xpaths => <<-EOH
-        [
-          "//rif:registryObject/*/*[not(local-name()=\\\"identifier\\\")]",
-          "//rif:identifier[not(@type=\\\"AU-ANL:PEAU\\\")]"
-        ]
+      :exclude_xpaths_string => <<-EOH
+        //rif:registryObject/*/*[not(local-name()=\"identifier\")]
+        //rif:identifier[not(@type=\"AU-ANL:PEAU\")]
       EOH
       )
     interface.exclude_xpaths.should be_a Array
@@ -60,6 +56,8 @@ describe Miletus::Harvest::SRU::Interface do
       '//rif:registryObject/*/*[not(local-name()="identifier")]',
       '//rif:identifier[not(@type="AU-ANL:PEAU")]'
     ]
+    interface.exclude_xpaths_string.should be == \
+      interface.exclude_xpaths.join("\n")
   end
 
 end

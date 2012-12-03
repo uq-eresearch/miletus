@@ -9,10 +9,8 @@ ActiveAdmin.register Miletus::Harvest::SRU::Interface,
     selectable_column
     column :endpoint
     column :schema
-    column :exclude_xpaths do |interface|
-      unless interface.exclude_xpaths.nil?
-        simple_format interface.exclude_xpaths.join("\n")
-      end
+    column "XPaths to Exclude from Response" do |interface|
+      interface.exclude_xpaths_string
     end
     default_actions
   end
@@ -23,7 +21,8 @@ ActiveAdmin.register Miletus::Harvest::SRU::Interface,
     f.inputs "SRU Lookup Interface Details" do
       f.input :endpoint
       f.input :schema
-      f.input :exclude_xpaths
+      f.input :exclude_xpaths_string, :as => :text,
+        :label => "XPaths to Exclude from Response"
     end
     f.buttons
   end

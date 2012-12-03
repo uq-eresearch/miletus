@@ -4,7 +4,7 @@ ActiveAdmin.register Miletus::Merge::Concept,
   :as => "Concept" do
 
   controller do
-    module BatchLinkHelper
+    module LinkToBatchHelper
       def link_to_batch(action, title = nil)
         link_to(title || action.to_s.titleize, {
             :action => :batch_action,
@@ -45,12 +45,12 @@ ActiveAdmin.register Miletus::Merge::Concept,
   end
 
   action_item do
-    extend controller.class::BatchLinkHelper
+    extend controller.class.const_get('LinkToBatchHelper')
     link_to_batch :recheck_sru, "Recheck SRU"
   end
 
   action_item do
-    extend controller.class::BatchLinkHelper
+    extend controller.class.const_get('LinkToBatchHelper')
     link_to_batch :reindex
   end
 

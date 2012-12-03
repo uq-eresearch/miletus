@@ -108,9 +108,9 @@ ActiveRecord::Schema.define(:version => 20121123045342) do
   end
 
   create_table "merge_concepts", :force => true do |t|
-    t.text     "cache"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
+    t.text     "cache"
     t.integer  "facets_count"
     t.string   "sort_key"
     t.string   "uuid"

@@ -11,6 +11,7 @@ describe Admin::SruLookupInterfacesController do
     context "with a single SRU Interface" do
       before(:each) do
         Miletus::Harvest::SRU::Interface.create(
+          :schema => 'rif',
           :endpoint => 'http://example.test/sru')
       end
 

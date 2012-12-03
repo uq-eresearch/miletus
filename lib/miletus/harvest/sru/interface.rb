@@ -6,16 +6,19 @@ module Miletus::Harvest::SRU
     self.table_name = 'sru_interfaces'
 
     store :details, :accessors => [:schema, :exclude_xpaths, :limit_to_types]
-    attr_accessible :endpoint, :schema, :exclude_xpaths
+    attr_accessible :endpoint, :schema, :exclude_xpaths, :exclude_xpaths_string
 
     validates :endpoint, :presence => true
+    validates :schema, :presence => true
     validates_format_of :endpoint, :with => URI::regexp(%w(http https))
     validates_uniqueness_of :endpoint
 
-    before_save do
-      if self.exclude_xpaths.is_a? String
-        self.exclude_xpaths = eval self.exclude_xpaths
-      end
+    def exclude_xpaths_string
+      self.exclude_xpaths.try(:join, "\n") || ''
+    end
+
+    def exclude_xpaths_string=(exclude_xpaths_string)
+      self.exclude_xpaths = exclude_xpaths_string.split("\n").map(&:strip)
     end
 
     def lookup_by_identifier(value)
