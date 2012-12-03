@@ -37,7 +37,8 @@ module Miletus::Merge
     end
 
     def update_key
-      write_attribute(:key, self.class.global_key(metadata))
+      k = self.class.global_key(metadata)
+      write_attribute(:key, k) unless k.nil?
     end
 
     def self.global_key(xml)

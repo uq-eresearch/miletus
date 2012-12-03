@@ -3,6 +3,26 @@ require 'miletus'
 ActiveAdmin.register Miletus::Merge::Concept,
   :as => "Concept" do
 
+  controller do
+    module BatchLinkHelper
+      def link_to_batch(action, title = nil)
+        link_to(title || action.to_s.titleize, {
+            :action => :batch_action,
+            :batch_action => action,
+            :collection_selection => [params[:id]]
+          }, :method => :post)
+      end
+    end
+
+    def redirect_after_action(selection = [])
+      if selection.count == 1
+        redirect_to :action => :show, :id => selection.first
+      else
+        redirect_to :action => :index
+      end
+    end
+  end
+
   sidebar "Maintenance", :only => :index do
     para do
       button_to "Recheck SRU", :action => :recheck_sru, :method => :post
@@ -24,19 +44,29 @@ ActiveAdmin.register Miletus::Merge::Concept,
     redirect_to :action => :show, :id => merged_concept.id
   end
 
+  action_item do
+    extend controller.class::BatchLinkHelper
+    link_to_batch :recheck_sru, "Recheck SRU"
+  end
+
+  action_item do
+    extend controller.class::BatchLinkHelper
+    link_to_batch :reindex
+  end
+
   batch_action :recheck_sru do |selection|
     Miletus::Merge::Concept.find(selection).each do |concept|
       SruRifcsLookupObserver.instance.find_sru_records(concept)
     end
     flash[:notice] = \
       "Scheduled recheck for selected concepts from SRU interfaces."
-    redirect_to :action => :index
+    redirect_after_action(selection)
   end
 
   batch_action :reindex do |selection|
     Miletus::Merge::Concept.find(selection).each(&:reindex)
     flash[:notice] = "Selected concepts have been reindexed."
-    redirect_to :action => :index
+    redirect_after_action(selection)
   end
 
   collection_action :recheck_sru, :method => :post do
@@ -44,19 +74,19 @@ ActiveAdmin.register Miletus::Merge::Concept,
       SruRifcsLookupObserver.instance.find_sru_records(concept)
     end
     flash[:notice] = "Scheduled recheck for all concepts from SRU interfaces."
-    redirect_to :action => :index
+    redirect_after_action
   end
 
   collection_action :reindex, :method => :post do
     Miletus::Merge::Concept.all.each(&:reindex)
     flash[:notice] = "All concepts have been reindexed."
-    redirect_to :action => :index
+    redirect_after_action
   end
 
   collection_action :deduplicate, :method => :post do
     Miletus::Merge::Concept.deduplicate
     flash[:notice] = "Finished merging duplicate concepts."
-    redirect_to :action => :index
+    redirect_after_action
   end
 
   index do
