@@ -7,7 +7,6 @@ describe Admin::DirectRifCsDocumentsController do
   render_views
 
   describe "GET index" do
-
     context "with a single RIF-CS Document" do
       before(:each) do
         Miletus::Harvest::Document::RIFCS.create(
@@ -19,6 +18,5 @@ describe Admin::DirectRifCsDocumentsController do
         response.should be_success
       end
     end
-
   end
 end

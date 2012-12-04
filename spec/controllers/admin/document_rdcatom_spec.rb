@@ -7,7 +7,6 @@ describe Admin::DirectRdcAtomDocumentsController do
   render_views
 
   describe "GET index" do
-
     context "with a single RDC Atom Document" do
       before(:each) do
         Miletus::Harvest::Document::RDCAtom.create(
@@ -19,6 +18,5 @@ describe Admin::DirectRdcAtomDocumentsController do
         response.should be_success
       end
     end
-
   end
 end

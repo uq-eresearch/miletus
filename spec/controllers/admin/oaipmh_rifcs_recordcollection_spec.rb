@@ -7,7 +7,6 @@ describe Admin::RifcsOverOaipmhRecordCollectionsController do
   render_views
 
   describe "GET index" do
-
     context "with a single SRU Interface" do
       before(:each) do
         Miletus::Harvest::OAIPMH::RIFCS::RecordCollection.create(
@@ -19,6 +18,16 @@ describe Admin::RifcsOverOaipmhRecordCollectionsController do
         response.should be_success
       end
     end
+  end
 
+  describe "POST harvest" do
+    before(:each) do
+      Miletus::Harvest::OAIPMH::RIFCS.should_receive(:jobs).and_return([])
+      post :harvest
+    end
+
+    it "is successful" do
+      response.should be_redirect
+    end
   end
 end

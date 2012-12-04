@@ -22,7 +22,7 @@ ActiveAdmin.register Miletus::Harvest::Document::RDCAtom,
     f.inputs "RDC Atom Document" do
       f.input :url
     end
-    f.buttons
+    f.actions
   end
 
   batch_action :fetch do |selection|

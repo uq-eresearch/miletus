@@ -11,7 +11,6 @@ end
 
 shared_examples "an admin page" do
   include_context "logged in as admin"
-
   render_views
 
   describe "GET index" do
@@ -22,4 +21,13 @@ shared_examples "an admin page" do
     end
   end
 
+  describe "GET new" do
+    before(:each) do
+      get :new
+    end
+
+    it "is successful" do
+      response.should be_success
+    end
+  end
 end

@@ -7,7 +7,6 @@ describe Admin::AtomFeedsController do
   render_views
 
   describe "GET index" do
-
     context "with a single Atom Feed" do
       before(:each) do
         Miletus::Harvest::Atom::Feed.create(
@@ -19,6 +18,16 @@ describe Admin::AtomFeedsController do
         response.should be_success
       end
     end
+  end
 
+  describe "POST harvest" do
+    before(:each) do
+      Miletus::Harvest::Atom.should_receive(:jobs).and_return([])
+      post :harvest
+    end
+
+    it "is successful" do
+      response.should be_redirect
+    end
   end
 end

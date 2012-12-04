@@ -22,7 +22,7 @@ ActiveAdmin.register Miletus::Harvest::Document::RIFCS,
     f.inputs "RIF-CS Document" do
       f.input :url
     end
-    f.buttons
+    f.actions
   end
 
   batch_action :fetch do |selection|

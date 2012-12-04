@@ -24,7 +24,7 @@ ActiveAdmin.register Miletus::Harvest::SRU::Interface,
       f.input :exclude_xpaths_string, :as => :text,
         :label => "XPaths to Exclude from Response"
     end
-    f.buttons
+    f.actions
   end
 
 end

@@ -7,7 +7,6 @@ describe Admin::SruLookupInterfacesController do
   render_views
 
   describe "GET index" do
-
     context "with a single SRU Interface" do
       before(:each) do
         Miletus::Harvest::SRU::Interface.create(
@@ -20,6 +19,5 @@ describe Admin::SruLookupInterfacesController do
         response.should be_success
       end
     end
-
   end
 end
