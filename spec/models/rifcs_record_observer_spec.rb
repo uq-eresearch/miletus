@@ -66,7 +66,7 @@ describe RifcsRecordObserver do
 
   describe "OAIPMH RIF-CS observation" do
 
-    def create_input_record(type = 'party', fixture_id = 1)
+    def new_input_record(type = 'party', fixture_id = 1)
       # Load data from fixture
       fixture_file = File.join(File.dirname(__FILE__),
         '..', 'fixtures',"rifcs-#{type}-#{fixture_id}.xml")
@@ -85,14 +85,35 @@ describe RifcsRecordObserver do
           doc.root = Nokogiri::XML::Node.new('metadata', doc)
           doc.root << old_root
         end.to_s
-        r.save!
       end
     end
 
     it "should create a new concept for a new harvested record" do
       # Disable delayed run for hooks
       RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
-      input_record = create_input_record
+      input_record = new_input_record
+      input_record.save!
+      # Run hook - which will happen as part of the environment
+      # subject.after_create(input_record)
+      # A new concept should exist as a result
+      concept = Miletus::Merge::Concept.find(:first)
+      concept.should_not be(nil)
+      concept.to_rif.should_not be(nil)
+      doc = Nokogiri::XML(concept.to_rif)
+      doc.at_xpath('/rif:registryObjects', ns_decl).should_not be_nil
+    end
+
+    it "should handle missing XSI namespace definition" do
+      # Disable delayed run for hooks
+      RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
+      input_record = new_input_record('activity', 1)
+      input_record.metadata = input_record.metadata.gsub(
+        /(registryObjects .*)>$/,
+        "\\1 xsi:schemaLocation=\""+
+        "http://ands.org.au/standards/rif-cs/registryObjects "+
+        "http://services.ands.org.au/documentation/"+
+        "rifcs/schema/registryObjects.xsd\">")
+      input_record.save!
       # Run hook - which will happen as part of the environment
       # subject.after_create(input_record)
       # A new concept should exist as a result
@@ -106,7 +127,8 @@ describe RifcsRecordObserver do
     it "should update concept when the harvested record changes" do
       # Disable delayed run for hooks
       RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
-      input_record = create_input_record
+      input_record = new_input_record
+      input_record.save!
       # Run hook - which will happen as part of the environment
       # subject.after_create(input_record)
       Miletus::Merge::Concept.all.count.should be == 1
@@ -138,7 +160,8 @@ describe RifcsRecordObserver do
     it "should delete facets when the harvested record is marked deleted" do
       # Disable delayed run for hooks
       RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
-      input_record = create_input_record
+      input_record = new_input_record
+      input_record.save!
       # Run hook - which will happen as part of the environment
       # subject.after_create(input_record)
       Miletus::Merge::Concept.all.count.should be == 1
@@ -160,7 +183,8 @@ describe RifcsRecordObserver do
     it "should delete facets when the harvested record is destroyed" do
       # Disable delayed run for hooks
       RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
-      input_record = create_input_record
+      input_record = new_input_record
+      input_record.save!
       # Run hook - which will happen as part of the environment
       # subject.after_create(input_record)
       Miletus::Merge::Concept.all.count.should be == 1
@@ -179,28 +203,20 @@ describe RifcsRecordObserver do
     it "should merge output record data when identifiers match" do
       # Disable delayed run for hooks
       RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
-      input_record_1 = create_input_record('party', 1)
+      input_record_1 = new_input_record('party', 1)
+      input_record_1.save!
       # Run hook - which will happen as part of the environment
       # subject.after_create(input_record)
       Miletus::Merge::Concept.all.count.should be == 1
       # Run hook - which will happen as part of the environment
-      input_record_2 = create_input_record('party', '1b')
+      input_record_2 = new_input_record('party', '1b')
+      input_record_2.save!
       Miletus::Merge::Concept.all.count.should be == 1
       # A new record should exist as a result
       concept = Miletus::Merge::Concept.find(:first)
       concept.should_not be(nil)
       concept.to_rif.should_not be(nil)
       concept.should have(2).facets
-    end
-
-    it "should update on touch" do
-      # Disable delayed run for hooks, and expect two job runs
-      RifcsRecordObserver.should_receive(:run_job).twice \
-        .and_return { |j| j.run }
-      # Create record (run #1)
-      input_record = create_input_record('party', 1)
-      # Trigger update (run #2)
-      input_record.touch
     end
 
   end

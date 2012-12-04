@@ -53,7 +53,36 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Record do
       :datestamp => DateTime.now,
       :metadata => fixture_xml)
     rifcs_doc = Nokogiri::XML(record.to_rif)
-    ns_by_prefix('rif').schema.valid?(rifcs_doc).should be_true
+    ns_by_prefix('rif').schema.validate(rifcs_doc).should be == []
+  end
+
+  it "produces a valid RIF-CS record when undefined namespace prefixes exist" do
+    fixture_xml = Nokogiri::XML(get_xml_fixture('collection')).tap do |doc|
+      old_root = doc.root
+      doc.root = Nokogiri::XML::Node.new('metadata', doc)
+      doc.root << old_root
+    end.to_s.gsub(
+      /(registryObjects .*)>$/,
+      "\\1 xsi:schemaLocation=\""+
+      "http://ands.org.au/standards/rif-cs/registryObjects "+
+      "http://services.ands.org.au/documentation/"+
+      "rifcs/schema/registryObjects.xsd\">")
+    expect do
+      Nokogiri::XML::Reader(fixture_xml).each do |n|
+        # Do nothing
+      end
+    end.to raise_error
+    record = Miletus::Harvest::OAIPMH::RIFCS::Record.new(
+      :identifier => 'http://example.test/1',
+      :datestamp => DateTime.now,
+      :metadata => fixture_xml)
+    expect do
+      Nokogiri::XML::Reader(record.to_rif).each do |n|
+        # Do nothing
+      end
+    end.to_not raise_error
+    rifcs_doc = Nokogiri::XML(record.to_rif)
+    ns_by_prefix('rif').schema.validate(rifcs_doc).should be == []
   end
 
 end

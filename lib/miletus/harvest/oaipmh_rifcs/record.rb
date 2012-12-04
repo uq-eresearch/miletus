@@ -52,11 +52,22 @@ module Miletus::Harvest::OAIPMH::RIFCS
     end
 
     def to_rif
-      doc = Nokogiri::XML::Document.parse(metadata)
-      doc.root.children.map { |obj| obj.to_s }.join("\n")
+      return nil if metadata.nil? or metadata.empty?
+      xml = fix_xsi_namespace(metadata)
+      node = Nokogiri::XML::Reader(xml).detect do |n|
+        n.name == 'registryObjects'
+      end
+      node.try(:outer_xml)
     end
 
     private
+
+    def fix_xsi_namespace(xml)
+      return xml unless xml =~ /<registryObjects.*xsi:.*>/
+      return xml if xml =~ /<registryObjects.*xmlns:xsi.*/
+      xml.gsub(/<registryObjects/,
+        '\0 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"')
+    end
 
     def xml_obj_to_str(obj)
       case obj.class.name
