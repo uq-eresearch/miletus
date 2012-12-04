@@ -54,8 +54,10 @@ init_graph = (selector) ->
                 '#0f0'
               when 'activity'
                 '#44f'
-              else
+              when 'service'
                 '#f0f'
+              else
+                '#444'
           # Spiral outwards rather than random
           angle = 0.5 * node_i++
           node.x = (1 + 1 * angle) * Math.cos(angle)
