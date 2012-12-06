@@ -89,7 +89,10 @@ describe Miletus::Merge::Concept do
     merged_doc.xpath('//rif:name[@type="primary"]', ns_decl).count.should be(1)
     # Primary name should be the "best" one we have, not the first
     merged_doc.xpath('//rif:name[@type="primary"]/rif:namePart[@type="given"]',
-      ns_decl).count.should == 2
+      ns_decl).count.should be == 2
+    # Primary name should be first
+    merged_doc.at_xpath('//rif:name', ns_decl)['type'].should be ==
+      'primary'
   end
 
 

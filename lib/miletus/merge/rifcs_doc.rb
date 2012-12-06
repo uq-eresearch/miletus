@@ -89,12 +89,19 @@ module Miletus::Merge
         other_names = xpath('//rif:name').to_ary.sort_by! do |n|
           name_order.index(n['type'])
         end
-        other_names.first['type'] = 'primary' unless other_names.empty?
+        # No need to continue if there are no other candidates
+        return if other_names.first.nil?
+        # Otherwise, pick the first
+        first_primary_name = other_names.first
+        first_primary_name['type'] = 'primary' unless other_names.empty?
       else
         other_primary_names.each do |node|
           node['type'] = 'alternative'
         end
       end
+      # Ensure primary name comes first (for really stupid RIF-CS consumers)
+      first_name = at_xpath('//rif:name')
+      first_name.before(first_primary_name) if first_name['type'] != 'primary'
     end
 
     def merge_rifcs_elements(input_docs)
