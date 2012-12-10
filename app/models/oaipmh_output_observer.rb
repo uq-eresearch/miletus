@@ -3,9 +3,9 @@ require 'miletus'
 class OaipmhOutputObserver < ActiveRecord::Observer
   include Miletus::NamespaceHelper
 
-  # TODO: Check if this is actually observing anything but the facet!
-  observe Miletus::Merge::Concept
-  observe Miletus::Merge::Facet
+  observe(
+    Miletus::Merge::Concept,
+    Miletus::Merge::Facet)
 
   def update_record(concept_or_facet)
     concept = concept_or_facet.concept rescue concept_or_facet
