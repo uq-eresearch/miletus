@@ -13,6 +13,7 @@ module Miletus::Output::OAIPMH
 
     source_model OAI::Provider::ActiveRecordWrapper.new(
       Miletus::Output::OAIPMH::Record
+      #Miletus::Output::OAIPMH::Record.includes([:sets, :underlying_concept])
     )
     register_format(RifcsFormat.instance)
 

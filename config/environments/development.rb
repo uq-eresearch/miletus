@@ -38,4 +38,10 @@ Miletus::Application.configure do
 
   # Expands the lines which load the assets
   config.assets.debug = true
+
+  # Use perftools.rb in development
+  config.middleware.use ::Rack::PerftoolsProfiler,
+    :default_printer => 'text',
+    :bundler => true,
+    :mode => :walltime
 end

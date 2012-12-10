@@ -103,4 +103,5 @@ group :development do
   gem 'pry-rails'
   gem 'ruby-prof'
   gem 'rb-inotify', '~> 0.8.8'
+  gem 'rack-perftools_profiler', :require => 'rack/perftools_profiler'
 end

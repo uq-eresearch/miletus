@@ -1,7 +1,3 @@
-# Un-ruby pattern required by lib-xml `find` calls:
-# http://libxml.rubyforge.org/rdoc/classes/LibXML/XML/Document.html#M000475
-#
-# Please don't refactor it away unless you like segfaults!
 require 'nokogiri'
 
 module Miletus::Output::OAIPMH
@@ -11,13 +7,14 @@ module Miletus::Output::OAIPMH
 
     self.table_name = 'output_oaipmh_records'
 
+    default_scope includes([:sets, :underlying_concept])
+
     attr_accessible :metadata
     belongs_to :underlying_concept,
       :class_name => 'Miletus::Merge::Concept'
     has_and_belongs_to_many :sets,
       :class_name => 'Set',
-      :join_table => 'output_oaipmh_record_set_memberships',
-      :uniq => true
+      :join_table => 'output_oaipmh_record_set_memberships'
 
     validate :valid_rifcs?
     after_validation :clean_metadata
@@ -62,12 +59,17 @@ module Miletus::Output::OAIPMH
     def update_set_memberships
       type_attrs = Nokogiri::XML(to_rif).xpath(
         "//rif:identifier/@type", ns_decl)
-      type_attrs.map{|a| a.value}.each do |type|
-        spec = "#{record_type}:identifier:#{type}"
-        set = Miletus::Output::OAIPMH::Set.find_or_create_by_spec(
-          :spec => spec,
-          :name => "#{type} identifier #{record_type}")
-        set.records << self
+      self.transaction do
+        # Remove all current associations
+        self.sets.clear
+        # Add associations
+        type_attrs.map{|a| a.value}.each do |type|
+          spec = "#{record_type}:identifier:#{type}"
+          set = Miletus::Output::OAIPMH::Set.find_or_create_by_spec(
+            :spec => spec,
+            :name => "#{type} identifier #{record_type}")
+          self.sets << set unless self.sets.exists? :id => set.id
+        end
       end
     end
 

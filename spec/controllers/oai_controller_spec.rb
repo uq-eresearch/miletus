@@ -71,7 +71,8 @@ describe OaiController do
         Miletus::Output::OAIPMH::Record.new(
           :metadata => File.open(fixture_file) { |f| f.read() }
         ).save!
-        Miletus::Output::OAIPMH::Record.count.should > 0
+        Miletus::Output::OAIPMH::Record.count.should be > 0
+        Miletus::Output::OAIPMH::Set.count.should be > 0
       end
 
       describe "ListIdentifiers" do

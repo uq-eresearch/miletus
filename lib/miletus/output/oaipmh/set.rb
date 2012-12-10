@@ -9,8 +9,7 @@ module Miletus::Output::OAIPMH
     attr_accessible :name, :spec, :description
     has_and_belongs_to_many :records,
       :class_name => 'Record',
-      :join_table => 'output_oaipmh_record_set_memberships',
-      :uniq => true
+      :join_table => 'output_oaipmh_record_set_memberships'
 
   end
 
