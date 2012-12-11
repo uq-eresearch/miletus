@@ -45,13 +45,16 @@ module Miletus::Harvest::SRU
     private
 
     def lookup(cql_query)
-      client = SRU::Client.new(endpoint)
-
-      # Search (returns a SRU::SearchRetrieveResponse object)
-
-      records = client.search_retrieve(cql_query,
-                              :maximumRecords => 2,
-                              :recordSchema => schema)
+      begin
+        client = SRU::Client.new(endpoint)
+        # Search (returns a SRU::SearchRetrieveResponse object)
+        records = client.search_retrieve(cql_query,
+                                :maximumRecords => 2,
+                                :recordSchema => schema)
+      rescue Exception => e
+        Rails.logger.error "Failed to look up #{self}: #{e.message}"
+        return nil
+      end
 
       num_records = records.number_of_records
       return nil if num_records.zero?
@@ -68,6 +71,10 @@ module Miletus::Harvest::SRU
         doc.xpath(p, ns_decl).tap {|matches| matches.each { |n| n.remove } }
       end
       doc
+    end
+
+    def to_s
+      "SRU interface @ " + self.endpoint
     end
 
   end
