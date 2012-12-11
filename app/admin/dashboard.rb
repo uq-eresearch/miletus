@@ -25,6 +25,17 @@ ActiveAdmin.register_page "Dashboard" do
           end
         end
       end
+      column do
+        panel "Delayed Jobs" do
+          div do
+            stats = {
+              'Pending Jobs' => \
+                Delayed::Job.count,
+            }
+            render('/admin/stats', :stats => stats)
+          end
+        end
+      end
     end # columns
   end # content
 end
