@@ -13,9 +13,7 @@ describe Admin::FacetsController do
     context "when no facets exist" do
       before(:each) { get :index }
 
-      it "is successful" do
-        response.should be_success
-      end
+      it { should respond_with(:success) }
     end
 
     context "when a single facet exists" do
@@ -24,9 +22,7 @@ describe Admin::FacetsController do
         get :index
       end
 
-      it "is successful" do
-        response.should be_success
-      end
+      it { should respond_with(:success) }
     end
   end
 
@@ -37,9 +33,7 @@ describe Admin::FacetsController do
         get :show, :id => Miletus::Merge::Concept.create.facets.create.id
       end
 
-      it "is successful" do
-        response.should be_success
-      end
+      it { should respond_with(:success) }
     end
 
   end

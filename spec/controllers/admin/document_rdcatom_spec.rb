@@ -11,12 +11,10 @@ describe Admin::DirectRdcAtomDocumentsController do
       before(:each) do
         Miletus::Harvest::Document::RDCAtom.create(
           :url => 'http://example.test/doc.atom')
+        get :index
       end
 
-      it "is successful" do
-        get :index
-        response.should be_success
-      end
+      it { should respond_with(:success) }
     end
   end
 end

@@ -80,6 +80,7 @@ gem 'sru',
 
 group :test do
   gem 'webmock' # For VCR
+  gem 'shoulda-matchers' # Various RSpec helpers
 end
 
 group :test, :development do

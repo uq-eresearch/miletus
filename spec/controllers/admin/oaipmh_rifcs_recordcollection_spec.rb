@@ -11,12 +11,10 @@ describe Admin::RifcsOverOaipmhRecordCollectionsController do
       before(:each) do
         Miletus::Harvest::OAIPMH::RIFCS::RecordCollection.create(
           :endpoint => 'http://example.test/oai')
+        get :index
       end
 
-      it "is successful" do
-        get :index
-        response.should be_success
-      end
+      it { should respond_with(:success) }
     end
   end
 
@@ -26,8 +24,6 @@ describe Admin::RifcsOverOaipmhRecordCollectionsController do
       post :harvest
     end
 
-    it "is successful" do
-      response.should be_redirect
-    end
+    it { should respond_with(:redirect) }
   end
 end

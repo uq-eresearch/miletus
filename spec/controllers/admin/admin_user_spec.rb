@@ -16,9 +16,7 @@ describe Admin::AdminUsersController do
       get :new
     end
 
-    it "is successful" do
-      response.should be_success
-    end
+    it { should respond_with(:success) }
   end
 
 end

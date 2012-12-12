@@ -12,12 +12,10 @@ describe Admin::SruLookupInterfacesController do
         Miletus::Harvest::SRU::Interface.create(
           :schema => 'rif',
           :endpoint => 'http://example.test/sru')
+        get :index
       end
 
-      it "is successful" do
-        get :index
-        response.should be_success
-      end
+      it { should respond_with(:success) }
     end
   end
 end

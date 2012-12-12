@@ -10,11 +10,11 @@ describe Admin::PagesController do
   describe "GET show" do
 
     context "with a single empty Page" do
-      before(:each) { @page = Page.create }
-      it "is successful" do
-        get :show, :id => @page.id
-        response.should be_success
+      before(:each) do
+        get :show, :id => Page.create.id
       end
+
+      it { should respond_with(:success) }
     end
 
     context "with a single populated Page" do
@@ -29,13 +29,11 @@ describe Admin::PagesController do
            * list
 
         EOH
-        @page = Page.create :name => 'foo', :content => md_content
+        page = Page.create :name => 'foo', :content => md_content
+        get :show, :id => page.id
       end
 
-      it "is successful" do
-        get :show, :id => @page.id
-        response.should be_success
-      end
+      it { should respond_with(:success) }
     end
 
   end

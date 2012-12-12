@@ -11,12 +11,10 @@ describe Admin::AtomFeedsController do
       before(:each) do
         Miletus::Harvest::Atom::Feed.create(
           :url => 'http://example.test/feed.atom')
+        get :index
       end
 
-      it "is successful" do
-        get :index
-        response.should be_success
-      end
+      it { should respond_with(:success) }
     end
   end
 
@@ -26,8 +24,6 @@ describe Admin::AtomFeedsController do
       post :harvest
     end
 
-    it "is successful" do
-      response.should be_redirect
-    end
+    it { should respond_with(:redirect) }
   end
 end

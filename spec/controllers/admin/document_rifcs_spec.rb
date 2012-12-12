@@ -11,12 +11,10 @@ describe Admin::DirectRifCsDocumentsController do
       before(:each) do
         Miletus::Harvest::Document::RIFCS.create(
           :url => 'http://example.test/doc.rifcs.xml')
+        get :index
       end
 
-      it "is successful" do
-        get :index
-        response.should be_success
-      end
+      it { should respond_with(:success) }
     end
   end
 end

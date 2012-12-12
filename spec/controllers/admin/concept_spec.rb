@@ -13,9 +13,7 @@ describe Admin::ConceptsController do
         get :index
       end
 
-      it "is successful" do
-        response.should be_success
-      end
+      it { should respond_with(:success) }
     end
   end
 
@@ -25,9 +23,7 @@ describe Admin::ConceptsController do
         get :show, :id => Miletus::Merge::Concept.create.id
       end
 
-      it "is successful" do
-        response.should be_success
-      end
+      it { should respond_with(:success) }
     end
   end
 
@@ -40,8 +36,9 @@ describe Admin::ConceptsController do
           :collection_selection => concepts.map(&:id)
       end
 
-      it "is successful" do
-        response.should be_redirect
+      it { should respond_with(:redirect) }
+
+      it "should result in only one concept" do
         Miletus::Merge::Concept.count.should be == 1
       end
     end
@@ -52,9 +49,7 @@ describe Admin::ConceptsController do
       post :reindex
     end
 
-    it "is successful" do
-      response.should be_redirect
-    end
+    it { should respond_with(:redirect) }
   end
 
   describe "POST recheck_sru" do
@@ -62,9 +57,7 @@ describe Admin::ConceptsController do
       post :recheck_sru
     end
 
-    it "is successful" do
-      response.should be_redirect
-    end
+    it { should respond_with(:redirect) }
   end
 
 end

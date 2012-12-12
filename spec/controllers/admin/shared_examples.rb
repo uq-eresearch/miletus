@@ -16,9 +16,7 @@ shared_examples "an admin page" do
   describe "GET index" do
     before(:each) { get :index }
 
-    it "is successful" do
-      response.should be_success
-    end
+    it { should respond_with(:success) }
   end
 
   describe "GET new" do
@@ -26,8 +24,6 @@ shared_examples "an admin page" do
       get :new
     end
 
-    it "is successful" do
-      response.should be_success
-    end
+    it { should respond_with(:success) }
   end
 end
