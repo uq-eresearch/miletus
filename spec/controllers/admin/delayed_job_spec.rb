@@ -6,6 +6,9 @@ describe Admin::DelayedJobsController do
 
   render_views
 
+  # Ensure that jobs are always delayed so the counts don't change
+  before(:each) { Delayed::Worker.delay_jobs = true }
+
   before(:each) do
     @user = AdminUser.find_by_email!('admin@example.com')
     sign_in @user
@@ -15,7 +18,6 @@ describe Admin::DelayedJobsController do
     context "when a job exists" do
       before(:each) do
         1.delay.succ # Add a new job to the queue
-        puts Delayed::Job.methods.inspect
         Delayed::Job.count.should be == 1
         get :index
       end

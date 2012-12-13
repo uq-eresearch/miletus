@@ -98,11 +98,29 @@ module Miletus::Merge
         # Transfer concept to primary
         concept.facets.update_all(:concept_id => self.id)
         Rails.logger.info("Removing empty concept #{concept.id}")
-        concept.reload.destroy
+        # It's just possible we're trying to merge a concept with itself
+        concept.destroy unless concept.reload.id == self.id
         # Update primary concept details
         reload_facets_and_reindex
       end
       self
+    end
+
+    # Split concept's facets up into their own separate facets.
+    #
+    # Should generally only be used for recovering from a merge-gone-bad.
+    def split
+      self.transaction do
+        split_facets = facets.reject do |facet|
+          self.uuid == uuid_from_facet_key(facet.key).to_s
+        end.each do |f|
+          f.reload
+          f.concept = Miletus::Merge::Concept.new
+          f.save!
+        end
+        # We need to reindex this concept to process the loss of facets
+        reload_facets_and_reindex
+      end
     end
 
     # Find duplicate concepts in the system (which may have emerged from

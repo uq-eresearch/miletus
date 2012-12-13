@@ -9,6 +9,7 @@ class OaipmhOutputObserver < ActiveRecord::Observer
 
   def update_record(concept_or_facet)
     concept = concept_or_facet.concept rescue concept_or_facet
+    return if concept.nil? # It might have been an orphan facet
     Rails.logger.info("Updating OAIPMH output record for %s" % concept)
     update_record_from_concept(concept)
     Rails.logger.info(

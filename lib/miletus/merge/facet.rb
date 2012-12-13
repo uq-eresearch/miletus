@@ -20,7 +20,7 @@ module Miletus::Merge
     end
 
     def reindex_concept
-      concept.reindex
+      concept.reindex unless concept.nil?
     end
 
     def to_rif

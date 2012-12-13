@@ -15,7 +15,14 @@ describe Miletus::Merge::Concept do
     end
   end
 
+  describe "class methods" do
+    subject { described_class }
+    it { should respond_to(:merge) }
+  end
+
   it { should respond_to(:facets, :indexed_attributes, :key, :sort_key, :uuid) }
+
+  it { should respond_to(:merge, :split) }
 
   it "should merge facet metadata when identifiers match" do
     # Create multi-faceted concept
@@ -54,7 +61,7 @@ describe Miletus::Merge::Concept do
   end
 
   it "should be able to merge adhoc concepts" do
-    # Create multi-faceted concept
+    # Create multiple single-faceted concepts
     concepts = [1, '1b'].map{|n| get_fixture('party', n)}.map do |fixture_xml|
       concept = Miletus::Merge::Concept.create()
       concept.facets.create(:metadata => fixture_xml)
@@ -69,6 +76,27 @@ describe Miletus::Merge::Concept do
     Miletus::Merge::Concept.merge(concepts)
     Miletus::Merge::Concept.count.should be == 1
     Miletus::Merge::Concept.where(:facets_count => 2).count.should == 1
+  end
+
+  it "should be able to split concepts" do
+    # Create multi-faceted concept
+    concept = Miletus::Merge::Concept.create()
+    [1, '1b'].map{|n| get_fixture('party', n)}.each do |fixture_xml|
+      concept.facets.create(:metadata => fixture_xml)
+      concept.save!
+    end
+    concept.uuid.should_not be_nil
+    Miletus::Merge::Concept.count.should be == 1
+    Miletus::Merge::Facet.count.should be == 2
+    concept.reload.should have(2).facets
+    concept.should respond_to(:split)
+    concept.split
+    concept.should have(1).facet
+    Miletus::Merge::Concept.count.should be == 2
+    Miletus::Merge::Concept.all.each do |c|
+      c.should have(1).facets
+      c.to_rif.should_not be(nil)
+    end
   end
 
   it "should deduplicate primary names from facet metadata" do
