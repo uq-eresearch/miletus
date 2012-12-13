@@ -22,6 +22,9 @@ module Miletus::Harvest::SRU
     end
 
     def lookup_by_identifier(value)
+      # Handle nil identifiers that might leak through
+      return nil if value.nil?
+
       # Create Common/Contextual Query Language (CQL) query
 
       # According to <http://www.loc.gov/standards/sru/specs/cql.html>:
