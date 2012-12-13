@@ -35,7 +35,7 @@ class SruRifcsLookupObserver < ActiveRecord::Observer
   end
 
   def self.run_job(job)
-    job.delay.run
+    job.delay(:queue => 'lookup').run
   end
 
   class JobProcessor < Struct.new(:concept, :interface)
