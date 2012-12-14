@@ -4,6 +4,11 @@ require 'delayed_job_active_record'
 ActiveAdmin.register Delayed::Backend::ActiveRecord::Job,
   :as => "Delayed Job" do
 
+  scope :all, :default => true
+  scope :with_errors do |jobs|
+    jobs.where('last_error IS NOT NULL')
+  end
+
   sidebar "Maintenance" do
     para do
       button_to "Clear All", :action => :clear, :method => :post

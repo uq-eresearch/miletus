@@ -5,7 +5,8 @@ ActiveAdmin.register Miletus::Harvest::Document::RDCAtom,
 
   menu :parent => 'Documents'
 
-  scope :unmanaged
+  scope :unmanaged, :default => true
+  scope :all
 
   index do
     selectable_column
