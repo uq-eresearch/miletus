@@ -10,11 +10,7 @@ class RifcsRecordObserver < ActiveRecord::Observer
     Miletus::Harvest::Document::RIFCS,
     Miletus::Harvest::OAIPMH::RIFCS::Record)
 
-  def after_create(record)
-    CreateFacetJob.new(record).delay.run
-  end
-
-  def after_update(record)
+  def after_metadata_change(record)
     if record.deleted?
       RemoveFacetJob.new(record).delay.run
     else
@@ -24,10 +20,6 @@ class RifcsRecordObserver < ActiveRecord::Observer
 
   def after_destroy(record)
     RemoveFacetJob.new(record).delay.run
-  end
-
-  def after_touch(record)
-    UpdateFacetJob.new(record).delay.run
   end
 
   class AbstractJob < Struct.new(:record)
@@ -80,17 +72,6 @@ class RifcsRecordObserver < ActiveRecord::Observer
 
     end
 
-  end
-
-  class CreateFacetJob < AbstractJob
-    def run
-      split_rifcs_document.each do |xml|
-        concept = Miletus::Merge::Concept.find_existing(xml)
-        concept ||= Miletus::Merge::Concept.create()
-        facet = concept.facets.create(:metadata => xml)
-        record.facet_links.create(:facet => facet)
-      end
-    end
   end
 
   class UpdateFacetJob < AbstractJob

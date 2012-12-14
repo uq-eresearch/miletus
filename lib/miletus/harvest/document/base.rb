@@ -4,7 +4,6 @@ require 'uri'
 module Miletus::Harvest::Document
 
   class Base < ActiveRecord::Base
-
     self.table_name = :harvest_documents
 
     attr_accessible :url, :managed
@@ -24,7 +23,25 @@ module Miletus::Harvest::Document
       not document.present?
     end
 
+    def clear
+      document.clear
+      notify_metadata_change
+    end
+
     def fetch
+      watch_for_change { fetch_without_watch_for_change }
+    end
+
+    def url=(url)
+      self[:url] = url
+      # As the URL has changed, clear any existing document
+      clear
+    end
+
+    private
+
+    def fetch_without_watch_for_change
+      save! if new_record? # We'll potentially have dependant objects
       begin
         open(remote_file_location, fetch_options) do |f|
           tempfile = Tempfile.new('fetched-document-')
@@ -57,13 +74,20 @@ module Miletus::Harvest::Document
       end
     end
 
-    def url=(url)
-      self[:url] = url
-      # As the URL has changed, clear any existing document
-      document.clear
+    def notify_metadata_change
+      self.class.notify_observers :after_metadata_change, self
     end
 
-    private
+    def watch_for_change
+      digest_before = document_sha256
+      yield
+      notify_metadata_change unless document_sha256 == digest_before
+    end
+
+    def document_sha256
+      return nil unless document.present?
+      Digest::SHA256.file(document.path).hexdigest
+    end
 
     def fetch_options
       opts = {}

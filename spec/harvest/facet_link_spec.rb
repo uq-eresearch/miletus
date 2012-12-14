@@ -33,7 +33,7 @@ describe Miletus::Harvest::FacetLink do
       doc.fetch
       doc.should have(1).facet_links
       # The links should delete when the record data does
-      doc.document.clear
+      doc.clear
       doc.should be_changed
       doc.save!
       doc.should have(0).facet_links

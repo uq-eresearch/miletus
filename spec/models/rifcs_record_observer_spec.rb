@@ -7,8 +7,7 @@ describe RifcsRecordObserver do
   # Ensure that jobs execute immediately for these tests
   before(:each) { Delayed::Worker.delay_jobs = false }
 
-  it { should respond_to(
-        :after_create, :after_update, :after_destroy, :after_touch) }
+  it { should respond_to(:after_metadata_change, :after_destroy) }
 
   describe "RIF-CS splitting with Reader" do
 

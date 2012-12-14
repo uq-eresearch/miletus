@@ -3,7 +3,6 @@ require 'nokogiri'
 module Miletus::Harvest::OAIPMH::RIFCS
 
   class Record < ActiveRecord::Base
-
     self.table_name = 'oaipmh_rifcs_records'
 
     class OaiHeader < OAI::Header
@@ -17,6 +16,8 @@ module Miletus::Harvest::OAIPMH::RIFCS
     end
 
     attr_accessible :identifier, :datestamp, :metadata, :deleted
+
+    around_save :notify_metadata_change
 
     belongs_to :record_collection,
       :class_name => 'Miletus::Harvest::OAIPMH::RIFCS::RecordCollection',
@@ -62,6 +63,12 @@ module Miletus::Harvest::OAIPMH::RIFCS
 
     private
 
+    def notify_metadata_change
+      should_notify = metadata_changed? || deleted_changed?
+      yield
+      self.class.notify_observers :after_metadata_change, self if should_notify
+    end
+
     def fix_xsi_namespace(xml)
       return xml unless xml =~ /<registryObjects.*xsi:.*>/
       return xml if xml =~ /<registryObjects.*xmlns:xsi.*/
@@ -77,7 +84,6 @@ module Miletus::Harvest::OAIPMH::RIFCS
           obj.to_s
       end
     end
-
 
     def oai_header
       OaiHeader.new().tap do |oaiHeader|
