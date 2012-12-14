@@ -3,19 +3,15 @@ require 'miletus'
 
 class SruRifcsLookupObserver < ActiveRecord::Observer
 
-  observe Miletus::Merge::Concept
   observe Miletus::Merge::Facet
 
-  def find_sru_records(concept_or_facet)
-    concept = concept_or_facet
-    if concept_or_facet.respond_to?(:concept)
-      facet = concept_or_facet
-      return if blocked_key?(facet.key)
-      concept = facet.concept
-    end
+  def find_sru_records(facet)
+    return if blocked_key?(facet.key)
+    concept = facet.concept
+    return if concept.nil?
     Miletus::Harvest::SRU::Interface.all.each do |interface|
       if interface.suitable_type?(concept.type)
-        self.class.run_job(JobProcessor.new(concept, interface))
+        JobProcessor.new(concept, interface).delay(:queue => 'lookup').run
       end
     end
   end
@@ -32,10 +28,6 @@ class SruRifcsLookupObserver < ActiveRecord::Observer
     @blocked_keys << key
     block.call
     @blocked_keys.delete(key)
-  end
-
-  def self.run_job(job)
-    job.delay(:queue => 'lookup').run
   end
 
   class JobProcessor < Struct.new(:concept, :interface)

@@ -4,6 +4,9 @@ describe Miletus::Harvest::FacetLink do
 
   it { should respond_to(:facet, :harvest_record) }
 
+  # Ensure that jobs execute immediately for these tests
+  before(:each) { Delayed::Worker.delay_jobs = false }
+
   describe "integration with Miletus::Harvest::Document::RIFCS" do
     let :fixture_url do
       fixture_file = File.expand_path(
@@ -13,8 +16,6 @@ describe Miletus::Harvest::FacetLink do
     end
 
     it "should use with add, update and delete" do
-      # Disable delayed run for hooks
-      RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
       # Create new doc
       doc = Miletus::Harvest::Document::RIFCS.new
       VCR.use_cassette('ands_rifcs_example') do
@@ -71,8 +72,6 @@ describe Miletus::Harvest::FacetLink do
     end
 
     it "should create a new concept for a new harvested record" do
-      # Disable delayed run for hooks
-      RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
       input_record = fixture
       input_record.should respond_to(:facet_links)
       input_record.save!

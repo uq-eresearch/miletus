@@ -4,6 +4,9 @@ describe SruRifcsLookupObserver do
 
   subject { SruRifcsLookupObserver.instance }
 
+  # Ensure that jobs execute immediately for these tests
+  before(:each) { Delayed::Worker.delay_jobs = false }
+
   it { should respond_to(:after_save) }
 
   def get_fixture(type, number = 1)
@@ -12,18 +15,7 @@ describe SruRifcsLookupObserver do
     File.open(fixture_file) { |f| f.read() }
   end
 
-  it "should normally run jobs using delayed_job" do
-    test_job = Object.new.tap do |obj|
-      obj.should_receive(:delay).and_return do
-        Object.new.tap {|o| o.should_receive(:run)}
-      end
-    end
-    SruRifcsLookupObserver.run_job(test_job)
-  end
-
   it "should look up identifiers and keys" do
-    # Disable delayed run for hooks
-    SruRifcsLookupObserver.stub(:run_job).and_return { |j| j.run }
     # Create concept and facet
     xml = get_fixture('party', '1c')
     # Create mock SRU Interface with expectations
@@ -56,8 +48,6 @@ describe SruRifcsLookupObserver do
 
   it "should do a new lookup when a facet is created" do
     VCR.use_cassette('nla_lookup_for_party_1c') do
-      # Disable delayed run for hooks
-      SruRifcsLookupObserver.stub(:run_job).and_return { |j| j.run }
       # Create concept and facet
       xml = get_fixture('party', '1c')
       # Create SRU Interface

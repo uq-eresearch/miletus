@@ -4,6 +4,9 @@ describe RifcsRecordObserver do
 
   subject { RifcsRecordObserver.instance }
 
+  # Ensure that jobs execute immediately for these tests
+  before(:each) { Delayed::Worker.delay_jobs = false }
+
   it { should respond_to(
         :after_create, :after_update, :after_destroy, :after_touch) }
 
@@ -104,8 +107,6 @@ describe RifcsRecordObserver do
     end
 
     it "should handle missing XSI namespace definition" do
-      # Disable delayed run for hooks
-      RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
       input_record = new_input_record('activity', 1)
       input_record.metadata = input_record.metadata.gsub(
         /(registryObjects .*)>$/,
@@ -125,8 +126,6 @@ describe RifcsRecordObserver do
     end
 
     it "should update concept when the harvested record changes" do
-      # Disable delayed run for hooks
-      RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
       input_record = new_input_record
       input_record.save!
       # Run hook - which will happen as part of the environment
@@ -158,8 +157,6 @@ describe RifcsRecordObserver do
     end
 
     it "should delete facets when the harvested record is marked deleted" do
-      # Disable delayed run for hooks
-      RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
       input_record = new_input_record
       input_record.save!
       # Run hook - which will happen as part of the environment
@@ -181,8 +178,6 @@ describe RifcsRecordObserver do
 
 
     it "should delete facets when the harvested record is destroyed" do
-      # Disable delayed run for hooks
-      RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
       input_record = new_input_record
       input_record.save!
       # Run hook - which will happen as part of the environment
@@ -201,8 +196,6 @@ describe RifcsRecordObserver do
     end
 
     it "should merge output record data when identifiers match" do
-      # Disable delayed run for hooks
-      RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
       input_record_1 = new_input_record('party', 1)
       input_record_1.save!
       # Run hook - which will happen as part of the environment
@@ -231,8 +224,6 @@ describe RifcsRecordObserver do
     end
 
     it "should create a new concept for a single object document" do
-      # Disable delayed run for hooks
-      RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
       # Check the database has no existing concepts
       Miletus::Merge::Concept.count.should be == 0
       # Create entry
@@ -244,8 +235,6 @@ describe RifcsRecordObserver do
     end
 
     it "should create a new concepts for a multiple object document" do
-      # Disable delayed run for hooks
-      RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
       # Check the database has no existing concepts
       Miletus::Merge::Concept.count.should be == 0
       # Create entry

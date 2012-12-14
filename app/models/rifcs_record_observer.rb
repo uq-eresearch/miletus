@@ -11,27 +11,23 @@ class RifcsRecordObserver < ActiveRecord::Observer
     Miletus::Harvest::OAIPMH::RIFCS::Record)
 
   def after_create(record)
-    self.class.run_job(CreateFacetJob.new(record))
+    CreateFacetJob.new(record).delay.run
   end
 
   def after_update(record)
     if record.deleted?
-      self.class.run_job(RemoveFacetJob.new(record))
+      RemoveFacetJob.new(record).delay.run
     else
-      self.class.run_job(UpdateFacetJob.new(record))
+      UpdateFacetJob.new(record).delay.run
     end
   end
 
   def after_destroy(record)
-    self.class.run_job(RemoveFacetJob.new(record))
+    RemoveFacetJob.new(record).delay.run
   end
 
   def after_touch(record)
-    self.class.run_job(UpdateFacetJob.new(record))
-  end
-
-  def self.run_job(job)
-    job.delay.run
+    UpdateFacetJob.new(record).delay.run
   end
 
   class AbstractJob < Struct.new(:record)
