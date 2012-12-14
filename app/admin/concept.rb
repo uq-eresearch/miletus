@@ -46,12 +46,17 @@ ActiveAdmin.register Miletus::Merge::Concept,
 
   action_item do
     extend controller.class.const_get('LinkToBatchHelper')
-    link_to_batch :recheck_sru, "Recheck SRU"
+    link_to_batch :recheck_sru, "Recheck SRU" if params[:id]
   end
 
   action_item do
     extend controller.class.const_get('LinkToBatchHelper')
-    link_to_batch :reindex
+    link_to_batch :reindex if params[:id]
+  end
+
+  action_item do
+    extend controller.class.const_get('LinkToBatchHelper')
+    link_to_batch :split if params[:id]
   end
 
   batch_action :recheck_sru do |selection|
@@ -66,6 +71,12 @@ ActiveAdmin.register Miletus::Merge::Concept,
   batch_action :reindex do |selection|
     Miletus::Merge::Concept.find(selection).each(&:reindex)
     flash[:notice] = "Selected concepts have been reindexed."
+    redirect_after_action(selection)
+  end
+
+  batch_action :split do |selection|
+    Miletus::Merge::Concept.find(selection).each(&:split)
+    flash[:notice] = "Selected concepts have been split up."
     redirect_after_action(selection)
   end
 

@@ -4,6 +4,9 @@ describe OaipmhOutputObserver do
 
   subject { OaipmhOutputObserver.instance }
 
+  # Ensure that jobs execute immediately for these tests
+  before(:each) { Delayed::Worker.delay_jobs = false }
+
   it { should respond_to(:after_update) }
 
   def get_fixture(type, number = 1)
@@ -24,27 +27,23 @@ describe OaipmhOutputObserver do
   end
 
   it "should create a new output record for a new concept" do
-    # Disable delayed run for hooks
-    RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
     concept = create_concept
     # Run hook - which will happen as part of the environment
     # subject.after_create(input_record)
     # A new record should exist as a result
     output_record = Miletus::Output::OAIPMH::Record.find(:first)
-    output_record.should_not be(nil)
-    output_record.to_rif.should_not be(nil)
+    output_record.should_not be_nil
+    output_record.to_rif.should_not be_nil
   end
 
   it "should update an existing output record when a concept updates" do
-    # Disable delayed run for hooks
-    RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
     concept = create_concept
     # Run hook - which will happen as part of the environment
     # subject.after_create(input_record)
     # A new record should exist as a result
     output_record = Miletus::Output::OAIPMH::Record.find(:first)
-    output_record.should_not be(nil)
-    output_record.to_rif.should_not be(nil)
+    output_record.should_not be_nil
+    output_record.to_rif.should_not be_nil
     # Change facet
     facet = concept.facets.first
     doc = Nokogiri::XML(facet.metadata)
@@ -66,15 +65,13 @@ describe OaipmhOutputObserver do
   end
 
   it "should mark output records as deleted when concepts have no entries" do
-    # Disable delayed run for hooks
-    RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
     concept = create_concept
     # Run hook - which will happen as part of the environment
     # subject.after_create(input_record)
     # A new record should exist as a result
     output_record = Miletus::Output::OAIPMH::Record.find(:first)
-    output_record.should_not be(nil)
-    output_record.to_rif.should_not be(nil)
+    output_record.should_not be_nil
+    output_record.to_rif.should_not be_nil
     # Delete facet
     concept.facets.first.destroy
     Miletus::Merge::Facet.all.count.should be == 0
@@ -85,8 +82,6 @@ describe OaipmhOutputObserver do
   end
 
   it "should regenerate output records when related concepts change" do
-    # Disable delayed run for hooks
-    RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
     concepts = \
       [get_fixture('collection', 1), get_fixture('party', 1)].map do |xml|
         concept = Miletus::Merge::Concept.create()
@@ -104,8 +99,6 @@ describe OaipmhOutputObserver do
   end
 
   it "should create sets based on identifier types" do
-    # Disable delayed run for hooks
-    RifcsRecordObserver.stub(:run_job).and_return { |j| j.run }
     concepts = \
       [get_fixture('collection', 1), get_fixture('party', 1)].map do |xml|
         concept = Miletus::Merge::Concept.create()

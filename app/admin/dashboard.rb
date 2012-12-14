@@ -28,10 +28,14 @@ ActiveAdmin.register_page "Dashboard" do
       column do
         panel "Delayed Jobs" do
           div do
+            queues = Delayed::Job.pluck(:queue).uniq.compact
             stats = {
-              'Pending Jobs' => \
-                Delayed::Job.count,
+              'Pending Jobs' => Delayed::Job.count,
+              'in default queue' => Delayed::Job.where(:queue => nil).count
             }
+            queues.each_with_object(stats) do |queue, h|
+              h["in #{queue} queue"] = Delayed::Job.where(:queue => queue).count
+            end
             render('/admin/stats', :stats => stats)
           end
         end

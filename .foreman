@@ -1,1 +1,1 @@
-concurrency: web=1,job=1,lookup=3,clock=1
+concurrency: web=1,clock=1,default_queue=1,lookup_queue=3,output_queue=1
