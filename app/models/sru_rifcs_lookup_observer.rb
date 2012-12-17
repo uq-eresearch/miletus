@@ -8,7 +8,10 @@ class SruRifcsLookupObserver < ActiveRecord::Observer
   def find_sru_records(facet)
     return if blocked_key?(facet.key)
     concept = facet.concept
-    return if concept.nil?
+    find_sru_records_for_concept(concept) unless concept.nil?
+  end
+
+  def find_sru_records_for_concept(concept)
     Miletus::Harvest::SRU::Interface.all.each do |interface|
       if interface.suitable_type?(concept.type)
         JobProcessor.new(concept, interface).delay(:queue => 'lookup').run

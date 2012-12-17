@@ -61,7 +61,7 @@ ActiveAdmin.register Miletus::Merge::Concept,
 
   batch_action :recheck_sru do |selection|
     Miletus::Merge::Concept.find(selection).each do |concept|
-      SruRifcsLookupObserver.instance.find_sru_records(concept)
+      SruRifcsLookupObserver.instance.find_sru_records_for_concept(concept)
     end
     flash[:notice] = \
       "Scheduled recheck for selected concepts from SRU interfaces."
@@ -82,9 +82,7 @@ ActiveAdmin.register Miletus::Merge::Concept,
 
   collection_action :recheck_sru, :method => :post do
     Miletus::Merge::Concept.all.each do |concept|
-      facet = concept.facets.first
-      next if facet.nil?
-      SruRifcsLookupObserver.instance.find_sru_records(facet)
+      SruRifcsLookupObserver.instance.find_sru_records_for_concept(concept)
     end
     flash[:notice] = "Scheduled recheck for all concepts from SRU interfaces."
     redirect_after_action

@@ -9,6 +9,36 @@ describe RifcsRecordObserver do
 
   it { should respond_to(:after_metadata_change, :after_destroy) }
 
+  describe ":after_metadata_change job selection" do
+
+    before(:each) do
+      # Throw exception when trying to instantiate the job
+      %w[UpdateFacetJob RemoveFacetJob].each do |job_type|
+        described_class.instance_eval do
+          self.const_get(job_type)
+        end.stub(:new).and_raise(job_type)
+      end
+    end
+
+    it "should use UpdateJob if not deleted" do
+      record = double("record")
+      record.should_receive(:deleted?).and_return(false)
+      expect do
+        subject.after_metadata_change(record)
+      end.to raise_error(Exception, 'UpdateFacetJob')
+    end
+
+    it "should use RemoveJob if deleted" do
+      record = double("record")
+      record.should_receive(:deleted?).and_return(true)
+      expect do
+        subject.after_metadata_change(record)
+      end.to raise_error(Exception, 'RemoveFacetJob')
+    end
+
+  end
+
+
   describe "RIF-CS splitting with Reader" do
 
     def split_rifcs_document(record)
