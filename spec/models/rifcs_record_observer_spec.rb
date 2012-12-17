@@ -14,9 +14,7 @@ describe RifcsRecordObserver do
     before(:each) do
       # Throw exception when trying to instantiate the job
       %w[UpdateFacetJob RemoveFacetJob].each do |job_type|
-        described_class.instance_eval do
-          self.const_get(job_type)
-        end.stub(:new).and_raise(job_type)
+        described_class.const_get(job_type).stub(:new).and_raise(job_type)
       end
     end
 
