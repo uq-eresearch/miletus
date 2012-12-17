@@ -21,7 +21,9 @@ class OaipmhOutputObserver < ActiveRecord::Observer
   class UpdateJob < Struct.new(:concept_id)
 
     def run
-      concept = Miletus::Merge::Concept.find(concept_id)
+      # Handle deleted records by ignoring them
+      return unless Miletus::Merge::Concept.exists? concept_id
+      concept = Miletus::Merge::Concept.find concept_id
       Rails.logger.info("Updating OAIPMH output record for %s" % concept)
       update_record_from_concept(concept)
       Rails.logger.info(

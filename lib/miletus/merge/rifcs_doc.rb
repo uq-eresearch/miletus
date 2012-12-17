@@ -39,7 +39,7 @@ module Miletus::Merge
     def sort_key
       name_order = ['primary', 'abbreviated', 'alternative', nil]
       names = xpath("//rif:name").to_ary.sort_by! do |n|
-        name_order.index(n['type'])
+        name_order.index(n['type']) || 100 # Handle invalid name types
       end
       names.map{|n| sort_key_from_name_element(n)}.compact.first
     end
