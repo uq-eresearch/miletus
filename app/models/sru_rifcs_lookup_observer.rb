@@ -95,16 +95,7 @@ class SruRifcsLookupObserver < ActiveRecord::Observer
       xml = interface.lookup_by_identifier(key)
       return if xml.nil?
       prevent_loop(Miletus::Merge::Facet.global_key(xml)) do
-        facet = Miletus::Merge::Facet.find_existing(xml)
-        if facet.nil?
-          related_concept = Miletus::Merge::Concept.find_existing(xml)
-          related_concept ||= Miletus::Merge::Concept.create()
-          facet = related_concept.facets.create(:metadata => xml)
-        else
-          facet.metadata = xml
-        end
-        facet.save!
-        facet.reindex_concept
+        Miletus::Merge::Facet.create_or_update_by_metadata(xml)
       end
     end
 

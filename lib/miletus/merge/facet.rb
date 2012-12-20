@@ -15,6 +15,19 @@ module Miletus::Merge
     after_save :reindex_concept
     after_destroy :destroy_empty_concept
 
+    # Update the matching facet if it exists, otherwise create one.
+    def self.create_or_update_by_metadata(xml)
+      facet = find_existing(xml)
+      if facet.nil?
+        facet = create_with_metadata(xml)
+      else
+        facet.metadata = xml
+        facet.save!
+      end
+      facet.reindex_concept
+      facet
+    end
+
     def self.find_existing(xml)
       find_by_key(global_key(xml))
     end
@@ -29,6 +42,13 @@ module Miletus::Merge
     end
 
     private
+
+    # Create a new facet which is attached to an existing concept if one exists.
+    def self.create_with_metadata(xml)
+      concept = Miletus::Merge::Concept.find_existing(xml)
+      concept ||= Miletus::Merge::Concept.create()
+      concept.facets.create(:metadata => xml)
+    end
 
     def destroy_empty_concept
       return if self.concept.nil?

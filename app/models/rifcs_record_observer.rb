@@ -89,16 +89,7 @@ class RifcsRecordObserver < ActiveRecord::Observer
       existing_links = record.facet_links.all
       facets = []
       split_rifcs_document.each do |xml|
-        facet = Miletus::Merge::Facet.find_existing(xml)
-        if facet.nil?
-          concept = Miletus::Merge::Concept.find_existing(xml)
-          concept ||= Miletus::Merge::Concept.create()
-          facet = concept.facets.create(:metadata => xml)
-        else
-          facet.metadata = xml
-          facet.save!
-        end
-        facets << facet
+        facets << Miletus::Merge::Facet.create_or_update_by_metadata(xml)
       end
       # Remove links (and facets) for no longer present facets
       existing_links.reject{|l| facets.include?(l.facet)}.each do |l|

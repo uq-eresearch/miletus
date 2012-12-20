@@ -14,6 +14,11 @@ describe Miletus::Merge::Facet do
     concept.facets.new
   end
 
+  describe "class methods" do
+    subject { described_class }
+    it { should respond_to(:create_or_update_by_metadata) }
+  end
+
   it { should respond_to(:concept) }
 
   it "should handle writing empty metadata" do
