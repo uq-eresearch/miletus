@@ -1,4 +1,5 @@
 require 'spec_helper'
+require File.join(File.dirname(__FILE__), 'fixtures', 'oai')
 
 describe Miletus::Harvest::OAIPMH::RIFCS::RecordCollection do
 
@@ -20,11 +21,7 @@ describe Miletus::Harvest::OAIPMH::RIFCS::RecordCollection do
   end
 
   it "adds OAI::Record instances to a collection" do
-    record = Struct.new(:header, :metadata).new(
-        Struct.new(:identifier, :datestamp, :status).new(
-          'http://example.test/1',
-          DateTime.now),
-        LibXML::XML::Node.new('metadata'))
+    record = FactoryGirl.build(:oai_record)
     subject.add(record)
 
     r = subject.get(record.header.identifier)
@@ -34,14 +31,11 @@ describe Miletus::Harvest::OAIPMH::RIFCS::RecordCollection do
   end
 
   it "updates existing OAI::Record instances in a collection" do
-    records = (-10..-1).map do |i|
-      Struct.new(:header, :metadata).new(
-        Struct.new(:identifier, :datestamp, :status).new(
-          'http://example.test/1',
-          DateTime.now + i),
-        LibXML::XML::Node.new('metadata'))
+    records = 10.downto(1).map do |i|
+      FactoryGirl.build :oai_record,
+        :header => FactoryGirl.build(:oai_header,
+          :datestamp => i.hours.ago)
     end
-
     records.each do |record|
       subject.add(record)
       # Check attributes are what they should be
@@ -53,11 +47,7 @@ describe Miletus::Harvest::OAIPMH::RIFCS::RecordCollection do
   end
 
   it "marks deleted OAI::Record instances as deleted in a collection" do
-    record = Struct.new(:header, :metadata).new(
-        Struct.new(:identifier, :datestamp, :status).new(
-          'http://example.test/1',
-          DateTime.now),
-        LibXML::XML::Node.new('metadata'))
+    record = FactoryGirl.build(:oai_record)
     subject.add(record)
 
     # Check attributes are what they should be
@@ -76,9 +66,7 @@ describe Miletus::Harvest::OAIPMH::RIFCS::RecordCollection do
   end
 
   it "silently ignores new deleted OAI::Record instances in a collection" do
-    header = Struct.new(:identifier, :datestamp).new(
-          'http://example.test/1',
-          DateTime.now)
+    header = FactoryGirl.build(:oai_header)
 
     subject.remove(header.identifier, header.datestamp)
 
@@ -88,11 +76,7 @@ describe Miletus::Harvest::OAIPMH::RIFCS::RecordCollection do
   end
 
   it "knows which records it has seen, and can delete unseen records" do
-    record1 = Struct.new(:header, :metadata).new(
-        Struct.new(:identifier, :datestamp, :status).new(
-          'http://example.test/1',
-          DateTime.now),
-        LibXML::XML::Node.new('metadata'))
+    record1 = FactoryGirl.build(:oai_record)
     subject.add(record1)
 
     r = subject.get(record1.header.identifier)
@@ -100,11 +84,7 @@ describe Miletus::Harvest::OAIPMH::RIFCS::RecordCollection do
     r.header.datestamp.to_i.should be == record1.header.datestamp.to_i
     r.metadata.should be == record1.metadata
 
-    record2 = Struct.new(:header, :metadata).new(
-      Struct.new(:identifier, :datestamp, :status).new(
-        'http://example.test/2',
-        DateTime.now),
-      LibXML::XML::Node.new('metadata'))
+    record2 = FactoryGirl.build(:oai_record)
     subject.restrict_to do
       subject.add(record2)
     end

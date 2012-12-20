@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'yaml'
+require File.join(File.dirname(__FILE__), 'fixtures', 'oai')
 
 describe Miletus::Harvest::OAIPMH::RIFCS::Consumer do
 
@@ -50,10 +51,10 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Consumer do
     client = double("OAI::Client")
     client.should_receive(:list_identifiers).with(:metadataPrefix => 'rif')\
       .and_return(Struct.new(:full).new(
-        get_fixture_objects('fixtures/list_identifiers_1.yaml')))
+        get_fixture_objects(list_identifiers_1)))
     # This should be called for all records
     client.should_receive(:get_record).exactly(8).times.and_return(
-      &get_record_by_identifier_lambda('fixtures/list_identifiers_1.yaml')
+      &get_record_by_identifier_lambda(list_identifiers_1)
     )
 
     recordCollection = double("RecordCollection")
@@ -75,16 +76,16 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Consumer do
   end
 
   it "updates records with different datetimes for an existing collection" do
-    existing_records = get_fixture_objects('fixtures/list_identifiers_1.yaml')
+    existing_records = get_fixture_objects(list_identifiers_1)
 
     # OAI::Client and RecordCollection should be duck-typed
     client = double("OAI::Client")
     client.should_receive(:list_identifiers).with(:metadataPrefix => 'rif')\
       .and_return(Struct.new(:full).new(
-        get_fixture_objects('fixtures/list_identifiers_2.yaml')))
+        get_fixture_objects(list_identifiers_2)))
     # One new record => one call
     client.should_receive(:get_record).exactly(1).times.and_return(
-      &get_record_by_identifier_lambda('fixtures/list_identifiers_2.yaml')
+      &get_record_by_identifier_lambda(list_identifiers_2)
     )
 
     recordCollection = double("RecordCollection")
@@ -108,16 +109,16 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Consumer do
   end
 
   it "removes deleted records for an existing collection" do
-    existing_records = get_fixture_objects('fixtures/list_identifiers_2.yaml')
+    existing_records = get_fixture_objects(list_identifiers_2)
 
     # OAI::Client and RecordCollection should be duck-typed
     client = double("OAI::Client")
     client.should_receive(:list_identifiers).with(:metadataPrefix => 'rif')\
       .and_return(Struct.new(:full).new(
-        get_fixture_objects('fixtures/list_identifiers_3.yaml')))
+        get_fixture_objects(list_identifiers_3)))
     # One new record => one call
     client.should_receive(:get_record).exactly(3).times.and_return(
-      &get_record_by_identifier_lambda('fixtures/list_identifiers_3.yaml')
+      &get_record_by_identifier_lambda(list_identifiers_3)
     )
 
     recordCollection = double("RecordCollection")
@@ -155,29 +156,53 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Consumer do
     header_to_record(get_header_by_identifier(*args))
   end
 
-  def get_record_by_identifier_lambda(filename)
+  def get_record_by_identifier_lambda(objects)
     # Produce lambda
     lambda do |h|
       Struct.new(:record).new(
         get_record_by_identifier(
-          get_fixture_objects(filename),
+          get_fixture_objects(objects),
           h[:identifier]))
     end
   end
 
-  def get_fixture_objects(filename)
-    File.open(File.join(File.dirname(__FILE__), filename)) do |f|
-      response = YAML::load(f.read())
-      response.should_receive(:resumption_token)\
-              .any_number_of_times.and_return(nil)
-      response
+  def get_fixture_objects(objects)
+    response = objects
+    response.should_receive(:resumption_token)\
+            .any_number_of_times.and_return(nil)
+    response
+  end
+
+  let(:identifier_sequence) do
+    Enumerator.new do |y|
+      i = 1
+      loop do
+        y << "http://example.test/#{i}"
+        i += 1
+      end
     end
   end
 
-  # Loaded as a fixture
-  Struct::new('OaiHeaderStruct', :identifier, :datestamp, :status) do
-    def deleted?
-      status == 'deleted'
+  let(:list_identifiers_1) do
+    identifier_sequence.take(8).map do |identifier|
+      FactoryGirl.build :oai_header,
+        identifier: identifier,
+        datestamp: Time.parse('2012-07-03T09:17:47Z')
+    end
+  end
+
+  let(:list_identifiers_2) do
+    l = list_identifiers_1
+    l[2].datestamp = Time.parse('2012-07-03T10:17:47Z')
+    l
+  end
+
+  let(:list_identifiers_3) do
+    identifier_sequence.take(9).each_with_index.map do |identifier, i|
+      FactoryGirl.build :oai_header,
+        identifier: identifier,
+        datestamp: Time.parse('2012-07-03T12:17:47Z'),
+        deleted: !i.succ.between?(6,8) # Leave last 3 in original list
     end
   end
 

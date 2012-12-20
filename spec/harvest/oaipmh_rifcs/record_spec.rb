@@ -1,4 +1,5 @@
 require 'spec_helper'
+require File.join(File.dirname(__FILE__), 'fixtures', 'oai')
 
 describe Miletus::Harvest::OAIPMH::RIFCS::Record do
 
@@ -15,15 +16,7 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Record do
   end
 
   it "is creatable using an OAI::Record" do
-    oaiRecord = Struct.new(:header, :metadata).new(
-        Struct.new(:identifier, :datestamp, :status) do
-          def deleted?
-            self.status == 'deleted'
-          end
-        end.new(
-          'http://example.test/1',
-          DateTime.now),
-        LibXML::XML::Node.new('metadata'))
+    oaiRecord = FactoryGirl.build(:oai_record)
     oaiRecord.header.should respond_to('deleted?'.to_sym)
     record = Miletus::Harvest::OAIPMH::RIFCS::Record.from_oai(oaiRecord)
     record.identifier.should be == oaiRecord.header.identifier

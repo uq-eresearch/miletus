@@ -107,4 +107,5 @@ group :development do
   gem 'ruby-prof'
   gem 'rb-inotify', '~> 0.8.8'
   gem 'rack-perftools_profiler', :require => 'rack/perftools_profiler'
+  gem 'factory_girl_rails'
 end
