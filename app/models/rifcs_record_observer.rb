@@ -36,36 +36,46 @@ class RifcsRecordObserver < ActiveRecord::Observer
       include Enumerable
 
       def each
-        # Create a document to clone for the separate ones
-        templateDoc = Nokogiri::XML::Document.new()
         reader.each do |node|
           # Ignore nodes which aren't elements - they're not important here
           next unless node.node_type == Nokogiri::XML::Reader::TYPE_ELEMENT
           case node.name
           when 'registryObjects'
-            populate_template_root(templateDoc, node)
+            populate_template_root(node)
           when 'registryObject'
-            doc = templateDoc.clone
-            doc.root << doc.fragment(node.outer_xml).children.first
-            yield doc.to_xml
+            yield render_with_template_doc(node)
           end
         end
       end
 
       private
 
+      # Clone the template doc, then insert the node as the first child of
+      # the root node.
+      def render_with_template_doc(node)
+        doc = template_doc.clone
+        # Use document fragment to clone the node itself
+        doc.root << doc.fragment(node.outer_xml).children.first
+        doc.to_xml
+      end
+
+      # Create a document to clone for the separate ones
+      def template_doc
+        @template_doc ||= Nokogiri::XML::Document.new()
+      end
+
       # Populate root for our template document
-      def populate_template_root(tmplDoc, node)
+      def populate_template_root(node)
         namespaces = node.namespaces
-        tmplDoc.root = tmplDoc.create_element(node.name, namespaces)
+        template_doc.root = template_doc.create_element(node.name, namespaces)
         node.attributes.each do |k,v|
           next if namespaces.key?(k)
           # Kludge to handle schemaLocation namespace disappearing
           case k
           when 'schemaLocation'
-            tmplDoc.root.set_attribute('xsi:%s' % k, v)
+            template_doc.root.set_attribute('xsi:%s' % k, v)
           else
-            tmplDoc.root.set_attribute(k, v)
+            template_doc.root.set_attribute(k, v)
           end
         end
       end
