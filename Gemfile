@@ -79,6 +79,7 @@ gem 'sru',
 group :test do
   gem 'webmock' # For VCR
   gem 'shoulda-matchers' # Various RSpec helpers
+  gem 'factory_girl_rails'
 end
 
 group :test, :development do
@@ -106,5 +107,4 @@ group :development do
   gem 'ruby-prof'
   gem 'rb-inotify', '~> 0.8.8'
   gem 'rack-perftools_profiler', :require => 'rack/perftools_profiler'
-  gem 'factory_girl_rails'
 end
