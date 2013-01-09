@@ -34,10 +34,13 @@ Or to run the whole lot:
 
     foreman start
 
-Exporting to system script to run on port 8000:
+Exporting to system script to run on port 8000, managed by bluepill:
 
-    foreman export upstart /tmp -a miletus -u <miletus_user> -p 8000 -t ./foreman
-    sudo cp /tmp/miletus* /etc/init/
+    sudo gem install bluepill
+    foreman export bluepill /tmp -a miletus -u <miletus_user> -p 8000 -t ./foreman
+    sudo cp /tmp/miletus.pill /etc/bluepill/miletus.pill
+    sudo cp ./foreman/miletus-bluepill.init /etc/init.d/miletus
+    sudo service miletus start
 
 ## Architecture
 
