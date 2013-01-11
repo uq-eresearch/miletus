@@ -37,7 +37,7 @@ gem 'unicorn'
 
 gem 'activerecord'
 gem 'delayed_job_active_record'
-gem 'oai', :git => 'https://github.com/tjdett/ruby-oai.git', :branch => 'next'
+gem 'oai', :git => 'https://github.com/code4lib/ruby-oai.git'
 gem 'rake'
 gem 'libxml-ruby'
 gem 'nokogiri'
@@ -55,8 +55,7 @@ gem 'paperclip', ">= 3.2" # For large file attachments
 
 gem 'less-rails' # Needed for Bootstrap LESS compilation
 gem 'twitter-bootstrap-rails'
-gem 'font-awesome-rails',
-  :git => 'https://github.com/bokmann/font-awesome-rails.git'
+gem 'font-awesome-rails', "~> 0.5.0"
 gem 'haml-rails'
 gem 'rails-timeago'
 gem 'google-analytics-rails'
@@ -68,9 +67,7 @@ gem 'uuidtools' # For UUID generation
 gem 'rdf'
 gem 'rdf-rdfa'
 gem 'rdf-rdfxml'
-gem 'georuby', :require => 'geo_ruby',
-  :git => 'https://github.com/tjdett/georuby.git', :branch => 'test-fixes'
-
+gem 'georuby', '>= 2.0.0', :require => 'geo_ruby'
 gem 'deface', '>= 1.0.0.rc1'
 gem 'activeadmin'
 
