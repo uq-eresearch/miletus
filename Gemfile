@@ -14,7 +14,7 @@ group :assets do
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
   # Peg to last version that definately has a binary
   # (production VM doesn't have the CPU required to build from source)
-  gem 'therubyracer', "0.11.0beta8", :platforms => :ruby
+  gem 'therubyracer', "~> 0.11.2", :platforms => :ruby
 
   gem 'uglifier', '>= 1.0.3'
 end
@@ -104,5 +104,4 @@ group :development do
   gem 'pry-rails'
   gem 'ruby-prof'
   gem 'rb-inotify', '~> 0.8.8'
-  gem 'rack-perftools_profiler', :require => 'rack/perftools_profiler'
 end
