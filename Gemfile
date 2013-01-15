@@ -55,7 +55,7 @@ gem 'paperclip', ">= 3.2" # For large file attachments
 
 gem 'less-rails' # Needed for Bootstrap LESS compilation
 gem 'twitter-bootstrap-rails'
-gem 'font-awesome-rails', "~> 0.5.0"
+gem 'font-awesome-rails', "~> 3.0.1.0"
 gem 'haml-rails'
 gem 'rails-timeago'
 gem 'google-analytics-rails'
@@ -95,13 +95,14 @@ group :development do
   gem 'code_analyzer' # For Rails BP
   gem 'rails_best_practices', '>= 1.11.0' # Has auto-ignore of schema.rb
   gem 'guard'
+  gem 'listen', :git => 'https://github.com/guard/listen.git'
   gem 'guard-brakeman'
   gem 'guard-bundler'
   gem 'guard-rails_best_practices'
   gem 'guard-rspec'
   gem 'debugger'
-  gem 'flog' # Cyclomatic complexity reporting
+  gem 'flog', "~> 3.2.1" # Cyclomatic complexity reporting
   gem 'pry-rails'
   gem 'ruby-prof'
-  gem 'rb-inotify', '~> 0.8.8'
+  gem 'rb-inotify', '~> 0.9.0'
 end
