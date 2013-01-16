@@ -129,8 +129,19 @@ ActiveAdmin.register Miletus::Merge::Concept,
       end
       row :facets do |concept|
         links = ''.html_safe
-        concept.facets.each do |facet|
-          links << div(link_to(facet.key, admin_facet_path(facet)))
+        # Facets merge in reverse order by size, so display in same order
+        concept.facets.sort_by do |facet|
+          # Sort by size
+          facet.metadata ? facet.metadata.length : 0
+        end.reverse.each do |facet|
+          facet_link = link_to(facet.key, admin_facet_path(facet))
+          if facet.metadata
+            # Show link and file size
+            links << div(
+              "#{facet_link} (#{facet.metadata.length} bytes)".html_safe)
+          else
+            links << div(facet_link)
+          end
         end
         links
       end
@@ -141,6 +152,9 @@ ActiveAdmin.register Miletus::Merge::Concept,
             dd i.value
           end
         end
+      end
+      row "Merged RIF-CS Metadata" do |facet|
+        pre concept.to_rif, :class => 'prettyprint'
       end
     end
     active_admin_comments
