@@ -6,7 +6,9 @@ module Miletus::Merge
     attr_reader :docs
 
     def initialize(xml_strings = [])
-      @docs = xml_strings.map {|xml| RifcsDoc.create(xml)}
+      @docs = xml_strings.sort_by {|s| s.length }
+                         .reverse
+                         .map {|xml| RifcsDoc.create(xml)}
     end
 
     def content_from_nodes(xpath)
