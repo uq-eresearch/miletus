@@ -42,6 +42,15 @@ Exporting to system script to run on port 8000, managed by bluepill:
     sudo cp ./foreman/miletus-bluepill.init /etc/init.d/miletus
     sudo service miletus start
 
+To configure feeds and lookup services once running, go to `/admin/`.
+
+### Production & SSL
+
+Miletus will enforce the use of HTTPS for admin logins in a production
+environments (ie. `RAILS_ENV=production`). If you need to run in an environment
+where HTTPS is not available, you run with `DISABLE_HTTPS=1` in the environment
+to disable this check.
+
 ## Architecture
 
 The harvest and output sections are loosely coupled to the merge process, and

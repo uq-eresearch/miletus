@@ -69,7 +69,9 @@ gem 'rdf-rdfa'
 gem 'rdf-rdfxml'
 gem 'georuby', '>= 2.0.0', :require => 'geo_ruby'
 gem 'deface', '>= 1.0.0.rc1'
-gem 'activeadmin'
+
+gem 'activeadmin' # Admin interface
+gem 'rack-ssl-enforcer' # Enforce SSL for admin interface
 
 gem 'sru',
   :git => 'https://github.com/tjdett/sru-ruby.git', :branch => 'proxy-handling'

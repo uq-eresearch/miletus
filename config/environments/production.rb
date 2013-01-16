@@ -2,6 +2,11 @@ Miletus::Application.configure do
   # Settings specified here will take precedence over those in
   # config/application.rb
 
+  # Enforce SSL for admin site
+  unless ENV['DISABLE_HTTPS']
+    config.middleware.use Rack::SslEnforcer, :only => %r{^/admin/}
+  end
+
   # Code is not reloaded between requests
   config.cache_classes = true
 
