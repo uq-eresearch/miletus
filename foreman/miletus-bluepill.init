@@ -10,7 +10,7 @@
 #
 # Based on https://github.com/opscode-cookbooks/bluepill script.
 
-BLUEPILL_BIN=/usr/local/bin/bluepill
+BLUEPILL_BIN=`which bluepill`
 BLUEPILL_CONFIG=/etc/bluepill/miletus.pill
 SERVICE_NAME=miletus
 
