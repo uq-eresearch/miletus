@@ -4,7 +4,7 @@ Miletus::Application.configure do
 
   # Enforce SSL for admin site
   unless ENV['DISABLE_HTTPS']
-    config.middleware.use Rack::SslEnforcer, :only => %r{^/admin/}
+    config.middleware.use Rack::SslEnforcer, :only => %r{^/admin/?}
   end
 
   # Code is not reloaded between requests
