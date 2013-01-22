@@ -165,6 +165,9 @@ module Miletus::Merge
     end
 
     def ensure_description_exists
+      xpath("//rif:registryObject/rif:*[last()]/rif:description").each do |d|
+        d.unlink if d.content == ''
+      end
       if at_xpath("//rif:registryObject/rif:*[last()]/rif:description").nil?
         desc_parent = at_xpath("//rif:registryObject/rif:*[last()]")
         Nokogiri::XML::Builder.with(desc_parent) do |xml|
