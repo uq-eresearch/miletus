@@ -78,7 +78,10 @@ module Miletus
     # auto-convert to this zone.
     # Run "rake -D time" for a list of tasks for finding time zone names.
     # Default is UTC.
-    # config.time_zone = 'Central Time (US & Canada)'
+    config.time_zone = 'UTC'
+
+    # Assume any times without timezone data are local
+    config.active_record.default_timezone = :local
 
     # The default locale is :en and all translations from
     # config/locales/*.rb,yml are auto loaded.

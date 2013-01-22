@@ -35,6 +35,16 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Record do
     oaiRecord.metadata.to_s.should == record.metadata
   end
 
+  it "saves timezones as UTC" do
+    selected_time = Time.now.round # DB is only precise to seconds
+    record = Miletus::Harvest::OAIPMH::RIFCS::Record.create(
+      :identifier => 'http://example.test/1',
+      :datestamp => selected_time,
+      :metadata => '<metadata/>')
+    record.datestamp.zone.should be == 'UTC'
+    record.datestamp.should be == selected_time
+  end
+
   it "produces a valid RIF-CS record" do
     fixture_xml = Nokogiri::XML(get_xml_fixture('collection')).tap do |doc|
       old_root = doc.root
