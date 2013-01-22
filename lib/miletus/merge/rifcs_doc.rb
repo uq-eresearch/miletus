@@ -128,6 +128,7 @@ module Miletus::Merge
           alt_parent)
       end
       ensure_single_primary_name
+      ensure_description_exists
       self
     end
 
@@ -161,6 +162,15 @@ module Miletus::Merge
 
     def title_from_name_element(name)
       join_name_parts_in_order(name, %w[title given family suffix])
+    end
+
+    def ensure_description_exists
+      if at_xpath("//rif:registryObject/rif:*[last()]/rif:description").nil?
+        desc_parent = at_xpath("//rif:registryObject/rif:*[last()]")
+        Nokogiri::XML::Builder.with(desc_parent) do |xml|
+          xml.description(titles.try(:first), :type => 'brief')
+        end
+      end
     end
 
     def join_name_parts_in_order(name, part_order, separator = ' ')
