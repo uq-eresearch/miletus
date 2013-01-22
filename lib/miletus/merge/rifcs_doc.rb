@@ -168,7 +168,7 @@ module Miletus::Merge
       if at_xpath("//rif:registryObject/rif:*[last()]/rif:description").nil?
         desc_parent = at_xpath("//rif:registryObject/rif:*[last()]")
         Nokogiri::XML::Builder.with(desc_parent) do |xml|
-          xml.description(titles.try(:first), :type => 'brief')
+          xml.description(' ', :type => 'brief')
         end
       end
     end

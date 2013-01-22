@@ -23,10 +23,7 @@ describe Miletus::Merge::RifcsDocs do
     doc = Nokogiri::XML(docs.merge.to_xml)
     doc.xpath('//rif:description', ns_decl).should_not be_empty
     doc.at_xpath('//rif:description/@type', ns_decl).to_s.should be == 'brief'
-    doc.at_xpath('//rif:description', ns_decl).content.should be == "
-      Tracking estuarine crocodiles on Cape York Peninsula using GPS-based
-      telemetry
-    ".gsub(/\s+/,' ').strip
+    doc.at_xpath('//rif:description', ns_decl).content.should be == ' '
   end
 
 end
