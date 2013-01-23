@@ -109,6 +109,7 @@ module Miletus::Merge
     def merge_rifcs_elements(input_docs)
       patterns = %w[
         //rif:registryObject/rif:*/rif:identifier
+        //rif:accessPolicy
         //rif:citationInfo
         //rif:coverage
         //rif:dates
