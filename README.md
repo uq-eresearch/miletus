@@ -19,6 +19,23 @@ metadata, merge together records describing the same concept (eg. a person) and
 to look up further information from institutional systems storing HR and funding
 data.
 
+### Features
+
+Miletus supports the following harvest methods:
+
+ * OAIPMH
+   * RIF-CS
+ * Direct document fetching
+   * RDC Atom
+   * RIF-CS
+ * Atom feeds (via rel="alternate" links)
+   * RDC Atom
+   * RIF-CS
+
+OAI-PMH is the primary output facility. The web interface is also heavily sprinkled with RDFa for good search engine optimisation.
+
+Static content can be updated through the admin interface using Markdown.
+
 ## Usage
 
 The database connection is provided by the `DATABASE_URL` environment variable.
@@ -43,7 +60,9 @@ Exporting to system script to run on port 8000, managed by bluepill:
     sudo cp ./foreman/miletus-bluepill.init /etc/init.d/miletus
     sudo service miletus start
 
-To configure feeds and lookup services once running, go to `/admin/`.
+To configure feeds and lookup services once running, go to `/admin/`. The default username is `admin@example.com`, and password is `password`. *You are strongly advised to change both of these after you log in.*
+
+The OAI-PMH output feed can be found at `/oai`.
 
 ### Production & SSL
 
