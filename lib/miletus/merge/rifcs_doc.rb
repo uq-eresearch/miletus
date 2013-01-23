@@ -109,13 +109,17 @@ module Miletus::Merge
     def merge_rifcs_elements(input_docs)
       patterns = %w[
         //rif:registryObject/rif:*/rif:identifier
-        //rif:name
-        //rif:description
-        //rif:location
+        //rif:citationInfo
         //rif:coverage
+        //rif:dates
+        //rif:description
+        //rif:existenceDates
+        //rif:location
+        //rif:name
         //rif:registryObject/rif:*/rif:relatedObject
         //rif:relatedInfo
         //rif:rights
+        //rif:subject
       ]
       alt_parent = at_xpath("//rif:registryObject/rif:*[last()]")
       patterns.each do |pattern|
