@@ -12,8 +12,18 @@ Miletus::Application.routes.draw do
 
   post '/recheck-sru-records' => 'record#recheck_sru'
 
+  get '/records.gexf' => 'record#gexf'
+  get '/records.sitemap' => 'record#sitemap'
+  get '/graph' => 'record#graph', :as => :concept_graph
+
   get '/records/:id.gexf' => 'record#gexf',
     :constraints => {:id => /\d+/}, :as => :concept_gexf
+
+  get '/records/:uuid.:format' => 'record#view_format',
+    :constraints => {
+      :uuid => /[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/,
+      :format => /[a-z0-9\.]+/
+    }, :as => :concept_format
   get '/records/:uuid' => 'record#view',
     :constraints => {
       :uuid => /[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/
@@ -24,9 +34,6 @@ Miletus::Application.routes.draw do
   post '/records/:id/recheck-sru' => 'record#recheck_sru',
     :constraints => {:id => /\d+/}
 
-  get '/records.gexf' => 'record#gexf'
-  get '/records.sitemap' => 'record#sitemap'
-  get '/graph' => 'record#graph', :as => :concept_graph
 
   # Sample of named route:
   #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase

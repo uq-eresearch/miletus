@@ -22,6 +22,21 @@ class RecordController < ApplicationController
     @doc = Miletus::Merge::RifcsDoc.create(@concept.to_rif)
   end
 
+  def view_format
+    case params[:format]
+    when 'html'
+      redirect_to :action => 'view', :uuid => params[:uuid], :status => 301
+    when 'rifcs.xml'
+      concept = Miletus::Merge::Concept.find_by_uuid(params[:uuid]) || not_found
+      if stale?(:last_modified => concept.updated_at, :public => true)
+        xml = concept.to_rif || not_found
+        render :text => xml, :content_type => 'text/xml'
+      end
+    else
+      not_found
+    end
+  end
+
   def graph
     # No data required
   end
@@ -57,6 +72,12 @@ class RecordController < ApplicationController
     else
       render :status => 404, :text => ''
     end
+  end
+
+  private
+
+  def not_found
+    raise ActionController::RoutingError.new('Not Found')
   end
 
 end

@@ -70,6 +70,78 @@ describe RecordController do
       get 'view', :id => concept.id
       response.should be_success
     end
+
+  end
+
+  describe "GET 'view_format'" do
+
+    before(:each) do
+      fixture_file = File.join(File.dirname(__FILE__),
+        '..', 'fixtures',"rifcs-collection-1.xml")
+      @concept = Miletus::Merge::Concept.create()
+      @concept.facets.create(
+        :metadata => File.open(fixture_file) { |f| f.read() }
+      )
+      @concept.reload
+    end
+
+    context "HTML" do
+      it "routes to :view_format when an extension is specified" do
+        { :get => "/records/#{@concept.uuid}.html" }.should route_to(
+          :controller => 'record',
+          :action => 'view_format',
+          :uuid => @concept.uuid,
+          :format => 'html')
+      end
+
+      it "returns http redirect" do
+        get 'view_format', :uuid => @concept.uuid, :format => 'html'
+        response.should be_redirect
+      end
+    end
+
+    context "RIF-CS" do
+      render_views
+
+      it "returns valid RIF-CS XML" do
+        include Miletus::NamespaceHelper
+        get 'view_format', :uuid => @concept.uuid, :format => 'rifcs.xml'
+        response.should be_success
+        doc = Nokogiri::XML(response.body)
+        ns_by_prefix('rif').schema.validate(doc).should be == []
+      end
+
+      it "returns 404 if RIF-CS XML is unavailable" do
+        # Bad XML (UUID will be found)
+        @concept.facets.first.tap {|f| f.metadata = '<xml/>'; f.save!}
+        @concept.reload
+        lambda do
+          get 'view_format', :uuid => @concept.uuid, :format => 'rifcs.xml'
+        end.should raise_error(ActionController::RoutingError)
+        # No facets
+        @concept.facets.destroy_all
+        lambda do
+          get 'view_format', :uuid => @concept.uuid, :format => 'rifcs.xml'
+        end.should raise_error(ActionController::RoutingError)
+      end
+
+      it "sends 304 Not Modified based on update time" do
+        @request.env['HTTP_IF_MODIFIED_SINCE'] = @concept.updated_at.httpdate
+        get 'view_format', :uuid => @concept.uuid, :format => 'rifcs.xml'
+        response.status.should be == 304
+      end
+
+    end
+
+    context "unknown format" do
+      it "returns 404 Not Found" do
+        include Miletus::NamespaceHelper
+        lambda do
+          get 'view_format', :uuid => @concept.uuid, :format => 'unknown'
+        end.should raise_error(ActionController::RoutingError)
+      end
+    end
+
   end
 
   describe "GET 'gexf'" do
@@ -77,7 +149,7 @@ describe RecordController do
       get 'gexf'
       response.should be_success
       doc = Nokogiri::XML(response.body)
-      ns_by_prefix('gexf').schema.validate(doc).should == []
+      ns_by_prefix('gexf').schema.validate(doc).should be == []
     end
   end
 
@@ -97,7 +169,7 @@ describe RecordController do
       get 'sitemap'
       response.should be_success
       doc = Nokogiri::XML(response.body)
-      ns_by_prefix('sitemap').schema.validate(doc).should == []
+      ns_by_prefix('sitemap').schema.validate(doc).should be == []
     end
 
   end
