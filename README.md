@@ -6,6 +6,7 @@
 ](https://gemnasium.com/uq-eresearch/miletus)
 [![Code Climate](https://codeclimate.com/badge.png)
 ](https://codeclimate.com/github/uq-eresearch/miletus)
+[YARD Docs](http://rdoc.info/github/uq-eresearch/miletus)
 
 ## Overview
 
