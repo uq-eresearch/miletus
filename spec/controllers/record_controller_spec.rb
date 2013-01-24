@@ -144,6 +144,58 @@ describe RecordController do
 
   end
 
+  describe "GET 'atom'" do
+
+    def validate_atom
+      response.should be_success
+      doc = Nokogiri::XML(response.body)
+      rng_schema_file = File.expand_path "atom.rng", File.dirname(__FILE__)
+      schema = Nokogiri::XML::RelaxNG(File.open(rng_schema_file))
+      schema.validate(doc).should be == []
+    end
+
+    it "has a route from /records.atom" do
+      { :get => "/records.atom" }.should route_to(
+          :controller => 'record',
+          :action => 'atom')
+    end
+
+    context "with no records" do
+      before(:each) { get 'atom' }
+
+      it "returns atom" do
+        get 'atom'
+        validate_atom
+      end
+    end
+
+    context "with a single record" do
+      before(:each) do
+        fixture_file = File.join(File.dirname(__FILE__),
+          '..', 'fixtures',"rifcs-collection-1.xml")
+        @concept = Miletus::Merge::Concept.create()
+        @concept.facets.create(
+          :metadata => File.open(fixture_file) { |f| f.read() }
+        )
+        @concept.reload
+      end
+
+      before(:each) { get 'atom' }
+
+      it "returns atom" do
+        validate_atom
+      end
+
+      it "should have a single entry" do
+        require 'atom'
+        feed = Atom::Feed.load_feed(response.body)
+        feed.entries.count.should be == 1
+      end
+
+    end
+
+  end
+
   describe "GET 'gexf'" do
     it "returns valid GEXF graph" do
       get 'gexf'

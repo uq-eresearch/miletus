@@ -12,8 +12,10 @@ Miletus::Application.routes.draw do
 
   post '/recheck-sru-records' => 'record#recheck_sru'
 
+  get '/records.atom' => 'record#atom', :as => :atom_feed
   get '/records.gexf' => 'record#gexf'
   get '/records.sitemap' => 'record#sitemap'
+
   get '/graph' => 'record#graph', :as => :concept_graph
 
   get '/records/:id.gexf' => 'record#gexf',

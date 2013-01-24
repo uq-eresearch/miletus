@@ -41,6 +41,10 @@ class RecordController < ApplicationController
     # No data required
   end
 
+  def atom
+    render :text => atom_feed.to_xml, :content_type => 'application/atom+xml'
+  end
+
   def gexf
     target = params.key?(:id) ?
       Miletus::Merge::Concept.find_by_id!(params[:id]) : Miletus::Merge::Concept
@@ -75,6 +79,30 @@ class RecordController < ApplicationController
   end
 
   private
+
+  def atom_feed
+    require 'atom'
+    Atom::Feed.new do |feed|
+      feed.id = atom_feed_url
+      feed.updated = Miletus::Merge::Concept.updated_at || DateTime.now
+      feed.title = 'Miletus Atom Feed'
+      Miletus::Merge::Concept.order('updated_at DESC').all.each do |concept|
+        feed.entries << Atom::Entry.new do |entry|
+          entry.id = concept.key
+          entry.updated = concept.updated_at
+          entry.title = concept.title
+          entry.links << Atom::Link.new({
+            :rel => 'alternate',
+            :type => 'application/rifcs+xml',
+            :href => concept_format_url({
+              :uuid => concept.uuid,
+              :format => 'rifcs.xml'
+            })
+          })
+        end
+      end
+    end
+  end
 
   def not_found
     raise ActionController::RoutingError.new('Not Found')
