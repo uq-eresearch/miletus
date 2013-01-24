@@ -183,6 +183,7 @@ describe RecordController do
       before(:each) { get 'atom' }
 
       it "returns atom" do
+        puts response.body
         validate_atom
       end
 
@@ -191,6 +192,13 @@ describe RecordController do
         feed = Atom::Feed.load_feed(response.body)
         feed.entries.count.should be == 1
       end
+
+      #it "should be complete" do
+      #  require 'atom'
+      #  feed = Atom::Feed.load_feed(response.body)
+      #  feed.extend(Miletus::Harvest::Atom::FeedMixin)
+      #  feed.should be_complete
+      #end
 
     end
 

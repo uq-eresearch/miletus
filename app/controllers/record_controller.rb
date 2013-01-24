@@ -83,22 +83,31 @@ class RecordController < ApplicationController
   def atom_feed
     require 'atom'
     Atom::Feed.new do |feed|
+      # Order is important
       feed.id = atom_feed_url
       feed.updated = Miletus::Merge::Concept.updated_at || DateTime.now
       feed.title = 'Miletus Atom Feed'
+      feed.generator = Atom::Generator.new(
+        :name => 'Miletus',
+        :uri => 'https://github.com/uq-eresearch/miletus')
+      # Mark feed as complete (disabled for now, due to ratom bug)
+      # feed['http://purl.org/syndication/history/1.0', 'complete'] << ''
+      # Add entries
       Miletus::Merge::Concept.order('updated_at DESC').all.each do |concept|
         feed.entries << Atom::Entry.new do |entry|
-          entry.id = concept.key
+          entry.id = concept_id_url(:id => concept.id)
           entry.updated = concept.updated_at
           entry.title = concept.title
-          entry.links << Atom::Link.new({
-            :rel => 'alternate',
-            :type => 'application/rifcs+xml',
-            :href => concept_format_url({
-              :uuid => concept.uuid,
-              :format => 'rifcs.xml'
+          if concept.uuid
+            entry.links << Atom::Link.new({
+              :rel => 'alternate',
+              :type => 'application/rifcs+xml',
+              :href => concept_format_url({
+                :uuid => concept.uuid,
+                :format => 'rifcs.xml'
+              })
             })
-          })
+          end
         end
       end
     end
