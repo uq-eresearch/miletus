@@ -32,7 +32,15 @@ Miletus supports the following harvest methods:
    * RDC Atom
    * RIF-CS
 
-OAI-PMH is the primary output facility. The web interface is also heavily sprinkled with RDFa for good search engine optimisation.
+Output feeds are available in:
+
+ * OAIPMH
+   * RIF-CS (rif)
+   * Dublin Core (oai_dc)
+ * Atom
+   * RIF-CS (application/rifcs+xml)
+
+The web interface is also heavily sprinkled with RDFa for good search engine optimisation.
 
 Static content can be updated through the admin interface using Markdown.
 
@@ -62,7 +70,7 @@ Exporting to system script to run on port 8000, managed by bluepill:
 
 To configure feeds and lookup services once running, go to `/admin/`. The default username is `admin@example.com`, and password is `password`. *You are strongly advised to change both of these after you log in.*
 
-The OAI-PMH output feed can be found at `/oai`.
+The OAI-PMH output feed can be found at `/oai`. The Atom feed can be found at `/atom`.
 
 ### Production & SSL
 
