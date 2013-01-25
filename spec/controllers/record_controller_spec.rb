@@ -260,13 +260,21 @@ describe RecordController do
 
         context "the archive feed for two days ago" do
 
+          before(:each) do
+            get 'atom', :date => @concept.updated_at.to_date.iso8601
+          end
+
           it "should have next-archive link for today" do
             require 'atom'
-            get 'atom', :date => @concept.updated_at.to_date.iso8601
             feed = Atom::Feed.load_feed(response.body)
             next_archive_link = feed.links.detect{|l| l.rel == 'next-archive'}
             next_archive_link.should_not be_nil
             next_archive_link.href.should be == atom_url(today)
+          end
+
+          it "should have a public cache age of 30 days" do
+            response.headers['Cache-Control'].should be == \
+              "max-age=2592000, public"
           end
 
         end

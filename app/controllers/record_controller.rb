@@ -51,6 +51,7 @@ class RecordController < ApplicationController
       rescue ArgumentError
         return render :text => '', :status => :bad_request
       end
+      expires_in(30.days, :public => true) if date < Date.today
       render :content_type => 'application/atom+xml',
         :text => Miletus::Output::Atom::feed(date, url_options).to_xml
     else
