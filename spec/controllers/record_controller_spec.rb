@@ -188,26 +188,90 @@ describe RecordController do
     end
 
     context "with a single record" do
-      before(:each) do
-        fixture_file = File.join(File.dirname(__FILE__),
-          '..', 'fixtures',"rifcs-collection-1.xml")
-        @concept = Miletus::Merge::Concept.create()
-        @concept.facets.create(
-          :metadata => File.open(fixture_file) { |f| f.read() }
-        )
-        @concept.reload
+
+      context "from today" do
+        before(:each) do
+          fixture_file = File.join(File.dirname(__FILE__),
+            '..', 'fixtures',"rifcs-collection-1.xml")
+          @concept = Miletus::Merge::Concept.create()
+          @concept.facets.create(
+            :metadata => File.open(fixture_file) { |f| f.read() }
+          )
+          @concept.reload
+        end
+
+        it "returns atom" do
+          get 'atom', :date => today
+          validate_atom
+        end
+
+        it "should have a single entry" do
+          require 'atom'
+          get 'atom', :date => today
+          feed = Atom::Feed.load_feed(response.body)
+          feed.entries.count.should be == 1
+        end
+
+        it "should not have a next-archive link" do
+          require 'atom'
+          get 'atom', :date => today
+          feed = Atom::Feed.load_feed(response.body)
+          next_archive_link = feed.links.detect{|l| l.rel == 'next-archive'}
+          next_archive_link.should be_nil
+        end
       end
 
-      it "returns atom" do
-        get 'atom', :date => today
-        validate_atom
-      end
+      context "from two days ago" do
+        before(:each) do
+          fixture_file = File.join(File.dirname(__FILE__),
+            '..', 'fixtures',"rifcs-collection-1.xml")
+          @concept = Miletus::Merge::Concept.create()
+          @concept.facets.create(
+            :metadata => File.open(fixture_file) { |f| f.read() }
+          )
+          @concept.reload
+          @concept.class.record_timestamps = false
+          @concept.updated_at = (Date.today - 2).to_datetime
+          @concept.save
+          @concept.class.record_timestamps = true
+        end
 
-      it "should have a single entry" do
-        require 'atom'
-        get 'atom', :date => today
-        feed = Atom::Feed.load_feed(response.body)
-        feed.entries.count.should be == 1
+        it "returns atom" do
+          get 'atom', :date => today
+          validate_atom
+        end
+
+        it "should have a no entries" do
+          require 'atom'
+          get 'atom', :date => today
+          feed = Atom::Feed.load_feed(response.body)
+          feed.entries.count.should be == 0
+        end
+
+        it "should have prev-archive link for two days ago" do
+          require 'atom'
+          get 'atom', :date => today
+          feed = Atom::Feed.load_feed(response.body)
+          prev_archive_link = feed.links.detect{|l| l.rel == 'prev-archive'}
+          prev_archive_link.should_not be_nil
+          prev_archive_link.href.should be == \
+            atom_url(@concept.updated_at.to_date.iso8601)
+        end
+
+        context "the archive feed for two days ago" do
+
+          it "should have next-archive link for today" do
+            require 'atom'
+            get 'atom', :date => @concept.updated_at.to_date.iso8601
+            feed = Atom::Feed.load_feed(response.body)
+            next_archive_link = feed.links.detect{|l| l.rel == 'next-archive'}
+            next_archive_link.should_not be_nil
+            next_archive_link.href.should be == atom_url(today)
+          end
+
+        end
+
+
       end
 
     end

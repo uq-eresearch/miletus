@@ -41,6 +41,10 @@ module Miletus::Output::Atom
 
     private
 
+    def present_date
+      DateTime.now.utc.to_date
+    end
+
     def last_updated
       Miletus::Merge::Concept.updated_at || DateTime.now
     end
@@ -64,10 +68,11 @@ module Miletus::Output::Atom
     end
 
     def next_archive_date
-      Miletus::Merge::Concept.updated_after(date)
+      next_date = Miletus::Merge::Concept.updated_after(date)
         .from_most_recent
         .last
         .try(:updated_at).try(:to_date)
+      next_date || (date < present_date ? present_date : nil)
     end
 
     def previous_archive_date
