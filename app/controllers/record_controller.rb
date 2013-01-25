@@ -1,5 +1,8 @@
 require 'miletus'
 
+require 'atom'
+require 'date'
+
 class RecordController < ApplicationController
 
   def index
@@ -42,7 +45,19 @@ class RecordController < ApplicationController
   end
 
   def atom
-    render :text => atom_feed.to_xml, :content_type => 'application/atom+xml'
+    if params[:date]
+      begin
+        date = Date.iso8601(params[:date])
+      rescue ArgumentError
+        return render :text => '', :status => :bad_request
+      end
+      render :content_type => 'application/atom+xml',
+        :text => Miletus::Output::Atom::feed(date, url_options).to_xml
+    else
+      redirect_to :action => 'atom',
+        :date => DateTime.now.utc.strftime('%Y-%m-%d'),
+        :status => 303
+    end
   end
 
   def gexf
@@ -79,39 +94,6 @@ class RecordController < ApplicationController
   end
 
   private
-
-  def atom_feed
-    require 'atom'
-    Atom::Feed.new do |feed|
-      # Order is important
-      feed.id = atom_feed_url
-      feed.updated = Miletus::Merge::Concept.updated_at || DateTime.now
-      feed.title = 'Miletus Atom Feed'
-      feed.generator = Atom::Generator.new(
-        :name => 'Miletus',
-        :uri => 'https://github.com/uq-eresearch/miletus')
-      # Mark feed as complete (disabled for now, due to ratom bug)
-      # feed['http://purl.org/syndication/history/1.0', 'complete'] << ''
-      # Add entries
-      Miletus::Merge::Concept.order('updated_at DESC').all.each do |concept|
-        feed.entries << Atom::Entry.new do |entry|
-          entry.id = concept_id_url(:id => concept.id)
-          entry.updated = concept.updated_at
-          entry.title = concept.title
-          if concept.uuid
-            entry.links << Atom::Link.new({
-              :rel => 'alternate',
-              :type => 'application/rifcs+xml',
-              :href => concept_format_url({
-                :uuid => concept.uuid,
-                :format => 'rifcs.xml'
-              })
-            })
-          end
-        end
-      end
-    end
-  end
 
   def not_found
     raise ActionController::RoutingError.new('Not Found')

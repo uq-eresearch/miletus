@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   -*- rnc -*-
-  RELAX NG Compact Syntax Grammar for the
+  RELAX NG XML Syntax Grammar for the
   Atom Format Specification Version 11
 
-  Converted from Relax NG Compact Notation, as seen in RFC 4287.
+  Converted from Relax NG Compact Syntax Grammar,
+  as seen in RFC 4287.
 -->
 <grammar ns="http://www.w3.org/1999/xhtml" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:s="http://www.ascc.net/xml/schematron" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
   <start>

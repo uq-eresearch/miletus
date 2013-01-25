@@ -146,6 +146,8 @@ describe RecordController do
 
   describe "GET 'atom'" do
 
+    let(:today) { DateTime.now.utc.strftime('%Y-%m-%d') }
+
     def validate_atom
       response.should be_success
       doc = Nokogiri::XML(response.body)
@@ -154,17 +156,33 @@ describe RecordController do
       schema.validate(doc).should be == []
     end
 
-    it "has a route from /records.atom" do
-      { :get => "/records.atom" }.should route_to(
-          :controller => 'record',
-          :action => 'atom')
+    describe "routes" do
+      it "routes from /atom" do
+        { :get => "/atom" }.should route_to(
+            :controller => 'record',
+            :action => 'atom')
+      end
+
+      it "routes from /atom/:date" do
+        { :get => "/atom/1970-01-01" }.should route_to(
+            :controller => 'record',
+            :action => 'atom',
+            :date => '1970-01-01')
+      end
+
     end
 
     context "with no records" do
       before(:each) { get 'atom' }
 
-      it "returns atom" do
+      it "redirects to today's feed" do
         get 'atom'
+        response.code.to_i.should be == 303
+        response.should redirect_to(atom_url(:date => today))
+      end
+
+      it "returns atom" do
+        get 'atom', :date => today
         validate_atom
       end
     end
@@ -180,25 +198,17 @@ describe RecordController do
         @concept.reload
       end
 
-      before(:each) { get 'atom' }
-
       it "returns atom" do
-        puts response.body
+        get 'atom', :date => today
         validate_atom
       end
 
       it "should have a single entry" do
         require 'atom'
+        get 'atom', :date => today
         feed = Atom::Feed.load_feed(response.body)
         feed.entries.count.should be == 1
       end
-
-      #it "should be complete" do
-      #  require 'atom'
-      #  feed = Atom::Feed.load_feed(response.body)
-      #  feed.extend(Miletus::Harvest::Atom::FeedMixin)
-      #  feed.should be_complete
-      #end
 
     end
 

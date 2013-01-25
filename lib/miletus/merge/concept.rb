@@ -36,8 +36,20 @@ module Miletus::Merge
 
     validates_uniqueness_of :uuid, :allow_nil => true
 
+    # Update scopes
+    scope :updated_on, lambda { |date|
+      where(:updated_at => date.to_datetime...(date+1).to_datetime)
+    }
+    scope :updated_before, lambda { |date|
+      where('updated_at < ?', date.to_datetime)
+    }
+    scope :updated_after, lambda { |date|
+      where('updated_at >= ?', (date+1).to_datetime)
+    }
+    scope :from_most_recent, order(:updated_at).reverse_order
+
     def self.updated_at
-      self.order(:updated_at).reverse_order.first.try(:updated_at)
+      from_most_recent.first.try(:updated_at)
     end
 
     def group
