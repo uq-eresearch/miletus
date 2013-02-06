@@ -14,6 +14,14 @@ GIT
     listen (0.7.2)
 
 GIT
+  remote: https://github.com/tjdett/ratom
+  revision: 138e6a4ee26c00fca722b4a012e975c4246a429a
+  branch: allow-libxml-ruby-2.4.0
+  specs:
+    ratom (0.7.2)
+      libxml-ruby (~> 2.3)
+
+GIT
   remote: https://github.com/tjdett/sru-ruby.git
   revision: 16423bf921ab836935b2a356d5405d4562d1a9ef
   branch: proxy-handling
@@ -209,7 +217,7 @@ GEM
       actionpack (>= 3.1)
       less (~> 2.2.0)
     libv8 (3.11.8.13)
-    libxml-ruby (2.3.3)
+    libxml-ruby (2.5.0)
     locale (2.0.8)
     lumberjack (1.0.2)
     mail (2.4.4)
@@ -291,8 +299,6 @@ GEM
       thor (>= 0.14.6, < 2.0)
     raindrops (0.10.0)
     rake (10.0.3)
-    ratom (0.7.2)
-      libxml-ruby (~> 2.3.2)
     rb-inotify (0.9.0)
       ffi (>= 0.5.0)
     rdf (0.3.11.1)
@@ -437,7 +443,7 @@ DEPENDENCIES
   rails-timeago
   rails_best_practices (>= 1.11.0)
   rake
-  ratom
+  ratom!
   rb-inotify (~> 0.9.0)
   rdf
   rdf-rdfa
