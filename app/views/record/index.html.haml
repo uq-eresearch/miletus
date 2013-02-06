@@ -7,14 +7,12 @@
 
     %ul#concept-type-filter.nav.nav-pills
       %li.active
-        %a{:href => '#',
-           'data-type' => '',
+        %a{:href => '#/',
            :title => 'Show all records'}
           All
       - @types.sort.each do |ct|
         %li
-          %a{:href => '#',
-             'data-type' => ct,
+          %a{:href => '#/'+ct,
              :title => 'Show only '+ct.pluralize}
             = ct.pluralize.titleize
 

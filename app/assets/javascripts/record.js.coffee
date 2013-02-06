@@ -103,18 +103,29 @@ init_graph = (selector) ->
         )
     )
 
+init_concept_filter = () ->
+  set_concept_selection = (type) ->
+    if type == ''
+      $('#concepts p').removeClass('hidden')
+    else
+      $('#concepts p').addClass('hidden')
+      $('#concepts p[data-type="'+type+'"]').removeClass('hidden')
+
+  $('#concept-type-filter a').each (i, e) ->
+    type = $(e).attr('href').substring(2)
+    Path.map('#/'+type).to () ->
+      set_concept_selection(type)
+      $(e).parents('ul').find('li').removeClass('active')
+      $(e).parents('li').addClass('active')
+  Path.root('#/')
+  Path.listen()
+
 $(document).ready (e) ->
   init_graph('.sigma-expand')
+  if $('#concept-type-filter').length
+    init_concept_filter()
 
 prettyPrint()
 
-$('#concept-type-filter').on('click', 'li a', (event) ->
-  type = $(event.target).attr('data-type')
-  if type == ""
-    $('#concepts p').removeClass('hidden')
-  else
-    $('#concepts p').addClass('hidden')
-    $('#concepts p[data-type="'+type+'"]').removeClass('hidden')
-  $('#concept-type-filter li').removeClass('active')
-  $(event.target).parents('li').first().addClass('active'))
+
 
