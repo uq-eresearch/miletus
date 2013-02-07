@@ -71,7 +71,7 @@ module Miletus::Output::Atom
       next_date = Miletus::Merge::Concept.updated_after(date)
         .from_most_recent
         .last
-        .try(:updated_at).try(:to_date)
+        .try(:updated_at).try(:utc).try(:to_date)
       next_date || (date < present_date ? present_date : nil)
     end
 
@@ -79,7 +79,7 @@ module Miletus::Output::Atom
       Miletus::Merge::Concept.updated_before(date)
         .from_most_recent
         .first
-        .try(:updated_at).try(:to_date)
+        .try(:updated_at).try(:utc).try(:to_date)
     end
 
     def make_feed
