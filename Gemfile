@@ -55,7 +55,7 @@ gem 'paperclip', ">= 3.2" # For large file attachments
 
 gem 'less-rails' # Needed for Bootstrap LESS compilation
 gem 'twitter-bootstrap-rails'
-gem 'font-awesome-rails', "~> 3.0.1.0"
+gem 'font-awesome-rails', "~> 3.0.1"
 gem 'haml-rails'
 gem 'rails-timeago'
 gem 'google-analytics-rails'
