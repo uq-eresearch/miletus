@@ -14,9 +14,8 @@ GIT
     listen (0.7.2)
 
 GIT
-  remote: https://github.com/tjdett/ratom
-  revision: 138e6a4ee26c00fca722b4a012e975c4246a429a
-  branch: allow-libxml-ruby-2.4.0
+  remote: https://github.com/seangeo/ratom
+  revision: 84da1d1e7b39dfc3dab7ae411e162ba4fee50890
   specs:
     ratom (0.7.2)
       libxml-ruby (~> 2.3)
