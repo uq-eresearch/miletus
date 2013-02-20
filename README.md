@@ -144,9 +144,11 @@ digraph miletus {
 
 ## Acknowledgements
 
-This app was produced as a result of an [ANDS-funded](http://www.ands.org.au/)
-project.
+This project is supported by the Australian National Data Service
+([ANDS](http://www.ands.org.au/)). ANDS is supported by the Australian
+Government through the National Collaborative Research Infrastructure
+Strategy Program and the Education Investment Fund (EIF) Super Science
+Initiative.
 
 [ANDS]: http://www.ands.org.au/
 [RIF-CS]: http://services.ands.org.au/documentation/rifcs/guidelines/rif-cs.html
-
