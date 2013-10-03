@@ -53,7 +53,9 @@ module Miletus
           private
 
           def list_identifiers
-            client.list_identifiers(:metadataPrefix => @collection.format).full
+            opts = { :metadataPrefix => @collection.format }
+            opts[:set] = @collection.set unless @collection.set.nil?
+            client.list_identifiers(opts).full
           end
 
           def add_record(header)

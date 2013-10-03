@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121123045342) do
+ActiveRecord::Schema.define(:version => 20131003034552) do
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -135,6 +135,7 @@ ActiveRecord::Schema.define(:version => 20121123045342) do
 
   create_table "oaipmh_rifcs_record_collections", :force => true do |t|
     t.string "endpoint", :null => false
+    t.string "set"
   end
 
   create_table "oaipmh_rifcs_records", :force => true do |t|
@@ -155,19 +156,17 @@ ActiveRecord::Schema.define(:version => 20121123045342) do
 
   create_table "output_oaipmh_records", :force => true do |t|
     t.integer  "underlying_concept_id"
-    t.integer  "set_memberships_id"
     t.text     "metadata"
     t.datetime "created_at",            :null => false
     t.datetime "updated_at",            :null => false
   end
 
   create_table "output_oaipmh_sets", :force => true do |t|
-    t.integer  "set_memberships_id"
-    t.string   "spec",               :null => false
-    t.string   "name",               :null => false
+    t.string   "spec",        :null => false
+    t.string   "name",        :null => false
     t.string   "description"
-    t.datetime "created_at",         :null => false
-    t.datetime "updated_at",         :null => false
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
   end
 
   create_table "pages", :force => true do |t|

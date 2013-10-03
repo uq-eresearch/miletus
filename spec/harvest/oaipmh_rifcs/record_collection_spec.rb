@@ -12,9 +12,32 @@ describe Miletus::Harvest::OAIPMH::RIFCS::RecordCollection do
     end
   }
 
-  it { should respond_to(:format, :endpoint) }
+  it { should respond_to(:format, :endpoint, :set) }
   it { should respond_to(:add, :get, :remove) }
   it { should respond_to(:restrict_to) }
+
+  describe "#set" do
+    it "returns nil if set is unspecified" do
+      rc = Miletus::Harvest::OAIPMH::RIFCS::RecordCollection.new(
+        :endpoint => 'http://example.test/oai'
+      )
+      rc.set.should be_nil
+    end
+    it "returns set if present" do
+      rc = Miletus::Harvest::OAIPMH::RIFCS::RecordCollection.new(
+        :endpoint => 'http://example.test/oai',
+        :set => 'foobar'
+      )
+      rc.set.should == 'foobar'
+    end
+    it "returns nil if set is blank" do
+      rc = Miletus::Harvest::OAIPMH::RIFCS::RecordCollection.new(
+        :endpoint => 'http://example.test/oai',
+        :set => ''
+      )
+      rc.set.should be_nil
+    end
+  end
 
   it "returns nil if record is absent" do
     subject.get("http://example.test/1").should be(nil)

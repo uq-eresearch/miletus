@@ -10,12 +10,18 @@ module Miletus
           self.table_name = 'oaipmh_rifcs_record_collections'
 
           attr_accessible :endpoint
+          attr_accessible :set
 
           validates :endpoint, :presence => true
           validates_format_of :endpoint, :with => URI::regexp(%w(http https))
           validates_uniqueness_of :endpoint
 
           has_many :records, :dependent => :destroy, :order => 'datestamp DESC'
+
+          def set
+            s = read_attribute(:set)
+            s.to_s.empty? ? nil : s
+          end
 
           def format
             'rif'

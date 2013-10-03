@@ -61,6 +61,8 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Consumer do
     recordCollection.should_receive(:restrict_to).once.and_yield
     # Record collection should have its format checked
     recordCollection.should_receive(:format).at_least(:once).and_return('rif')
+    # Record collection should have its set used
+    recordCollection.should_receive(:set).at_least(:once).and_return(nil)
     # The collection should be checked for all records
     recordCollection.should_receive(:get).with(%r{^http://example.test/})\
                     .exactly(8).times.and_return(nil)
@@ -92,6 +94,8 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Consumer do
     recordCollection.should_receive(:restrict_to).once.and_yield
     # Record collection should have its format checked
     recordCollection.should_receive(:format).at_least(:once).and_return('rif')
+    # Record collection should have its set used
+    recordCollection.should_receive(:set).at_least(:once).and_return(nil)
     # The collection should be checked for all records
     recordCollection.should_receive(:get).with(%r{^http://example.test/})\
       .exactly(8).times.and_return { |q|
@@ -125,6 +129,8 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Consumer do
     recordCollection.should_receive(:restrict_to).once.and_yield
     # Record collection should have its format checked
     recordCollection.should_receive(:format).at_least(:once).and_return('rif')
+    # Record collection should have its set used
+    recordCollection.should_receive(:set).at_least(:once).and_return(nil)
     # The collection should be checked for all records
     recordCollection.should_receive(:get).with(%r{^http://example.test/})\
       .exactly(9).times.and_return { |q|
