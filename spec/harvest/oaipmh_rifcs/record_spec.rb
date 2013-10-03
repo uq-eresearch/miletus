@@ -70,11 +70,6 @@ describe Miletus::Harvest::OAIPMH::RIFCS::Record do
       "http://ands.org.au/standards/rif-cs/registryObjects "+
       "http://services.ands.org.au/documentation/"+
       "rifcs/schema/registryObjects.xsd\">")
-    expect do
-      Nokogiri::XML::Reader(fixture_xml).each do |n|
-        # Do nothing
-      end
-    end.to raise_error
     record = Miletus::Harvest::OAIPMH::RIFCS::Record.new(
       :identifier => 'http://example.test/1',
       :datestamp => DateTime.now,
